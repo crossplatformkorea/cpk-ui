@@ -1,0 +1,68 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-jsx",
+    "lib": ["es2017"],
+    "moduleResolution": "node",
+    "noEmit": true,
+    "isolatedModules": false,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "outDir": "lib",
+    "module": "esnext",
+    "target": "es6",
+    "allowJs": false,
+    "rootDirs": ["src"],
+    "baseUrl": "src",
+    "incremental": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": false,
+    "strict": true,
+    "strictNullChecks": true,
+    "declaration": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "noUnusedLocals": false,
+    "types": ["node", "jest"],
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "plugins": [
+      {
+        "name": "typescript-styled-plugin",
+        "lint": {
+          "validProperties": [
+            "shadow-color",
+            "shadow-opacity",
+            "shadow-offset",
+            "shadow-radius",
+            "spread-radius",
+            "padding-horizontal",
+            "padding-vertical",
+            "margin-vertical",
+            "margin-horizontal",
+            "tint-color",
+            "aspect-ratio",
+            "elevation",
+            "blur-radius",
+            "text-align-vertical",
+            "include-font-padding"
+          ]
+        }
+      }
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "setupTest.ts",
+    "jest.config.ts",
+    "app.config.ts",
+    "App.tsx"
+  ],
+  "exclude": ["node_modules", "**/*.test.tsx", "**/*.spec.ts"],
+  "files": ["environment.d.ts", "styled.d.ts"],
+  "types": ["typePatches", "jest"],
+  "extends": "expo/tsconfig.base"
+}

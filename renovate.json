@@ -1,0 +1,77 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "prHourlyLimit": 3,
+  "prConcurrentLimit": 5,
+  "ignorePaths": [
+    "**/node_modules/**",
+    "docs"
+  ],
+  "ignoreDeps": [
+    "@types/react",
+    "@types/react-dom",
+    "@react-native-async-storage/async-storage",
+    "react-native",
+    "react-native-gesture-handler",
+    "react-native-reanimated",
+    "react-native-svg",
+    "@expo/vector-icons",
+    "react-native-web",
+    "react-native-web-hooks",
+    "react-native-safe-area-context",
+    "typescript",
+    "webpack-dev-server"
+  ],
+  "packageRules": [
+    {
+      "packagePatterns": [
+        "*"
+      ],
+      "excludeDepPatterns": [
+        "^@expo/",
+        "~@expo/",
+        "^expo",
+        "~expo"
+      ],
+      "excludePackageNames": [
+        "babel-loader",
+        "react",
+        "react-native",
+        "react-native-web",
+        "react-native-reanimated",
+        "react-native-svg",
+        "react-native-safe-area-context",
+        "@react-native-async-storage/async-storage",
+        "@react-native-community/datetimepicker",
+        "webpack-dev-server"
+      ]
+    },
+    {
+      "packagePatterns": [
+        "^@types/"
+      ],
+      "automerge": true,
+      "automergeType": "pr-comment",
+      "automergeComment": "types: auto merge",
+      "major": {
+        "automerge": false
+      }
+    },
+    {
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "labels": [
+        "lint"
+      ]
+    }
+  ]
+}

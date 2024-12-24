@@ -1,0 +1,32 @@
+/storybook-static
+.DS_Store
+.idea
+
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Expo
+.expo/*
+**/.expo
+dist/
+
+# Storybook build
+packages/*/lib
+/lib/*
+!/lib/package.json
+
+# Storyook doc build
+doc-build
+
+# Jest
+.jest
+
+# Coverage
+coverage
+
+# Storybook
+storybook

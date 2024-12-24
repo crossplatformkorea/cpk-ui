@@ -1,0 +1,1 @@
+sed -i 's/\/CPK-UI/./g' dist/index.html

@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noResolve": false,
+    "noImplicitAny": false,
+    "removeComments": false,
+    "sourceMap": false,
+    "declarationMap": false,
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "esnext",
+    "incremental": true,
+    "outDir": "lib",
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true
+  },
+  "exclude": [
+    "node_modules",
+    "lib",
+    "**/**/*/__tests__",
+    "**/*.test.tsx",
+    "**/*.spec.tsx",
+    "dist",
+    "stories",
+    "**/*.example.*"
+  ],
+  "include": [
+    "main"
+  ],
+  "files": [
+    "environment.d.ts",
+    "styled.d.ts"
+  ]
+}
