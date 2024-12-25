@@ -1,37 +1,33 @@
-name: Deploy Preview Hosting on PR
-on:
-  pull_request:
-    branches:
-      - main
-
+name: Deploy docs on PR
+on: pull_request
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
 jobs:
   build_and_preview:
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
           check-latest: false
 
-      - name: Setup expo cli
-        uses: expo/expo-github-action@v8
-        with:
-          expo-version: 4.x
-
       - name: Install packages and build storybook
         run: |
-          yarn install --network-concurrency 1
-          yarn pre
+          yarn
           yarn storybook:build
 
       - name: Deploy to firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CROSS_PLATFORM_KOREA_5032F }}
           projectId: cross-platform-korea-5032f
-          target: CPK-UI
+          target: cpk-ui
           expires: 7d
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels

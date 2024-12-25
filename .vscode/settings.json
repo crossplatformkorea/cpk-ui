@@ -26,9 +26,10 @@
   "prettier.configPath": ".prettierrc.js",
   "typescript.tsdk": "node_modules/typescript/lib",
   "cSpell.words": [
+    "cpk",
     "crossplatformkorea",
     "docgen",
-    "cpk",
+    "hostingchannels",
     "hyochan",
     "ondevice",
     "Phosphoricons",
