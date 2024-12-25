@@ -23,7 +23,7 @@
   },
   "javascript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.importModuleSpecifier": "relative",
-  "prettier.configPath": ".prettierrc.js",
+  "prettier.configPath": ".prettierrc.cjs",
   "typescript.tsdk": "node_modules/typescript/lib",
   "cSpell.words": [
     "cpk",

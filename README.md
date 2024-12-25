@@ -4,9 +4,8 @@ React Native UI components for [Expo](https://expo.dev).
 
 [![Npm Version](http://img.shields.io/npm/v/CPK-UI.svg?style=flat-square)](https://npmjs.org/package/CPK-UI)
 [![Downloads](http://img.shields.io/npm/dm/CPK-UI.svg?style=flat-square)](https://npmjs.org/package/CPK-UI)
-[![codecov](https://codecov.io/gh/crossplatformkorea/cpk-ui/graph/badge.svg?token=LWZI4U369L)](https://codecov.io/gh/crossplatformkorea/cpk-ui)
 [![CI](https://github.com/crossplatformkorea/CPK-UI/actions/workflows/ci.yml/badge.svg)](https://github.com/crossplatformkorea/CPK-UI/actions/workflows/ci.yml)
-[![gh-pages](https://github.com/crossplatformkorea/CPK-UI/actions/workflows/gh-pages.yml/badge.svg)](https://crossplatformkorea.github.io/CPK-UI)
+[![codecov](https://codecov.io/gh/crossplatformkorea/cpk-ui/graph/badge.svg?token=LWZI4U369L)](https://codecov.io/gh/crossplatformkorea/cpk-ui)
 [![Publish](https://github.com/crossplatformkorea/CPK-UI/actions/workflows/publish.yml/badge.svg)](https://github.com/crossplatformkorea/CPK-UI/actions/workflows/publish.yml)
 [![Sponsor](https://opencollective.com/crossplatformkorea/tiers/badge.svg?style=shield)](https://opencollective.com/crossplatformkorea/tiers/badge.svg)
 

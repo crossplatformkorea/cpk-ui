@@ -1,4 +1,4 @@
-name: Deploy docs on PR
+name: Storybook on PR
 on: pull_request
 permissions:
   checks: write

@@ -22,8 +22,10 @@ const createBaseText = (
 `;
 
 // Common Text Component Factory
+type TextComponentType = ReturnType<typeof styled.Text>;
+
 const createTextComponent = (
-  BaseText: ReturnType<typeof styled.Text>,
+  BaseText: TextComponentType,
   fontSize: number,
   lineHeight: number,
 ) =>
@@ -40,11 +42,10 @@ const createTextComponent = (
     }) => (
       <BaseText
         {...props}
-        theme={theme}
         style={[
           css`
-            font-size: ${fontSize + 'px'};
-            line-height: ${lineHeight + 'px'};
+            font-size: ${fontSize}px;
+            line-height: ${lineHeight}px;
           `,
           {includeFontPadding: false},
           style,
@@ -53,7 +54,7 @@ const createTextComponent = (
         {children}
       </BaseText>
     ),
-  );
+  ) as unknown as TextComponentType;
 
 // Standard and Inverted Base Components
 const StandardBaseText = createBaseText((theme) => theme.text.basic, 'gray');

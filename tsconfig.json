@@ -47,7 +47,8 @@
             "elevation",
             "blur-radius",
             "text-align-vertical",
-            "include-font-padding"
+            "include-font-padding",
+            "text-align-vertical"
           ]
         }
       }
