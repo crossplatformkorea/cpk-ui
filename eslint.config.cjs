@@ -26,6 +26,10 @@ const commonRules = {
 module.exports = [
   eslintRecommended.configs.recommended,
 
+  {
+    ignores: ['lib/**/*', 'doc-build/**/*'],
+  },
+
   // JavaScript 설정
   {
     files: ['*.js', '*.jsx'],

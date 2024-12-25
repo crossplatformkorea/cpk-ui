@@ -18,7 +18,7 @@ import Snackbar, {
 import AlertDialog, {
   AlertDialogContext,
 } from '../components/modals/AlertDialog/AlertDialog';
-import {LoadingIndicator} from '../components/uis/LoadingIndicator';
+import {LoadingIndicator} from '../components/uis/LoadingIndicator/LoadingIndicator';
 
 export type ThemeType = ThemeContext['themeType'];
 export type DoobooTheme = ThemeContext['theme'];

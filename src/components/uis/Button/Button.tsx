@@ -13,7 +13,7 @@ import styled, {css} from '@emotion/native';
 import {useTheme} from '../../../providers/ThemeProvider';
 import {cloneElemWithDefaultColors} from '../../../utils/guards';
 import type {CpkTheme} from '../../../utils/theme';
-import {LoadingIndicator} from '../LoadingIndicator';
+import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
 
 export type ButtonType = 'text' | 'solid' | 'outlined';
 export type ButtonColorType =
@@ -256,13 +256,13 @@ export function Button({
         disabled={innerDisabled}
         size={size}
         style={[
-          compositeStyles.container,
           hovered && !innerDisabled && compositeStyles.hovered,
-          innerDisabled && compositeStyles.disabled,
+          compositeStyles.container,
           type === 'text' &&
             css`
               background-color: transparent;
             `,
+          innerDisabled && compositeStyles.disabled,
         ]}
         testID={loading ? 'loading-view' : 'button-container'}
         type={type}

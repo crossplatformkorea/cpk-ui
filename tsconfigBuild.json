@@ -13,20 +13,23 @@
     "outDir": "lib",
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "declaration": true
+    "declaration": false
   },
   "exclude": [
     "node_modules",
     "lib",
-    "**/**/*/__tests__",
-    "**/*.test.tsx",
-    "**/*.spec.tsx",
     "dist",
-    "stories",
+    "**/__tests__",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
     "**/*.example.*"
   ],
   "include": [
-    "main"
+    "src"
   ],
   "files": [
     "environment.d.ts",

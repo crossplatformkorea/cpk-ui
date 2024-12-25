@@ -8,7 +8,7 @@ import {fireEvent, render} from '@testing-library/react-native';
 
 import {createComponent} from '../../../../test/testUtils';
 import {Button} from './Button';
-import {LoadingIndicator} from '../LoadingIndicator';
+import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
 import type {Props as ButtonProps} from './Button';
 import {ThemeType} from '../../../providers/ThemeProvider';
 import {dark, light} from '../../../utils/colors';
