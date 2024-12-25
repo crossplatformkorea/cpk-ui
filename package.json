@@ -1,6 +1,8 @@
 {
   "homepage": "https://ui.crossplatformkorea.com",
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "predeploy": "yarn build",
