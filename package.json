@@ -22,7 +22,7 @@
     "tsc": "tsc",
     "start:reset": "watchman watch-del-all && lsof -t -i :8081 | xargs kill && expo start -c",
     "jest": "jest --runInBand",
-    "test:all": "yarn pre && yarn lint && yarn tsc && yarn test",
+    "test:all": "yarn lint && yarn tsc && yarn test",
     "build": "tsc --project tsconfigBuild.json && yarn cp:icon; yarn cp:assets; yarn cp:main",
     "cp:assets": "cp -R main/__assets__ lib",
     "cp:icon": "mkdir -p `dirname ./lib/uis/Icon/selection.json` && cp ./main/uis/Icon/selection.json ./lib/uis/Icon/selection.json && cp ./main/uis/Icon/cpk-icons.ttf ./lib/uis/Icon/cpk-icons.ttf",

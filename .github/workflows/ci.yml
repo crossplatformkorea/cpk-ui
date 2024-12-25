@@ -22,9 +22,6 @@ jobs:
       - name: Install modules
         run: yarn install --network-concurrency 1
 
-      - name: Prepare packages
-        run: yarn pre
-
       - name: Check linting
         run: yarn lint
 
@@ -39,12 +36,7 @@ jobs:
           export NODE_OPTIONS="--max-old-space-size=8192"
           npx jest --coverage --forceExit --silent -u
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./coverage/
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
-          path_to_write_report: ./coverage/codecov_report.gz
