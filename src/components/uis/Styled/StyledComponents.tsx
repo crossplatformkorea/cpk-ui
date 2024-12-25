@@ -21,7 +21,7 @@ export type SnackbarType =
   | 'danger';
 
 // 기본 theme 설정 함수
-const resolveTheme = (theme?: CpkTheme) =>
+const resolveTheme = (theme?: CpkTheme & any) =>
   isEmptyObject(theme) ? light : theme!;
 
 // ButtonWrapper Component
