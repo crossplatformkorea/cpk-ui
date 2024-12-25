@@ -285,12 +285,24 @@ export function Button({
     ],
   );
 
+  function resolveStyle<T>(
+    style: StyleProp<T>
+  ): T | undefined {
+    if (Array.isArray(style)) {
+      return style.find((s): s is T => !!s);
+    }
+    return style as T || undefined;
+  }
+
+  const viewStyle = resolveStyle<ViewStyle>(compositeStyles.container);
+  const textStyle = resolveStyle<TextStyle>(compositeStyles.text);
+
   const ChildView = (
     <>
       {cloneElemWithDefaultColors({
         element: startElement,
-        backgroundColor: compositeStyles.container?.[0]?.backgroundColor,
-        color: compositeStyles.text?.[0]?.color,
+        backgroundColor: viewStyle?.backgroundColor,
+        color: textStyle?.color,
       })}
       {!text || typeof text === 'string' ? (
         <Text style={compositeStyles.text}>{text}</Text>
@@ -299,8 +311,8 @@ export function Button({
       )}
       {cloneElemWithDefaultColors({
         element: endElement,
-        backgroundColor: compositeStyles.container?.[0]?.backgroundColor,
-        color: compositeStyles.text?.[0]?.color,
+        backgroundColor: viewStyle?.backgroundColor,
+        color: textStyle?.color,
       })}
     </>
   );

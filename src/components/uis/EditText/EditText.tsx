@@ -23,10 +23,10 @@ import {
 import {useHover} from 'react-native-web-hooks';
 import {css} from '@emotion/native';
 
-import {useCPK} from '../../../providers';
 import {Icon} from '../Icon/Icon';
 import {cloneElemWithDefaultColors} from '../../../utils/guards';
 import {Global} from '@emotion/react';
+import {useTheme} from '../../../providers/ThemeProvider';
 
 export type EditTextStyles = {
   container?: StyleProp<ViewStyle>;
@@ -148,7 +148,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
   ): JSX.Element => {
     EditText.displayName = 'EditText';
 
-    const {theme} = useCPK();
+    const {theme} = useTheme();
     const webRef = useRef<View>(null);
     const [focused, setFocused] = useState(false);
     const defaultInputRef = useRef(null);

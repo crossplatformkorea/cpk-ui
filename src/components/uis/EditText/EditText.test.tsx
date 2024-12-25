@@ -1,3 +1,5 @@
+import '@testing-library/jest-native/extend-expect';
+
 import React from 'react';
 import {Text} from 'react-native';
 import RNWebHooks from 'react-native-web-hooks';
@@ -7,7 +9,7 @@ import {act, fireEvent, render} from '@testing-library/react-native';
 import {createComponent} from '../../../../test/testUtils';
 import type {EditTextProps} from './EditText';
 import {EditText} from './EditText';
-import { light } from '../../../utils/colors';
+import {light} from '../../../utils/colors';
 
 jest.mock('react-native-web-hooks', () => ({
   useHover: () => false,
@@ -33,9 +35,7 @@ describe('[EditText]', () => {
     describe('label', () => {
       it('renders label text', async () => {
         testingLib = render(Component({label: 'label text'}));
-
         const label = testingLib.getByText('label text');
-
         expect(label).toBeTruthy();
       });
 

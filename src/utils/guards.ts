@@ -1,5 +1,5 @@
-import React, { cloneElement } from "react";
-import type { ViewStyle } from "react-native";
+import React, {cloneElement} from 'react';
+import type {ColorValue, ViewStyle} from 'react-native';
 import {
   Button,
   Image,
@@ -10,19 +10,19 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-} from "react-native";
-import { Icon } from "../components/uis/Icon/Icon";
+} from 'react-native';
+import {Icon} from '../components/uis/Icon/Icon';
 
 const getRootElementStyleType = (
-  element: JSX.Element
-): "TextStyle" | "ViewStyle" | "unknown" => {
+  element: JSX.Element,
+): 'TextStyle' | 'ViewStyle' | 'unknown' => {
   if (React.isValidElement(element)) {
     if (
       element.type === Text ||
       element.type === TextInput ||
       element.type === Icon
     ) {
-      return "TextStyle";
+      return 'TextStyle';
     }
 
     if (
@@ -34,11 +34,11 @@ const getRootElementStyleType = (
       element.type === Pressable ||
       element.type === TouchableWithoutFeedback
     ) {
-      return "ViewStyle";
+      return 'ViewStyle';
     }
   }
 
-  return "unknown";
+  return 'unknown';
 };
 
 type CloneElemColorsParams = {
@@ -51,13 +51,13 @@ type CloneElemColorsParams = {
    * If not passed, default color will be applied.
    * Invalid if element is ViewStyle.
    */
-  color?: string;
+  color?: ColorValue;
   /**
    * Background color to be applied.
    * If not passed, default color will be applied.
    * Invalid if element is TextStyle.
    */
-  backgroundColor?: string;
+  backgroundColor?: ColorValue;
   /**
    * Extra style to be applied.
    */
@@ -79,14 +79,14 @@ export const cloneElemWithDefaultColors = ({
   return element
     ? cloneElement(element, {
         style: [
-          getRootElementStyleType(element) === "TextStyle" && {
+          getRootElementStyleType(element) === 'TextStyle' && {
             color,
           },
-          getRootElementStyleType(element) === "ViewStyle" && {
+          getRootElementStyleType(element) === 'ViewStyle' && {
             borderColor: color,
             backgroundColor: backgroundColor,
           },
-          { ...style, ...element.props.style },
+          {...style, ...element.props.style},
         ],
       })
     : null;
