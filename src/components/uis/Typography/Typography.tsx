@@ -44,8 +44,8 @@ const createTextComponent = (
         {...props}
         style={[
           css`
-            font-size: ${fontSize}px;
-            line-height: ${lineHeight}px;
+            font-size: ${fontSize + 'px'};
+            line-height: ${lineHeight + 'px'};
           `,
           {includeFontPadding: false},
           style,

@@ -67,7 +67,7 @@ const StyledRadioCircle = styled(RadioWrapper)<{
 
   margin: ${({innerLayout}) => innerLayout && '2px'};
   border-radius: ${({innerLayout}) =>
-    innerLayout && `${innerLayout.width / 2}px`};
+    innerLayout && `${innerLayout.width / 2 + 'px'}`};
 `;
 
 export default function RadioButton({
