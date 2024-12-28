@@ -5,7 +5,7 @@ module.exports = async (env, argv) => {
     {
       ...env,
       babel: {
-        dangerouslyAddModulePathsToTranspile: ['CPK-UI', '@CPK-UI'],
+        dangerouslyAddModulePathsToTranspile: ['cpk-ui', '@cpk-ui'],
       },
     },
     argv,

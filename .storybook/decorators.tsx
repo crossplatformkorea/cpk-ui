@@ -4,18 +4,20 @@ import {ThemeProvider} from '../src/providers/ThemeProvider';
 import {dark, light} from '../src/utils/colors';
 import styled from '@emotion/native';
 import {CpkProvider} from '../src/providers';
+import {ThemeParam} from '../src/utils/theme';
 
-export const withThemeProvider = (Story: React.FC, context: any) => {
+export const withThemeProvider = (
+  Story: React.FC,
+  context: any,
+  customTheme?: ThemeParam,
+) => {
   const isDarkMode = context.globals.theme === 'dark';
 
   return (
     <CpkProvider
       themeConfig={{
         initialThemeType: isDarkMode ? 'dark' : 'light',
-        customTheme: {
-          light,
-          dark,
-        },
+        customTheme,
       }}
     >
       <Container>

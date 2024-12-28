@@ -12,9 +12,9 @@
 
 ### Things to Keep in Mind
 
-> Only components in the `main` directory are published to `npm`. These are the components intended for production use.  
-> When creating new components, please ensure you write `test code` for them.  
-> Add `stories` in the `storybook` directory to showcase components. Users can easily see a [demo](https://ui.crossplatformkorea.com) of all components at a glance.  
+> Only components in the `main` directory are published to `npm`. These are the components intended for production use.
+> When creating new components, please ensure you write `test code` for them.
+> Add stories to the same directory (e.g., component.stories.tsx) to showcase components. This allows users to easily view a demo of all components at a glance.
 
 ## How to Contribute
 
@@ -24,7 +24,7 @@
 
    - It is recommended to keep the `main` branch of your fork updated with the upstream repository.
    - Configure [Syncing a Fork](https://help.github.com/articles/configuring-a-remote-for-a-fork/):
-     - `git remote add upstream https://github.com/crossplatformkorea/CPK-UI`
+     - `git remote add upstream https://github.com/crossplatformkorea/cpk-ui`
      - Verify with `git remote -v`
    - Fetch branches from the upstream repository: `git fetch upstream`
    - Create a new branch before submitting a PR: `git checkout -b [feature_name]`
@@ -33,7 +33,7 @@
 
 2. Clone your forked repository:
    ```
-   git clone https://github.com/<your-github-username>/CPK-UI.git
+   git clone https://github.com/<your-github-username>/cpk-ui.git
    ```
 3. Install dependencies:
    ```

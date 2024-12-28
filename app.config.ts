@@ -2,10 +2,10 @@ export default {
   expo: {
     plugins: [['expo-font', {fonts: ['main/uis/Icon/*']}]],
     experiments: {
-      baseUrl: '/CPK-UI',
+      baseUrl: '/cpk-ui',
     },
-    name: 'CPK-UI',
-    slug: 'CPK-UI',
+    name: 'cpk-ui',
+    slug: 'cpk-ui',
     privacy: 'public',
     platforms: ['ios', 'android', 'web'],
     orientation: 'default',
