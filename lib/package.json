@@ -13,9 +13,9 @@
     "publish:next": "npm publish <package>.tgz --tag next"
   },
   "bugs": {
-    "url": "https://github.com/crossplatformkorea/CPK-UI/issues"
+    "url": "https://github.com/crossplatformkorea/cpk-ui/issues"
   },
-  "homepage": "https://github.com/crossplatformkorea/CPK-UI#readme",
+  "homepage": "https://github.com/crossplatformkorea/cpk-ui#readme",
   "peerDependencies": {
     "@emotion/native": ">=11.0.0",
     "@emotion/react": ">=11.0.0",

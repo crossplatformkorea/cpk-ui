@@ -1,4 +1,4 @@
-# CPK-UI
+# cpk-ui
 
 React Native UI components for [Expo](https://expo.dev).
 

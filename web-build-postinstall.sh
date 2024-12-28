@@ -1,1 +1,1 @@
-sed -i 's/\/CPK-UI/./g' dist/index.html
+sed -i 's/\/cpk-ui/./g' dist/index.html
