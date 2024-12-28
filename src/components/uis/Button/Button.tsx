@@ -236,9 +236,11 @@ export function Button({
   const LoadingView = loadingElement ?? (
     <LoadingIndicator
       color={
-        loadingColor || type === 'solid'
-          ? theme.text.contrast
-          : theme.text.basic
+        loadingColor
+          ? loadingColor
+          : type === 'solid'
+            ? theme.text.contrast
+            : theme.text.basic
       }
       size="small"
     />
@@ -285,13 +287,11 @@ export function Button({
     ],
   );
 
-  function resolveStyle<T>(
-    style: StyleProp<T>
-  ): T | undefined {
+  function resolveStyle<T>(style: StyleProp<T>): T | undefined {
     if (Array.isArray(style)) {
       return style.find((s): s is T => !!s);
     }
-    return style as T || undefined;
+    return (style as T) || undefined;
   }
 
   const viewStyle = resolveStyle<ViewStyle>(compositeStyles.container);
