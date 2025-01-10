@@ -1,6 +1,6 @@
 import React, {forwardRef, useImperativeHandle, useState} from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
-import {Modal, Platform, StyleSheet} from 'react-native';
+import {Modal, Platform, StyleSheet, View} from 'react-native';
 import styled, {css} from '@emotion/native';
 
 import {SnackbarTimer} from './const';
@@ -154,20 +154,23 @@ function Snackbar(
   );
 
   return (
-    <Modal
-      animationType="fade"
-      style={[
-        css`
-          flex: 1;
-          align-self: stretch;
-        `,
-        style,
-      ]}
-      transparent={true}
-      visible={visible}
-    >
-      {SnackbarContent}
-    </Modal>
+    // https://github.com/facebook/react-native/issues/48526#issuecomment-2579478884
+    <View>
+      <Modal
+        animationType="fade"
+        style={[
+          css`
+            flex: 1;
+            align-self: stretch;
+          `,
+          style,
+        ]}
+        transparent={true}
+        visible={visible}
+      >
+        {SnackbarContent}
+      </Modal>
+    </View>
   );
 }
 

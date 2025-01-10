@@ -164,6 +164,7 @@ function AlertDialog(
   );
 
   return (
+    // https://github.com/facebook/react-native/issues/48526#issuecomment-2579478884
     <View>
       <Modal
         animationType="fade"
