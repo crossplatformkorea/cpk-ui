@@ -10,6 +10,7 @@ import {
   Platform,
   StyleSheet,
   TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 import styled, {css} from '@emotion/native';
 import {useTheme} from '../../../providers/ThemeProvider';
@@ -163,31 +164,33 @@ function AlertDialog(
   );
 
   return (
-    <Modal
-      animationType="fade"
-      style={[
-        css`
-          flex: 1;
-          align-self: stretch;
-        `,
-        style,
-      ]}
-      transparent={true}
-      visible={visible}
-    >
-      {closeOnTouchOutside ? (
-        <TouchableWithoutFeedback
-          onPress={() => setVisible(false)}
-          style={css`
+    <View>
+      <Modal
+        animationType="fade"
+        style={[
+          css`
             flex: 1;
-          `}
-        >
-          {AlertDialogContent}
-        </TouchableWithoutFeedback>
-      ) : (
-        AlertDialogContent
-      )}
-    </Modal>
+            align-self: stretch;
+          `,
+          style,
+        ]}
+        transparent={true}
+        visible={visible}
+      >
+        {closeOnTouchOutside ? (
+          <TouchableWithoutFeedback
+            onPress={() => setVisible(false)}
+            style={css`
+              flex: 1;
+            `}
+          >
+            {AlertDialogContent}
+          </TouchableWithoutFeedback>
+        ) : (
+          AlertDialogContent
+        )}
+      </Modal>
+    </View>
   );
 }
 
