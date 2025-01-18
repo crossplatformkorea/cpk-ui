@@ -11,8 +11,13 @@ import styled, {css} from '@emotion/native';
 const createBaseText = (
   colorResolver: (theme: CpkTheme) => string,
   fallbackColor: string,
-) => styled.Text<{theme?: CpkTheme}>`
-  font-family: ${({theme}) => (theme ? 'Pretendard-Bold' : 'Pretendard')};
+) => styled.Text<{theme?: CpkTheme; fontWeight?: 'normal' | 'bold' | 'thin'}>`
+  font-family: ${({fontWeight}) =>
+    fontWeight === 'bold'
+      ? 'Pretendard-Bold'
+      : fontWeight === 'thin'
+        ? 'Pretendard-Thin'
+        : 'Pretendard'};
   color: ${({theme}) => {
     if (!theme || isEmptyObject(theme)) {
       return fallbackColor;
@@ -24,11 +29,17 @@ const createBaseText = (
 // Common Text Component Factory
 type TextComponentType = ReturnType<typeof styled.Text>;
 
-const createTextComponent = (
-  BaseText: TextComponentType,
-  fontSize: number,
-  lineHeight: number,
-) =>
+const createTextComponent = ({
+  BaseText,
+  fontSize,
+  lineHeight,
+  fontWeight,
+}: {
+  BaseText: TextComponentType;
+  fontSize: number;
+  lineHeight: number;
+  fontWeight?: 'normal' | 'bold' | 'thin';
+}) =>
   withTheme(
     ({
       style,
@@ -64,28 +75,138 @@ const InvertedBaseText = createBaseText(
 );
 
 // Standard Typography Components
-const Title = createTextComponent(StandardBaseText, 36, 50.4);
-const Heading1 = createTextComponent(StandardBaseText, 28, 39.2);
-const Heading2 = createTextComponent(StandardBaseText, 26, 36.4);
-const Heading3 = createTextComponent(StandardBaseText, 24, 33.6);
-const Heading4 = createTextComponent(StandardBaseText, 22, 30.8);
-const Heading5 = createTextComponent(StandardBaseText, 20, 28);
-const Body1 = createTextComponent(StandardBaseText, 18, 25.2);
-const Body2 = createTextComponent(StandardBaseText, 16, 22.4);
-const Body3 = createTextComponent(StandardBaseText, 14, 19.6);
-const Body4 = createTextComponent(StandardBaseText, 12, 16.4);
+const Title = createTextComponent({
+  BaseText: StandardBaseText,
+  fontSize: 36,
+  lineHeight: 50.4,
+  fontWeight: 'bold',
+});
+
+const Heading1 = createTextComponent({
+  BaseText: StandardBaseText,
+  fontSize: 28,
+  lineHeight: 39.2,
+  fontWeight: 'bold',
+});
+
+const Heading2 = createTextComponent({
+  BaseText: StandardBaseText,
+  fontSize: 26,
+  lineHeight: 36.4,
+  fontWeight: 'bold',
+});
+
+const Heading3 = createTextComponent({
+  BaseText: StandardBaseText,
+  fontSize: 24,
+  lineHeight: 33.6,
+  fontWeight: 'bold',
+});
+
+const Heading4 = createTextComponent({
+  BaseText: StandardBaseText,
+  fontSize: 22,
+  lineHeight: 30.8,
+  fontWeight: 'bold',
+});
+
+const Heading5 = createTextComponent({
+  BaseText: StandardBaseText,
+  fontSize: 20,
+  lineHeight: 28,
+  fontWeight: 'bold',
+});
+
+const Body1 = createTextComponent({
+  BaseText: StandardBaseText,
+  fontSize: 18,
+  lineHeight: 25.2,
+});
+
+const Body2 = createTextComponent({
+  BaseText: StandardBaseText,
+  fontSize: 16,
+  lineHeight: 22.4,
+});
+
+const Body3 = createTextComponent({
+  BaseText: StandardBaseText,
+  fontSize: 14,
+  lineHeight: 19.6,
+});
+
+const Body4 = createTextComponent({
+  BaseText: StandardBaseText,
+  fontSize: 12,
+  lineHeight: 16.4,
+});
 
 // Inverted Typography Components
-const InvertedTitle = createTextComponent(InvertedBaseText, 36, 50.4);
-const InvertedHeading1 = createTextComponent(InvertedBaseText, 28, 39.2);
-const InvertedHeading2 = createTextComponent(InvertedBaseText, 26, 36.4);
-const InvertedHeading3 = createTextComponent(InvertedBaseText, 24, 33.6);
-const InvertedHeading4 = createTextComponent(InvertedBaseText, 22, 30.8);
-const InvertedHeading5 = createTextComponent(InvertedBaseText, 20, 28);
-const InvertedBody1 = createTextComponent(InvertedBaseText, 18, 25.2);
-const InvertedBody2 = createTextComponent(InvertedBaseText, 16, 22.4);
-const InvertedBody3 = createTextComponent(InvertedBaseText, 14, 19.6);
-const InvertedBody4 = createTextComponent(InvertedBaseText, 12, 16.4);
+const InvertedTitle = createTextComponent({
+  BaseText: InvertedBaseText,
+  fontSize: 36,
+  lineHeight: 50.4,
+  fontWeight: 'bold',
+});
+
+const InvertedHeading1 = createTextComponent({
+  BaseText: InvertedBaseText,
+  fontSize: 28,
+  lineHeight: 39.2,
+  fontWeight: 'bold',
+});
+
+const InvertedHeading2 = createTextComponent({
+  BaseText: InvertedBaseText,
+  fontSize: 26,
+  lineHeight: 36.4,
+  fontWeight: 'bold',
+});
+
+const InvertedHeading3 = createTextComponent({
+  BaseText: InvertedBaseText,
+  fontSize: 24,
+  lineHeight: 33.6,
+  fontWeight: 'bold',
+});
+
+const InvertedHeading4 = createTextComponent({
+  BaseText: InvertedBaseText,
+  fontSize: 22,
+  lineHeight: 30.8,
+  fontWeight: 'bold',
+});
+
+const InvertedHeading5 = createTextComponent({
+  BaseText: InvertedBaseText,
+  fontSize: 20,
+  lineHeight: 28,
+  fontWeight: 'bold',
+});
+
+const InvertedBody1 = createTextComponent({
+  BaseText: InvertedBaseText,
+  fontSize: 18,
+  lineHeight: 25.2,
+});
+
+const InvertedBody2 = createTextComponent({
+  BaseText: InvertedBaseText,
+  fontSize: 16,
+  lineHeight: 22.4,
+});
+
+const InvertedBody3 = createTextComponent({
+  BaseText: InvertedBaseText,
+  fontSize: 14,
+  lineHeight: 19.6,
+});
+
+const InvertedBody4 = createTextComponent({
+  BaseText: InvertedBaseText,
+  fontSize: 12,
+  lineHeight: 16.4,
+});
 
 export const Typography = {
   Title,
