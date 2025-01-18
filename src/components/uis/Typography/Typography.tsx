@@ -1,23 +1,32 @@
 import React, {ReactNode} from 'react';
 import {StyleProp, Text} from 'react-native';
-
 import {CpkTheme, isEmptyObject} from '../../../utils/theme';
 import {withTheme} from '../../../providers/ThemeProvider';
 import {light} from '../../../utils/colors';
 import {type TextStyle} from 'react-native';
 import styled, {css} from '@emotion/native';
 
-// Base Styled Component Factory
+type FontFamilyOptions = {
+  normal: string;
+  thin?: string;
+  bold?: string;
+};
+
 const createBaseText = (
   colorResolver: (theme: CpkTheme) => string,
   fallbackColor: string,
 ) => styled.Text<{theme?: CpkTheme; fontWeight?: 'normal' | 'bold' | 'thin'}>`
-  font-family: ${({fontWeight}) =>
-    fontWeight === 'bold'
-      ? 'Pretendard-Bold'
-      : fontWeight === 'thin'
-        ? 'Pretendard-Thin'
-        : 'Pretendard'};
+  font-family: ${({fontWeight}) => {
+    const {normal, thin = normal, bold = normal} = getFontFamilies();
+    switch (fontWeight) {
+      case 'bold':
+        return bold;
+      case 'thin':
+        return thin;
+      default:
+        return normal;
+    }
+  }};
   color: ${({theme}) => {
     if (!theme || isEmptyObject(theme)) {
       return fallbackColor;
@@ -26,7 +35,6 @@ const createBaseText = (
   }};
 `;
 
-// Common Text Component Factory
 type TextComponentType = ReturnType<typeof styled.Text>;
 
 const createTextComponent = ({
@@ -68,14 +76,12 @@ const createTextComponent = ({
     ),
   ) as unknown as TextComponentType;
 
-// Standard and Inverted Base Components
 const StandardBaseText = createBaseText((theme) => theme.text.basic, 'gray');
 const InvertedBaseText = createBaseText(
   (theme) => theme.text.contrast,
   light.text.contrast,
 );
 
-// Standard Typography Components
 const Title = createTextComponent({
   BaseText: StandardBaseText,
   fontSize: 36,
@@ -142,7 +148,6 @@ const Body4 = createTextComponent({
   lineHeight: 16.4,
 });
 
-// Inverted Typography Components
 const InvertedTitle = createTextComponent({
   BaseText: InvertedBaseText,
   fontSize: 36,
@@ -209,6 +214,18 @@ const InvertedBody4 = createTextComponent({
   lineHeight: 16.4,
 });
 
+let currentFontFamilies: FontFamilyOptions = {
+  normal: 'Pretendard',
+  thin: 'Pretendard-Thin',
+  bold: 'Pretendard-Bold',
+};
+
+export const setFontFamily = (fontFamilies: FontFamilyOptions): void => {
+  currentFontFamilies = {...currentFontFamilies, ...fontFamilies};
+};
+
+export const getFontFamilies = (): FontFamilyOptions => currentFontFamilies;
+
 export const Typography = {
   Title,
   Heading1,
@@ -233,23 +250,4 @@ export const TypographyInverted = {
   Body2: InvertedBody2,
   Body3: InvertedBody3,
   Body4: InvertedBody4,
-};
-
-export const setFontFamily = (fontFamily: string): void => {
-  const style = {
-    includeFontPadding: false,
-    fontFamily,
-  };
-
-  // @ts-ignore
-  let oldRender = Text.render;
-
-  // @ts-ignore
-  Text.render = (...args: any) => {
-    let origin = oldRender.call(this, ...args);
-
-    return React.cloneElement(origin, {
-      style: [style, origin.props.style],
-    });
-  };
 };
