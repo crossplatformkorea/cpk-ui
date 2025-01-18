@@ -14,6 +14,7 @@ import {useTheme} from '../../../providers/ThemeProvider';
 import {cloneElemWithDefaultColors} from '../../../utils/guards';
 import type {CpkTheme} from '../../../utils/theme';
 import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
+import {Typography} from '../Typography/Typography';
 
 export type ButtonType = 'text' | 'solid' | 'outlined';
 export type ButtonColorType =
@@ -127,7 +128,6 @@ const calculateStyles = ({
     ],
     text: [
       css`
-        font-family: 'Pretendard';
         color: ${isDisabled
           ? theme.button.disabled.text
           : type === 'solid' || color === 'light'
@@ -305,7 +305,7 @@ export function Button({
         color: textStyle?.color,
       })}
       {!text || typeof text === 'string' ? (
-        <Text style={compositeStyles.text}>{text}</Text>
+        <Typography.Body2 style={compositeStyles.text}>{text}</Typography.Body2>
       ) : (
         text
       )}

@@ -2,6 +2,7 @@ import {Animated} from 'react-native';
 import styled from '@emotion/native';
 import {CpkTheme, isEmptyObject} from '../../../utils/theme';
 import {light} from '../../../utils/colors';
+import {Typography} from '../Typography/Typography';
 
 export type ButtonType =
   | 'primary'
@@ -54,14 +55,13 @@ export const ButtonWrapper = styled.View<{
 `;
 
 // ButtonText Component
-export const ButtonText = styled.Text<{
+export const ButtonText = styled(Typography.Body2)<{
   outlined?: boolean;
   type?: ButtonType | SnackbarType;
   disabled?: boolean;
   loading?: boolean;
   theme?: CpkTheme;
 }>`
-  font-family: Pretendard;
   color: ${({theme, outlined, type, disabled}) => {
     theme = resolveTheme(theme);
 
@@ -157,12 +157,11 @@ export const RadioWrapper = styled(Animated.View)<{
 `;
 
 // ColoredText Component
-export const ColoredText = styled.Text<{
+export const ColoredText = styled(Typography.Body2)<{
   type: ButtonType;
   disabled?: boolean;
   selected?: boolean;
 }>`
-  font-family: Pretendard;
   color: ${({theme, selected, type, disabled}) => {
     theme = resolveTheme(theme);
 

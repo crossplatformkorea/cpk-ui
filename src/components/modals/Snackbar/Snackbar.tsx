@@ -7,6 +7,7 @@ import {SnackbarTimer} from './const';
 import {Button, ButtonColorType} from '../../uis/Button/Button';
 import {useTheme} from '../../../providers/ThemeProvider';
 import {Icon} from '../../uis/Icon/Icon';
+import {Typography} from '../../uis/Typography/Typography';
 
 const Container = styled.View`
   flex: 1;
@@ -32,8 +33,7 @@ const ActionContainer = styled.View`
   margin-right: 4px;
 `;
 
-const SnackbarText = styled.Text<{color: ButtonColorType}>`
-  font-family: Pretendard;
+const SnackbarText = styled(Typography.Body2)<{color: ButtonColorType}>`
   color: ${({theme, color}) => theme.button[color].text};
   flex: 1;
   padding: 12px;
@@ -117,7 +117,6 @@ function Snackbar(
           color={color}
           style={StyleSheet.flatten([
             css`
-              font-family: 'Pretendard';
               color: ${theme.button[color].text};
             `,
             styles?.text,
@@ -132,7 +131,6 @@ function Snackbar(
               styles={{
                 text: StyleSheet.flatten([
                   css`
-                    font-family: 'Pretendard';
                     color: ${theme.button[color].text};
                   `,
                   styles?.actionText,

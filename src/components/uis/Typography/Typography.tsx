@@ -1,5 +1,5 @@
 import React, {ReactNode} from 'react';
-import {StyleProp, Text} from 'react-native';
+import {StyleProp, Text, TextInput} from 'react-native';
 import {CpkTheme, isEmptyObject} from '../../../utils/theme';
 import {withTheme} from '../../../providers/ThemeProvider';
 import {light} from '../../../utils/colors';
@@ -214,18 +214,6 @@ const InvertedBody4 = createTextComponent({
   lineHeight: 16.4,
 });
 
-let currentFontFamilies: FontFamilyOptions = {
-  normal: 'Pretendard',
-  thin: 'Pretendard-Thin',
-  bold: 'Pretendard-Bold',
-};
-
-export const setFontFamily = (fontFamilies: FontFamilyOptions): void => {
-  currentFontFamilies = {...currentFontFamilies, ...fontFamilies};
-};
-
-export const getFontFamilies = (): FontFamilyOptions => currentFontFamilies;
-
 export const Typography = {
   Title,
   Heading1,
@@ -251,3 +239,60 @@ export const TypographyInverted = {
   Body3: InvertedBody3,
   Body4: InvertedBody4,
 };
+
+let currentFontFamilies = {
+  normal: 'Pretendard',
+  thin: 'Pretendard-Thin',
+  bold: 'Pretendard-Bold',
+};
+
+export const setFontFamily = (fontFamilies: {
+  normal: string;
+  thin?: string;
+  bold?: string;
+}): void => {
+  currentFontFamilies = {...currentFontFamilies, ...fontFamilies};
+
+  const getFontFamily = (fontWeight: string | undefined): string => {
+    switch (fontWeight) {
+      case 'bold':
+      case '700':
+        return currentFontFamilies.bold;
+      case '100':
+      case '200':
+      case '300':
+        return currentFontFamilies.thin;
+      default:
+        return currentFontFamilies.normal;
+    }
+  };
+
+  const applyFontFamily = (Component: typeof Text | typeof TextInput) => {
+    // @ts-ignore
+    const oldRender = Component.render;
+
+    // @ts-ignore
+    Component.render = function (...args: any) {
+      const origin = oldRender.call(this, ...args);
+
+      const fontWeight = origin.props.style?.fontWeight;
+
+      const updatedStyle = [
+        {
+          fontFamily: getFontFamily(fontWeight),
+          includeFontPadding: false,
+        },
+        origin.props.style,
+      ];
+
+      return React.cloneElement(origin, {
+        style: updatedStyle,
+      });
+    };
+  };
+
+  applyFontFamily(Text);
+  applyFontFamily(TextInput);
+};
+
+export const getFontFamilies = () => currentFontFamilies;

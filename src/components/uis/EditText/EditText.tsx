@@ -27,6 +27,7 @@ import {Icon} from '../Icon/Icon';
 import {cloneElemWithDefaultColors} from '../../../utils/guards';
 import {Global} from '@emotion/react';
 import {useTheme} from '../../../providers/ThemeProvider';
+import {Typography} from '../Typography/Typography';
 
 export type EditTextStyles = {
   container?: StyleProp<ViewStyle>;
@@ -224,10 +225,9 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
 
       return typeof label === 'string' ? (
         <Wrapper>
-          <Text
+          <Typography.Heading5
             style={[
               css`
-                font-family: Pretendard-Bold;
                 color: ${defaultColor};
                 margin-right: 4px;
                 font-size: 16px;
@@ -237,7 +237,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
             ]}
           >
             {label}
-          </Text>
+          </Typography.Heading5>
         </Wrapper>
       ) : label ? (
         <Wrapper>{label(status)}</Wrapper>
