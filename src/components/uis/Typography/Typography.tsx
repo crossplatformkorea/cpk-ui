@@ -57,6 +57,7 @@ const createTextComponent = ({
           css`
             font-size: ${fontSize + 'px'};
             line-height: ${lineHeight + 'px'};
+            font-weight: ${fontWeight};
           `,
           {includeFontPadding: false},
           style,
