@@ -1,6 +1,7 @@
 import React, {
   cloneElement,
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useState,
 } from 'react';
@@ -86,6 +87,15 @@ function AlertDialog(
   const [visible, setVisible] = useState(false);
   const {theme, themeType} = useTheme();
 
+  useEffect(() => {
+    if (!visible) {
+      setTimeout(() => {
+        setOptions(null);
+        // Run after modal has finished transition
+      }, 200);
+    }
+  }, [visible]);
+
   useImperativeHandle(ref, () => ({
     open: (alertDialogOptions) => {
       setVisible(true);
@@ -95,7 +105,6 @@ function AlertDialog(
     },
     close: () => {
       setVisible(false);
-      setOptions(null);
     },
   }));
 
