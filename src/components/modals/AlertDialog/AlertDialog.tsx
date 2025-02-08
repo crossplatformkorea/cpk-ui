@@ -92,7 +92,7 @@ function AlertDialog(
       setTimeout(() => {
         setOptions(null);
         // Run after modal has finished transition
-      }, 200);
+      }, 300);
     }
   }, [visible]);
 
