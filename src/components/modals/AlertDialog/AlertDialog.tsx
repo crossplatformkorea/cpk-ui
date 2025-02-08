@@ -70,6 +70,7 @@ export type AlertDialogOptions = {
   backdropOpacity?: number;
   closeOnTouchOutside?: boolean;
   actions?: JSX.Element[];
+  showCloseButton?: boolean;
 };
 
 export type AlertDialogContext = {
@@ -105,6 +106,7 @@ function AlertDialog(
     styles,
     actions,
     closeOnTouchOutside = true,
+    showCloseButton = true,
   } = options ?? {};
 
   const AlertDialogContent = (
@@ -132,12 +134,14 @@ function AlertDialog(
           ) : (
             title
           )}
-          <Button
-            onPress={() => setVisible(false)}
-            borderRadius={24}
-            text={<Icon color={theme.text.basic} name="X" size={18} />}
-            type="text"
-          />
+          {showCloseButton ? (
+            <Button
+              onPress={() => setVisible(false)}
+              borderRadius={24}
+              text={<Icon color={theme.text.basic} name="X" size={18} />}
+              type="text"
+            />
+          ) : null}
         </TitleRow>
         <BodyRow style={styles?.bodyContainer}>
           {typeof body === 'string' ? (
