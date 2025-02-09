@@ -15,7 +15,7 @@ import {cloneElemWithDefaultColors} from '../../../utils/guards';
 import type {CpkTheme} from '../../../utils/theme';
 import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
 import {Typography} from '../Typography/Typography';
-import Haptics from 'expo-haptics';
+import * as Haptics from 'expo-haptics';
 
 export type ButtonType = 'text' | 'solid' | 'outlined';
 export type ButtonColorType =

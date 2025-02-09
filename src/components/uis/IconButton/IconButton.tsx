@@ -9,7 +9,7 @@ import {Icon} from '../Icon/Icon';
 import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
 import {CpkTheme, getTheme} from '../../../utils/theme';
 import {useTheme} from '../../../providers/ThemeProvider';
-import Haptics from 'expo-haptics';
+import * as Haptics from 'expo-haptics';
 
 type Styles = {
   container?: StyleProp<ViewStyle>;
