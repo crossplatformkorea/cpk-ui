@@ -15,6 +15,7 @@ import {cloneElemWithDefaultColors} from '../../../utils/guards';
 import type {CpkTheme} from '../../../utils/theme';
 import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
 import {Typography} from '../Typography/Typography';
+import Haptics from 'expo-haptics';
 
 export type ButtonType = 'text' | 'solid' | 'outlined';
 export type ButtonColorType =
@@ -49,6 +50,7 @@ export type Props = {
     'onPress' | 'activeOpacity' | 'style'
   >;
   hitSlop?: null | Insets | number | undefined;
+  hapticFeedback?: Haptics.ImpactFeedbackStyle;
 };
 
 type Styles = {
@@ -215,6 +217,7 @@ export function Button({
   borderRadius = 4,
   loadingColor,
   hitSlop = {top: 8, bottom: 8, left: 8, right: 8},
+  hapticFeedback,
 }: Props): JSX.Element {
   const ref = useRef<React.ElementRef<typeof TouchableHighlight>>(null);
   const hovered = useHover(ref);
@@ -323,7 +326,13 @@ export function Button({
       delayPressIn={30}
       disabled={innerDisabled || loading || !onPress}
       hitSlop={hitSlop}
-      onPress={onPress}
+      onPress={(e) => {
+        onPress?.(e);
+
+        if (hapticFeedback) {
+          Haptics.impactAsync(hapticFeedback);
+        }
+      }}
       ref={Platform.select({
         web: ref,
         default: undefined,

@@ -9,6 +9,7 @@ import {Icon} from '../Icon/Icon';
 import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
 import {CpkTheme, getTheme} from '../../../utils/theme';
 import {useTheme} from '../../../providers/ThemeProvider';
+import Haptics from 'expo-haptics';
 
 type Styles = {
   container?: StyleProp<ViewStyle>;
@@ -99,6 +100,7 @@ export type IconButtonProps = {
   onPress?: TouchableHighlightProps['onPress'];
   activeOpacity?: number;
   touchableHighlightProps?: Omit<TouchableHighlightProps, 'onPress' | 'style'>;
+  hapticFeedback?: Haptics.ImpactFeedbackStyle;
 };
 
 export function IconButton({
@@ -116,6 +118,7 @@ export function IconButton({
   onPress,
   activeOpacity = 0.95,
   touchableHighlightProps,
+  hapticFeedback,
 }: IconButtonProps): JSX.Element {
   const ref = useRef<React.ElementRef<typeof TouchableHighlight>>(null);
   const hovered = useHover(ref);
@@ -196,7 +199,13 @@ export function IconButton({
         activeOpacity={activeOpacity}
         delayPressIn={50}
         disabled={disabled || loading}
-        onPress={onPress}
+        onPress={(e) => {
+          onPress?.(e);
+
+          if (hapticFeedback) {
+            Haptics.impactAsync(hapticFeedback);
+          }
+        }}
         ref={Platform.select({
           web: ref,
           default: undefined,

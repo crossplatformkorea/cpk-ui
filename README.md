@@ -28,7 +28,7 @@ Check out [ui.crossplatformkorea.com](https://ui.crossplatformkorea.com)
 #### For Expo
 
 ```sh
-expo install cpk-ui @emotion/react @emotion/native @expo/vector-icons react-native-gesture-handler react-native-svg expo-screen-orientation @expo/match-media
+expo install cpk-ui @emotion/react @emotion/native @expo/vector-icons react-native-gesture-handler react-native-svg expo-screen-orientation @expo/match-media expo-haptics
 ```
 
 #### For React Native CLI

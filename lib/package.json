@@ -22,7 +22,8 @@
     "react": ">=16.9",
     "react-native": ">=0.58",
     "react-native-gesture-handler": "*",
-    "@expo/vector-icons": "*"
+    "@expo/vector-icons": "*",
+    "expo-haptics": "*"
   },
   "dependencies": {
     "hyochan-welcome": "^1.0.1",
