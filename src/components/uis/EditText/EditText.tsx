@@ -29,6 +29,23 @@ import {Global} from '@emotion/react';
 import {useTheme} from '../../../providers/ThemeProvider';
 import {Typography} from '../Typography/Typography';
 
+// Add this helper function at the top of the file
+const isWeb = (): boolean => {
+  try {
+    return Platform && Platform.OS === 'web';
+  } catch (e) {
+    return false;
+  }
+};
+
+const safePlatformSelect = <T,>(options: {web?: T; default?: T}): T | undefined => {
+  try {
+    return Platform.select(options);
+  } catch (e) {
+    return options.default;
+  }
+};
+
 export type EditTextStyles = {
   container?: StyleProp<ViewStyle>;
   labelContainer?: StyleProp<ViewStyle>;
@@ -368,7 +385,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
                   font-size: 16px;
                   text-align-vertical: ${multiline ? 'top' : 'center'};
                 `,
-                Platform.OS === 'web' &&
+                isWeb() &&
                   css`
                     outline-width: 0;
                   `,
@@ -479,9 +496,9 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
 
     return (
       <>
-        {Platform.OS === 'web' ? <WebStyles /> : null}
+        {isWeb() ? <WebStyles /> : null}
         <View
-          ref={Platform.select({web: webRef, default: undefined})}
+          ref={safePlatformSelect({web: webRef, default: undefined})}
           style={[
             css`
               width: 100%;
