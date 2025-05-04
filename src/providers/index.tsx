@@ -31,7 +31,11 @@ export type CpkContext = {
 
 const [useCtx, Provider] = createCtx<CpkContext>();
 
-function AppProvider({children}: {children: JSX.Element}): JSX.Element {
+function AppProvider({
+  children,
+}: {
+  children: React.JSX.Element;
+}): React.JSX.Element {
   const [assetLoaded] = useFonts({
     cpk: require('../components/uis/Icon/cpk.ttf'),
     'Pretendard-Bold': require('../components/uis/Icon/Pretendard-Bold.otf'),
@@ -41,11 +45,13 @@ function AppProvider({children}: {children: JSX.Element}): JSX.Element {
 
   const themeContext = useTheme();
 
-  const snackbar =
-    useRef<SnackbarContext>() as MutableRefObject<SnackbarContext>;
+  const snackbar = useRef<SnackbarContext>(
+    undefined,
+  ) as MutableRefObject<SnackbarContext>;
 
-  const alertDialog =
-    useRef<AlertDialogContext>() as MutableRefObject<AlertDialogContext>;
+  const alertDialog = useRef<AlertDialogContext>(
+    undefined,
+  ) as MutableRefObject<AlertDialogContext>;
 
   /**
    ** Snackbar
@@ -109,10 +115,10 @@ function AppProvider({children}: {children: JSX.Element}): JSX.Element {
 export type CpkProviderProps = {
   themeConfig?: Omit<ThemeProps, 'children'>;
   snackbarConfig?: SnackbarOptions;
-  children: JSX.Element;
+  children: React.JSX.Element;
 };
 
-function CpkWithThemeProvider(props: CpkProviderProps): JSX.Element {
+function CpkWithThemeProvider(props: CpkProviderProps): React.JSX.Element {
   const {themeConfig} = props;
 
   return (

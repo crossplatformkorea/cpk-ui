@@ -26,9 +26,9 @@ export type AccordionBaseProps<T = string, K = string> = {
   animDuration?: number;
   activeOpacity?: number;
   toggleElementPosition?: 'left' | 'right';
-  toggleElement?: JSX.Element | null;
-  renderTitle?: (title: T) => JSX.Element;
-  renderItem?: (body: K) => JSX.Element;
+  toggleElement?: React.JSX.Element | null;
+  renderTitle?: (title: T) => React.JSX.Element;
+  renderItem?: (body: K) => React.JSX.Element;
   onPressItem?: (title: T | string, body: K | string) => void;
 };
 
@@ -39,7 +39,7 @@ export function Accordion<T, K>({
   toggleElementPosition = 'right',
   data,
   ...rest
-}: AccordionProps<T, K>): JSX.Element {
+}: AccordionProps<T, K>): React.JSX.Element {
   return (
     <Container style={style}>
       {data.map((datum, titleKey) => {

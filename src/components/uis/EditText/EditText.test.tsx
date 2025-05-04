@@ -17,7 +17,7 @@ jest.mock('react-native-web-hooks', () => ({
 
 let testingLib: RenderAPI;
 
-const Component = (editProps?: EditTextProps): JSX.Element =>
+const Component = (editProps?: EditTextProps): React.JSX.Element =>
   createComponent(<EditText {...editProps} />);
 
 describe('[EditText]', () => {
@@ -60,7 +60,7 @@ describe('[EditText]', () => {
       });
 
       it('renders custom label style', async () => {
-        const renderCustomLabel = (): JSX.Element => {
+        const renderCustomLabel = (): React.JSX.Element => {
           return (
             <Text
               style={{
@@ -279,7 +279,7 @@ describe('[EditText]', () => {
     });
 
     it('should have render custom error', () => {
-      const renderCustomError = (): JSX.Element => <Text>custom error</Text>;
+      const renderCustomError = (): React.JSX.Element => <Text>custom error</Text>;
 
       testingLib = render(
         Component({

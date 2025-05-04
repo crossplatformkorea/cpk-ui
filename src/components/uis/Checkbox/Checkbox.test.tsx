@@ -9,7 +9,7 @@ import {light} from '../../../utils/colors';
 
 let testingLib: RenderAPI;
 
-const Component = (props?: CheckboxProps): JSX.Element =>
+const Component = (props?: CheckboxProps): React.JSX.Element =>
   createComponent(<Checkbox {...props} />);
 
 describe('[Checkbox]', () => {

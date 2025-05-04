@@ -8,7 +8,7 @@ import {Hr} from './Hr';
 
 let testingLib: RenderAPI;
 
-const Component = (): JSX.Element =>
+const Component = (): React.JSX.Element =>
   createComponent(
     <View>
       <Hr />

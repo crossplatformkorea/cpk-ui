@@ -12,7 +12,7 @@ jest.mock('react-native-web-hooks', () => ({
   useHover: () => true,
 }));
 
-const Component = (props?: IconButtonProps): JSX.Element =>
+const Component = (props?: IconButtonProps): React.JSX.Element =>
   createComponent(<IconButton {...props} />);
 
 describe('[IconButton]', () => {

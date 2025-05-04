@@ -25,7 +25,7 @@ const Component = ({
 }: {
   props?: ButtonProps;
   themeType?: ThemeType;
-}): JSX.Element =>
+}): React.JSX.Element =>
   createComponent(<Button onPress={jest.fn} {...props} />, themeType);
 
 describe('[Button]', () => {

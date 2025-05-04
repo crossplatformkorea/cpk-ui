@@ -47,7 +47,7 @@ export function Rating({
   allowHalfRating = true,
   disabled = false,
   color,
-}: RatingProps): JSX.Element {
+}: RatingProps): React.JSX.Element {
   const [rating, setRating] = useState(initialRating);
   const iconPrefix = iconType === 'star' ? 'Star' : 'QuestBox';
 
@@ -67,7 +67,7 @@ export function Rating({
   }: {
     key: string;
     position: number;
-  }): JSX.Element => {
+  }): React.JSX.Element => {
     const filled = rating >= position + (allowHalfRating ? 0.5 : 0);
     const iconName: IconName = filled ? `${iconPrefix}Fill` : `${iconPrefix}`;
     const halfFilled =

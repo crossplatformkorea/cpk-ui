@@ -12,7 +12,7 @@ const Container = styled.SafeAreaView`
   background-color: ${({theme}) => theme.bg.basic};
 `;
 
-function AlertDialogBasicStory(): JSX.Element {
+function AlertDialogBasicStory(): React.JSX.Element {
   const {alertDialog} = useCPK();
 
   return (

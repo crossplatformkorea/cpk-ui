@@ -92,9 +92,9 @@ export type IconButtonProps = {
   size?: ButtonSizeType | number;
   disabled?: boolean;
   loading?: boolean;
-  loadingElement?: JSX.Element;
+  loadingElement?: React.JSX.Element;
   icon?: IconName;
-  iconElement?: JSX.Element;
+  iconElement?: React.JSX.Element;
   style?: StyleProp<Omit<ViewStyle, 'borderRadius' | 'padding'>>;
   styles?: Styles;
   onPress?: TouchableHighlightProps['onPress'];
@@ -119,7 +119,7 @@ export function IconButton({
   activeOpacity = 0.95,
   touchableHighlightProps,
   hapticFeedback,
-}: IconButtonProps): JSX.Element {
+}: IconButtonProps): React.JSX.Element {
   const ref = useRef<React.ElementRef<typeof TouchableHighlight>>(null);
   const hovered = useHover(ref);
   const {theme} = useTheme();

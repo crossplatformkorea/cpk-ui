@@ -55,7 +55,7 @@ function RadioGroupContainer<T>({
   labels,
   labelPosition,
   radioType,
-}: Omit<Props<T>, 'selected'>): JSX.Element {
+}: Omit<Props<T>, 'selected'>): React.JSX.Element {
   return (
     <Container style={style}>
       <Typography.Heading3 style={styles?.title}>{title}</Typography.Heading3>

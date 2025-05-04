@@ -11,7 +11,7 @@ const Container = styled.SafeAreaView`
   background-color: ${({theme}) => theme.bg.basic};
 `;
 
-function SnackbarBasicStory(): JSX.Element {
+function SnackbarBasicStory(): React.JSX.Element {
   const {snackbar} = useCPK();
 
   return (

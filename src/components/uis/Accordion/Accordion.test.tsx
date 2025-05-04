@@ -7,7 +7,7 @@ import {createComponent, createTestProps} from '../../../../test/testUtils';
 import {Accordion} from './Accordion';
 
 let props: any;
-let component: JSX.Element;
+let component: React.JSX.Element;
 let testingLib: RenderAPI;
 
 const data: any[] = [

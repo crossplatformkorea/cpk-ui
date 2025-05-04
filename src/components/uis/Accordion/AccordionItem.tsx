@@ -54,7 +54,7 @@ export function AccordionItem<T, K>({
   renderTitle,
   renderItem,
   styles,
-}: Props<T, K>): JSX.Element {
+}: Props<T, K>): React.JSX.Element {
   const dropDownAnimValueRef = useRef(new Animated.Value(0));
   const rotateAnimValueRef = useRef(new Animated.Value(0));
   const fadeItemAnim = useRef(new Animated.Value(0)).current;

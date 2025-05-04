@@ -5,7 +5,7 @@ import {createComponent} from '../../../../test/testUtils';
 import type {IconName} from '../../..';
 import {Fab} from './Fab';
 
-const Component = (props): JSX.Element => createComponent(<Fab {...props} />);
+const Component = (props): React.JSX.Element => createComponent(<Fab {...props} />);
 
 describe('[Fab]', () => {
   it('should render', async () => {

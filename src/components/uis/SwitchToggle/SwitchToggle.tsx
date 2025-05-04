@@ -84,7 +84,7 @@ export function SwitchToggle({
   size = 'medium',
   offElement,
   onPress,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   const {theme} = useTheme();
 
   const {

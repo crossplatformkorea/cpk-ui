@@ -42,7 +42,7 @@ function FloatingActionButtons({
   }),
   animationDuration = 200,
   iconButtonProps,
-}: FabProps): JSX.Element {
+}: FabProps): React.JSX.Element {
   const {Fab, FabItem} = styles ?? {};
 
   const spinValue = useRef(new Animated.Value(0));

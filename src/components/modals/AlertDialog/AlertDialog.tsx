@@ -66,11 +66,11 @@ export type AlertDialogStyles = {
 
 export type AlertDialogOptions = {
   styles?: AlertDialogStyles;
-  title?: string | JSX.Element;
-  body?: string | JSX.Element;
+  title?: string | React.JSX.Element;
+  body?: string | React.JSX.Element;
   backdropOpacity?: number;
   closeOnTouchOutside?: boolean;
-  actions?: JSX.Element[];
+  actions?: React.JSX.Element[];
   showCloseButton?: boolean;
 };
 
@@ -82,7 +82,7 @@ export type AlertDialogContext = {
 function AlertDialog(
   {style}: AlertDialogProps,
   ref: React.Ref<AlertDialogContext>,
-): JSX.Element {
+): React.JSX.Element {
   const [options, setOptions] = useState<AlertDialogOptions | null>(null);
   const [visible, setVisible] = useState(false);
   const {theme, themeType} = useTheme();

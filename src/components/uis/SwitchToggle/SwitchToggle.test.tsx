@@ -27,7 +27,7 @@ describe('[SwitchToggle]', () => {
     expect(handlePress).toBeCalled();
   });
 
-  const getSwitchToggle = ({isOn}: {isOn: boolean}): JSX.Element =>
+  const getSwitchToggle = ({isOn}: {isOn: boolean}): React.JSX.Element =>
     createComponent(
       <SwitchToggle
         isOn={isOn}

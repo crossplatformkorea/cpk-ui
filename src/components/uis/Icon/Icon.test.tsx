@@ -6,7 +6,7 @@ import {Icon} from './Icon';
 
 let testingLib: RenderAPI;
 
-const Component = (): JSX.Element => createComponent(<Icon name="Person" />);
+const Component = (): React.JSX.Element => createComponent(<Icon name="Person" />);
 
 describe('[Icon]', () => {
   it('should render without crashing', () => {

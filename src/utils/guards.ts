@@ -14,7 +14,7 @@ import {
 import {Icon} from '../components/uis/Icon/Icon';
 
 const getRootElementStyleType = (
-  element: JSX.Element,
+  element: React.JSX.Element,
 ): 'TextStyle' | 'ViewStyle' | 'unknown' => {
   if (React.isValidElement(element)) {
     if (
@@ -45,7 +45,7 @@ type CloneElemColorsParams = {
   /**
    * ReactElement to be cloned to shape default colors.
    */
-  element?: JSX.Element;
+  element?: React.JSX.Element;
   /**
    * Text color to be applied.
    * If not passed, default color will be applied.
@@ -68,14 +68,14 @@ type CloneElemColorsParams = {
  * This function applies default colors to cloned element.
  *
  * @param {CloneElemColorsParams} params
- * @returns {JSX.Element} - Cloned element with default colors if exists. Otherwise, null.
+ * @returns {React.JSX.Element} - Cloned element with default colors if exists. Otherwise, null.
  */
 export const cloneElemWithDefaultColors = ({
   element,
   color,
   backgroundColor,
   style,
-}: CloneElemColorsParams): JSX.Element | null => {
+}: CloneElemColorsParams): React.JSX.Element | null => {
   return element
     ? cloneElement(element, {
         style: [

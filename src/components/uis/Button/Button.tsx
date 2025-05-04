@@ -36,11 +36,11 @@ export type Props = {
   disabled?: boolean;
   loading?: boolean;
   loadingColor?: string;
-  loadingElement?: JSX.Element;
-  text?: string | JSX.Element;
+  loadingElement?: React.JSX.Element;
+  text?: string | React.JSX.Element;
   borderRadius?: number;
-  startElement?: JSX.Element;
-  endElement?: JSX.Element;
+  startElement?: React.JSX.Element;
+  endElement?: React.JSX.Element;
   style?: StyleProp<Omit<ViewStyle, 'borderRadius' | 'padding'>>;
   styles?: Styles;
   onPress?: TouchableHighlightProps['onPress'];
@@ -218,7 +218,7 @@ export function Button({
   loadingColor,
   hitSlop = {top: 8, bottom: 8, left: 8, right: 8},
   hapticFeedback,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   const ref = useRef<React.ElementRef<typeof TouchableHighlight>>(null);
   const hovered = useHover(ref);
   const {theme} = useTheme();
@@ -254,9 +254,9 @@ export function Button({
       children,
       loadingView,
     }: {
-      children: JSX.Element;
-      loadingView: JSX.Element;
-    }): JSX.Element => (
+      children: React.JSX.Element;
+      loadingView: React.JSX.Element;
+    }): React.JSX.Element => (
       <ButtonContainer
         disabled={innerDisabled}
         size={size}

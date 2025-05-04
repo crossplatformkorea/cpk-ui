@@ -31,8 +31,8 @@ export interface CheckboxProps {
   color?: CheckboxColor;
   disabled?: boolean;
   checked?: boolean;
-  endElement?: JSX.Element;
-  startElement?: JSX.Element;
+  endElement?: React.JSX.Element;
+  startElement?: React.JSX.Element;
 }
 
 const Container = styled.TouchableOpacity`
@@ -73,7 +73,7 @@ export function Checkbox({
   disabled = false,
   checked = false,
   onPress,
-}: CheckboxProps): JSX.Element {
+}: CheckboxProps): React.JSX.Element {
   const animatedValue = new Animated.Value(0);
   const fadeAnim = useRef(animatedValue).current;
   const scaleAnim = useRef(animatedValue).current;

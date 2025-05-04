@@ -5,7 +5,7 @@ import type {RatingProps} from './Rating';
 import {Rating} from './Rating';
 import {createComponent} from '../../../../test/testUtils';
 
-const Component = (props?: RatingProps): JSX.Element =>
+const Component = (props?: RatingProps): React.JSX.Element =>
   createComponent(<Rating {...props} />);
 
 describe('Rating', () => {

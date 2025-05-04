@@ -13,8 +13,8 @@ export const createTestProps = (
 });
 
 export const createComponent = (
-  children: JSX.Element,
+  children: React.JSX.Element,
   themeType?: ThemeType
-): JSX.Element => {
+): React.JSX.Element => {
   return <ThemeProvider initialThemeType={themeType}>{children}</ThemeProvider>;
 };

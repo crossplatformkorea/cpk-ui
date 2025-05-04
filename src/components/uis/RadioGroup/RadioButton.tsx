@@ -33,8 +33,8 @@ export type RadioButtonProps = {
   type?: RadioButtonType;
   disabled?: boolean;
   selected?: boolean;
-  endElement?: JSX.Element;
-  startElement?: JSX.Element;
+  endElement?: React.JSX.Element;
+  startElement?: React.JSX.Element;
 };
 
 const Container = styled.TouchableOpacity`
@@ -82,7 +82,7 @@ export default function RadioButton({
   onPress,
   label,
   labelPosition = 'right',
-}: RadioButtonProps): JSX.Element {
+}: RadioButtonProps): React.JSX.Element {
   const [innerLayout, setInnerLayout] = useState<LayoutRectangle>();
   const animatedValue = new Animated.Value(0);
   const fadeAnim = useRef(animatedValue).current;

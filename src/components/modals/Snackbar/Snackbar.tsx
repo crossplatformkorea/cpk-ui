@@ -75,7 +75,7 @@ function clearTimer(): void {
 function Snackbar(
   {style}: SnackbarProps,
   ref: React.Ref<SnackbarContext>,
-): JSX.Element {
+): React.JSX.Element {
   const [options, setOptions] = useState<SnackbarOptions | null>(null);
   const [visible, setVisible] = useState(false);
   const {theme} = useTheme();

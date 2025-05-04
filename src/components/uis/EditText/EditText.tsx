@@ -46,10 +46,10 @@ export type EditTextStatus =
   | 'hovered'
   | 'basic';
 
-type RenderType = (stats: EditTextStatus) => JSX.Element;
+type RenderType = (stats: EditTextStatus) => React.JSX.Element;
 
 type CustomRenderType =
-  | (({color, status}: {color: string; status: EditTextStatus}) => JSX.Element)
+  | (({color, status}: {color: string; status: EditTextStatus}) => React.JSX.Element)
   | null;
 
 export type EditTextProps = {
@@ -59,8 +59,8 @@ export type EditTextProps = {
   styles?: EditTextStyles;
 
   // Component
-  startElement?: JSX.Element | CustomRenderType;
-  endElement?: JSX.Element | CustomRenderType;
+  startElement?: React.JSX.Element | CustomRenderType;
+  endElement?: React.JSX.Element | CustomRenderType;
   required?: boolean;
   label?: string | RenderType;
   error?: string | RenderType;
@@ -146,7 +146,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       required = false,
     }: EditTextProps,
     ref,
-  ): JSX.Element => {
+  ): React.JSX.Element => {
     EditText.displayName = 'EditText';
 
     const {theme} = useTheme();
@@ -194,9 +194,9 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
             ? 'focused'
             : 'basic';
 
-    const renderLabel = useCallback((): JSX.Element | null => {
+    const renderLabel = useCallback((): React.JSX.Element | null => {
       // eslint-disable-next-line react/no-unstable-nested-components
-      function Wrapper({children}: {children: ReactNode}): JSX.Element {
+      function Wrapper({children}: {children: ReactNode}): React.JSX.Element {
         return (
           <View
             style={[
@@ -256,7 +256,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
     ]);
 
     const renderContainer = useCallback(
-      (children: ReactNode): JSX.Element => {
+      (children: ReactNode): React.JSX.Element => {
         return (
           <TouchableWithoutFeedback
             onPress={() => inputRef.current?.focus()}
@@ -305,7 +305,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       ],
     );
 
-    const renderInput = useCallback((): JSX.Element | null => {
+    const renderInput = useCallback((): React.JSX.Element | null => {
       return (
         <View
           style={[
@@ -432,7 +432,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       value,
     ]);
 
-    const renderError = useCallback((): JSX.Element | null => {
+    const renderError = useCallback((): React.JSX.Element | null => {
       return error ? (
         typeof error === 'string' ? (
           <Text
@@ -453,7 +453,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       ) : null;
     }, [error, status, styles?.error, theme.text.validation]);
 
-    const renderCounter = useCallback((): JSX.Element | null => {
+    const renderCounter = useCallback((): React.JSX.Element | null => {
       if (hideCounter) {
         return null;
       }
@@ -513,7 +513,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
   },
 );
 
-function WebStyles(): JSX.Element {
+function WebStyles(): React.JSX.Element {
   return (
     <Global
       // @ts-ignore

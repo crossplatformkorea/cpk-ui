@@ -5,7 +5,7 @@ import {useCPK} from '../../../providers';
 
 export function CustomPressable(
   props: PressableProps & {style?: StyleProp<ViewStyle>},
-): JSX.Element {
+): React.JSX.Element {
   const {children, style, hitSlop} = props;
   const {theme} = useCPK();
 

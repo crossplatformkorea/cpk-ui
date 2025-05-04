@@ -9,7 +9,7 @@ import {ThemeProvider} from '../../../providers/ThemeProvider';
 
 let testingLib: RenderAPI;
 
-const Component = (): JSX.Element =>
+const Component = (): React.JSX.Element =>
   createComponent(
     <View>
       <StatusBarBrightness />

@@ -32,7 +32,7 @@ export type ThemeContext = {
 const [useCtx, CpkProvider] = createCtx<ThemeContext>();
 
 export type ThemeProps = {
-  children?: JSX.Element;
+  children?: React.JSX.Element;
   initialThemeType?: ThemeType;
   customTheme?: ThemeParam;
   /*
@@ -104,7 +104,7 @@ export function ThemeProvider({
   initialThemeType,
   customTheme = {},
   responsiveDesignMode = "mobile-first",
-}: ThemeProps): JSX.Element {
+}: ThemeProps): React.JSX.Element {
   const isPortrait = useMediaQuery({ orientation: "portrait" });
 
   const isMobile = useMediaQuery(

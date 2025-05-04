@@ -20,7 +20,7 @@ type Props = {
   color?: string;
   size?: ActivityIndicator["props"]["size"];
   imgSource?: string | ImageSourcePropType;
-  customElement?: JSX.Element | (() => JSX.Element);
+  customElement?: React.JSX.Element | (() => React.JSX.Element);
 };
 
 const Container = styled.View``;
@@ -32,7 +32,7 @@ export function LoadingIndicator({
   size = "large",
   color,
   imgSource,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   const { theme } = useTheme();
 
   const handleImgSourceType = (

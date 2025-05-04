@@ -2,7 +2,7 @@ import type {StatusBarStyle} from 'react-native';
 import {StatusBar} from 'react-native';
 import {useTheme} from '../../../providers/ThemeProvider';
 
-function StatusBarBrightness({type}: {type?: StatusBarStyle}): JSX.Element {
+function StatusBarBrightness({type}: {type?: StatusBarStyle}): React.JSX.Element {
   const {themeType} = useTheme();
 
   const statusColor: StatusBarStyle = type

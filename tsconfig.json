@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
+    "jsx": "react-native",
     "lib": ["es2017"],
     "moduleResolution": "node",
     "noEmit": true,
@@ -10,7 +10,7 @@
     "resolveJsonModule": true,
     "outDir": "lib",
     "module": "esnext",
-    "target": "es6",
+    "target": "es2016",
     "allowJs": false,
     "rootDirs": ["src"],
     "baseUrl": "src",

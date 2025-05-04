@@ -8,7 +8,7 @@ import RadioButton from './RadioButton';
 import {type RadioButtonType, RadioGroup} from './RadioGroup';
 
 let props: any;
-let component: JSX.Element;
+let component: React.JSX.Element;
 let testingLib: RenderAPI;
 
 const data = ['Person', 'Animal', 'Bird', 'Other'];
