@@ -16,7 +16,7 @@
     "web": "expo start --web",
     "test": "jest --runInBand",
     "storybook:web": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
+    "build-storybook": "STORYBOOK=1 storybook build",
     "storybook-generate": "sb-rn-get-stories --config-path .ondevice",
     "storybook": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo start",
     "storybook:ios": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo start --ios",

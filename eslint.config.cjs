@@ -27,12 +27,21 @@ module.exports = [
   eslintRecommended.configs.recommended,
 
   {
-    ignores: ['lib/**/*', 'doc-build/**/*'],
+    ignores: [
+      'lib/**/*', 
+      'doc-build/**/*', 
+      'storybook-static/**/*',
+      'node_modules/**/*',
+      '.expo/**/*',
+      'web-build/**/*',
+      'dist/**/*',
+      'build/**/*'
+    ],
   },
 
   // JavaScript 설정
   {
-    files: ['*.js', '*.jsx'],
+    files: ['*.js', '*.jsx', '.storybook/**/*.js'],
     languageOptions: {
       sourceType: 'commonjs',
       globals: commonGlobals,
