@@ -11,6 +11,7 @@ export * from './providers';
 // UIs
 export * from './components/uis/Accordion/Accordion';
 export * from './components/uis/Button/Button';
+export * from './components/uis/Card/Card';
 export * from './components/uis/Checkbox/Checkbox';
 export * from './components/uis/CustomPressable/CustomPressable';
 export * from './components/uis/EditText/EditText';
@@ -33,6 +34,3 @@ export * from './utils';
 
 // Types
 export * from './types';
-
-// Test Utils (for library consumers)
-export * from './test/testUtils';
