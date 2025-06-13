@@ -1,4 +1,4 @@
-import type {FC} from 'react';
+import React, {type FC} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
 import styled from '@emotion/native';
 import {createIconSetFromIcoMoon} from '@expo/vector-icons';
@@ -3789,12 +3789,16 @@ export type IconProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-const Ico: FC<IconProps> = createIconSetFromIcoMoon(
+// Create the base icon component once at module level
+const BaseIconComponent: FC<IconProps> = createIconSetFromIcoMoon(
   collectingFontIconSelection,
   'cpk',
   require('./cpk.ttf'),
 ) as any;
 
-export const Icon = styled(Ico)`
+export const Icon = styled(BaseIconComponent)`
   color: ${({theme, color}) => color || theme.text.basic};
 `;
+
+// Export the icon component
+export default Icon;

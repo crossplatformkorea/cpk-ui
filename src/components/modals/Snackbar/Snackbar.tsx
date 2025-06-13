@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useState} from 'react';
+import React, {forwardRef, useImperativeHandle, useState, useCallback, useMemo} from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {Modal, Platform, StyleSheet, View} from 'react-native';
 import styled, {css} from '@emotion/native';
@@ -80,68 +80,107 @@ function Snackbar(
   const [visible, setVisible] = useState(false);
   const {theme} = useTheme();
 
-  useImperativeHandle(ref, () => ({
-    open: (snackbarOptions) => {
-      clearTimer();
-      setVisible(true);
-      if (snackbarOptions) {
-        setOptions(snackbarOptions);
-      }
+  // Memoize the close handler
+  const handleClose = useCallback(() => {
+    setVisible(false);
+    setOptions(null);
+  }, []);
 
-      timer = setTimeout(() => {
-        setVisible(false);
-        clearTimer();
-      }, snackbarOptions?.timer ?? SnackbarTimer.SHORT);
-    },
-    close: () => {
+  // Memoize the open handler
+  const handleOpen = useCallback((snackbarOptions?: SnackbarOptions) => {
+    clearTimer();
+    setVisible(true);
+    if (snackbarOptions) {
+      setOptions(snackbarOptions);
+    }
+
+    timer = setTimeout(() => {
       setVisible(false);
-      setOptions(null);
-    },
-  }));
+      clearTimer();
+    }, snackbarOptions?.timer ?? SnackbarTimer.SHORT);
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    open: handleOpen,
+    close: handleClose,
+  }), [handleOpen, handleClose]);
 
   const {text, styles, actionText, color = 'primary'} = options ?? {};
 
-  const SnackbarContent = (
+  // Memoize shadow styles
+  const shadowStyles = useMemo(() => 
+    Platform.OS !== 'web' ? {
+      shadowOffset: {width: 0, height: 4},
+      shadowColor: theme.text.basic,
+    } : {},
+    [theme.text.basic]
+  );
+
+  // Memoize container styles
+  const containerStyles = useMemo(() => 
+    StyleSheet.flatten([shadowStyles, styles?.container]),
+    [shadowStyles, styles?.container]
+  );
+
+  // Memoize text styles
+  const textStyles = useMemo(() => 
+    StyleSheet.flatten([
+      css`
+        color: ${theme.button[color].text};
+      `,
+      styles?.text,
+    ]),
+    [theme.button, color, styles?.text]
+  );
+
+  // Memoize action text styles
+  const actionTextStyles = useMemo(() => 
+    StyleSheet.flatten([
+      css`
+        color: ${theme.button[color].text};
+      `,
+      styles?.actionText,
+    ]),
+    [theme.button, color, styles?.actionText]
+  );
+
+  // Memoize action button handler
+  const handleActionPress = useCallback(() => setVisible(false), []);
+
+  // Memoize modal styles
+  const modalStyles = useMemo(() => [
+    css`
+      flex: 1;
+      align-self: stretch;
+    `,
+    style,
+  ], [style]);
+
+  const SnackbarContent = useMemo(() => (
     <Container>
       <SnackbarContainer
         color={color}
-        style={StyleSheet.flatten([
-          Platform.OS !== 'web' && {
-            shadowOffset: {width: 0, height: 4},
-            shadowColor: theme.text.basic,
-          },
-          styles?.container,
-        ])}
+        style={containerStyles}
       >
         <SnackbarText
           color={color}
-          style={StyleSheet.flatten([
-            css`
-              color: ${theme.button[color].text};
-            `,
-            styles?.text,
-          ])}
+          style={textStyles}
         >
           {text}
         </SnackbarText>
         <ActionContainer style={styles?.actionContainer}>
           {actionText ? (
             <Button
-              onPress={() => setVisible(false)}
+              onPress={handleActionPress}
               styles={{
-                text: StyleSheet.flatten([
-                  css`
-                    color: ${theme.button[color].text};
-                  `,
-                  styles?.actionText,
-                ]),
+                text: actionTextStyles,
               }}
               text={actionText}
               type="text"
             />
           ) : (
             <Button
-              onPress={() => setVisible(false)}
+              onPress={handleActionPress}
               text={<Icon color={theme.button[color].text} name="X" />}
               type="text"
             />
@@ -149,20 +188,24 @@ function Snackbar(
         </ActionContainer>
       </SnackbarContainer>
     </Container>
-  );
+  ), [
+    color,
+    containerStyles,
+    textStyles,
+    text,
+    styles?.actionContainer,
+    actionText,
+    actionTextStyles,
+    handleActionPress,
+    theme.button,
+  ]);
 
   return (
     // https://github.com/facebook/react-native/issues/48526#issuecomment-2579478884
     <View>
       <Modal
         animationType="fade"
-        style={[
-          css`
-            flex: 1;
-            align-self: stretch;
-          `,
-          style,
-        ]}
+        style={modalStyles}
         transparent={true}
         visible={visible}
       >
@@ -172,4 +215,5 @@ function Snackbar(
   );
 }
 
-export default forwardRef<SnackbarContext, SnackbarProps>(Snackbar);
+// Export memoized component for better performance
+export default React.memo(forwardRef<SnackbarContext, SnackbarProps>(Snackbar));

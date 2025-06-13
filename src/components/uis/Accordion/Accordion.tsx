@@ -1,3 +1,4 @@
+import React, {useMemo} from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import styled from '@emotion/native';
 
@@ -34,25 +35,33 @@ export type AccordionBaseProps<T = string, K = string> = {
 
 export type AccordionProps<T = string, K = string> = AccordionBaseProps<T, K>;
 
-export function Accordion<T, K>({
+function Accordion<T, K>({
   style,
   toggleElementPosition = 'right',
   data,
   ...rest
 }: AccordionProps<T, K>): React.JSX.Element {
+  // Memoize accordion items rendering
+  const accordionItems = useMemo(() => 
+    data.map((datum, titleKey) => (
+      <AccordionItem
+        data={datum}
+        key={titleKey}
+        testID={`${titleKey}`}
+        toggleElementPosition={toggleElementPosition}
+        {...rest}
+      />
+    )),
+    [data, toggleElementPosition, rest]
+  );
+
   return (
     <Container style={style}>
-      {data.map((datum, titleKey) => {
-        return (
-          <AccordionItem
-            data={datum}
-            key={titleKey}
-            testID={`${titleKey}`}
-            toggleElementPosition={toggleElementPosition}
-            {...rest}
-          />
-        );
-      })}
+      {accordionItems}
     </Container>
   );
 }
+
+// Export memoized component for better performance
+export default React.memo(Accordion) as typeof Accordion;
+export {Accordion};

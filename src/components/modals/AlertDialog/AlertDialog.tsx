@@ -4,6 +4,8 @@ import React, {
   useEffect,
   useImperativeHandle,
   useState,
+  useCallback,
+  useMemo,
 } from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {
@@ -87,26 +89,38 @@ function AlertDialog(
   const [visible, setVisible] = useState(false);
   const {theme, themeType} = useTheme();
 
+  // Memoize the cleanup effect
   useEffect(() => {
     if (!visible) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setOptions(null);
         // Run after modal has finished transition
       }, 300);
+      
+      return () => clearTimeout(timeoutId);
     }
+    
+    // Return an empty cleanup function when visible is true
+    return () => {};
   }, [visible]);
 
+  // Memoize the close handler
+  const handleClose = useCallback(() => {
+    setVisible(false);
+  }, []);
+
+  // Memoize the open handler
+  const handleOpen = useCallback((alertDialogOptions?: AlertDialogOptions) => {
+    setVisible(true);
+    if (alertDialogOptions) {
+      setOptions(alertDialogOptions);
+    }
+  }, []);
+
   useImperativeHandle(ref, () => ({
-    open: (alertDialogOptions) => {
-      setVisible(true);
-      if (alertDialogOptions) {
-        setOptions(alertDialogOptions);
-      }
-    },
-    close: () => {
-      setVisible(false);
-    },
-  }));
+    open: handleOpen,
+    close: handleClose,
+  }), [handleOpen, handleClose]);
 
   const {
     backdropOpacity = 0.2,
@@ -118,82 +132,154 @@ function AlertDialog(
     showCloseButton = true,
   } = options ?? {};
 
-  const AlertDialogContent = (
+  // Memoize backdrop color calculation
+  const backdropColor = useMemo(() => 
+    themeType === 'light'
+      ? `rgba(0,0,0,${backdropOpacity})`
+      : `rgba(255,255,255,${backdropOpacity})`,
+    [themeType, backdropOpacity]
+  );
+
+  // Memoize shadow styles
+  const shadowStyles = useMemo(() => 
+    Platform.OS !== 'web' ? {
+      shadowOffset: {width: 0, height: 4},
+      shadowColor: theme.text.basic,
+    } : {},
+    [theme.text.basic]
+  );
+
+  // Memoize container styles
+  const containerStyles = useMemo(() => 
+    StyleSheet.flatten([shadowStyles, styles?.container]),
+    [shadowStyles, styles?.container]
+  );
+
+  // Memoize modal styles
+  const modalStyles = useMemo(() => [
+    css`
+      flex: 1;
+      align-self: stretch;
+    `,
+    style,
+  ], [style]);
+
+  // Memoize backdrop press handler
+  const handleBackdropPress = useCallback(() => {
+    if (closeOnTouchOutside) {
+      setVisible(false);
+    }
+  }, [closeOnTouchOutside]);
+
+  // Memoize close button press handler
+  const handleCloseButtonPress = useCallback(() => setVisible(false), []);
+
+  // Memoize title content
+  const titleContent = useMemo(() => 
+    typeof title === 'string' ? (
+      <Typography.Heading3 style={styles?.title}>
+        {title}
+      </Typography.Heading3>
+    ) : (
+      title
+    ),
+    [title, styles?.title]
+  );
+
+  // Memoize body content
+  const bodyContent = useMemo(() => 
+    typeof body === 'string' ? (
+      <Typography.Body3 style={styles?.body}>{body}</Typography.Body3>
+    ) : (
+      body
+    ),
+    [body, styles?.body]
+  );
+
+  // Memoize actions content
+  const actionsContent = useMemo(() => 
+    actions ? (
+      <ActionRow style={styles?.actionContainer}>
+        {actions.map((action, index) =>
+          cloneElement(action, {
+            key: `action-${index}`,
+            style: {
+              flex: 1,
+              marginLeft: index !== 0 ? 12 : 0,
+            },
+          }),
+        )}
+      </ActionRow>
+    ) : null,
+    [actions, styles?.actionContainer]
+  );
+
+  // Memoize close button content
+  const closeButtonContent = useMemo(() => 
+    showCloseButton ? (
+      <Button
+        onPress={handleCloseButtonPress}
+        borderRadius={24}
+        text={<Icon color={theme.text.basic} name="X" size={18} />}
+        type="text"
+      />
+    ) : null,
+    [showCloseButton, handleCloseButtonPress, theme.text.basic]
+  );
+
+  const AlertDialogContent = useMemo(() => (
     <Container
       style={css`
-        background-color: ${themeType === 'light'
-          ? `rgba(0,0,0,${backdropOpacity})`
-          : `rgba(255,255,255,${backdropOpacity})`};
+        background-color: ${backdropColor};
       `}
     >
+      <TouchableWithoutFeedback
+        onPress={closeOnTouchOutside ? handleCloseButtonPress : undefined}
+      >
+        <View style={StyleSheet.absoluteFill} />
+      </TouchableWithoutFeedback>
+      
       <AlertDialogContainer
-        style={StyleSheet.flatten([
-          Platform.OS !== 'web' && {
-            shadowOffset: {width: 0, height: 4},
-            shadowColor: theme.text.basic,
-          },
-          styles?.container,
-        ])}
+        accessibilityRole="alert"
+        accessibilityLabel={typeof title === 'string' ? title : 'Alert dialog'}
+        style={containerStyles}
       >
         <TitleRow style={styles?.titleContainer}>
-          {typeof title === 'string' ? (
-            <Typography.Heading3 style={styles?.title}>
-              {title}
-            </Typography.Heading3>
-          ) : (
-            title
-          )}
-          {showCloseButton ? (
-            <Button
-              onPress={() => setVisible(false)}
-              borderRadius={24}
-              text={<Icon color={theme.text.basic} name="X" size={18} />}
-              type="text"
-            />
-          ) : null}
+          {titleContent}
+          {closeButtonContent}
         </TitleRow>
         <BodyRow style={styles?.bodyContainer}>
-          {typeof body === 'string' ? (
-            <Typography.Body3 style={styles?.body}>{body}</Typography.Body3>
-          ) : (
-            body
-          )}
+          {bodyContent}
         </BodyRow>
-        {actions ? (
-          <ActionRow style={styles?.actionContainer}>
-            {actions.map((action, index) =>
-              cloneElement(action, {
-                key: `action-${index}`,
-                style: {
-                  flex: 1,
-                  marginLeft: index !== 0 ? 12 : 0,
-                },
-              }),
-            )}
-          </ActionRow>
-        ) : null}
+        {actionsContent}
       </AlertDialogContainer>
     </Container>
-  );
+  ), [
+    backdropColor,
+    closeOnTouchOutside,
+    handleCloseButtonPress,
+    title,
+    containerStyles,
+    styles?.titleContainer,
+    styles?.bodyContainer,
+    titleContent,
+    closeButtonContent,
+    bodyContent,
+    actionsContent,
+  ]);
 
   return (
     // https://github.com/facebook/react-native/issues/48526#issuecomment-2579478884
     <View>
       <Modal
         animationType="fade"
-        style={[
-          css`
-            flex: 1;
-            align-self: stretch;
-          `,
-          style,
-        ]}
+        style={modalStyles}
         transparent={true}
         visible={visible}
       >
         {closeOnTouchOutside ? (
           <TouchableWithoutFeedback
-            onPress={() => setVisible(false)}
+            onPress={handleBackdropPress}
             style={css`
               flex: 1;
             `}
@@ -208,4 +294,5 @@ function AlertDialog(
   );
 }
 
-export default forwardRef<AlertDialogContext, AlertDialogProps>(AlertDialog);
+// Export memoized component for better performance
+export default React.memo(forwardRef<AlertDialogContext, AlertDialogProps>(AlertDialog));

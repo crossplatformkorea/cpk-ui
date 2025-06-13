@@ -1,3 +1,4 @@
+import React, {useCallback, useMemo} from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {View} from 'react-native';
 import styled from '@emotion/native';
@@ -56,32 +57,47 @@ function RadioGroupContainer<T>({
   labelPosition,
   radioType,
 }: Omit<Props<T>, 'selected'>): React.JSX.Element {
+  // Memoize title spacer to avoid re-creating View
+  const titleSpacer = useMemo(() => 
+    title ? <View style={{height: 8}} /> : null,
+    [title]
+  );
+
+  // Memoize radio buttons to prevent unnecessary re-renders
+  const radioButtons = useMemo(() => 
+    data.map((datum, i) => {
+      const handlePress = () => selectValue?.(datum);
+      
+      return (
+        <RadioButtonComp
+          key={`radio-${i}`}
+          testID={`radio-${i}`}
+          {...radioType}
+          label={labels?.[i] || ''}
+          labelPosition={labelPosition}
+          onPress={handlePress}
+          selected={selectedValue === datum}
+          style={styles?.radio}
+          styles={styles?.radioStyles}
+          type={type}
+        />
+      );
+    }),
+    [data, selectedValue, selectValue, labels, labelPosition, radioType, styles?.radio, styles?.radioStyles, type]
+  );
+
   return (
     <Container style={style}>
       <Typography.Heading3 style={styles?.title}>{title}</Typography.Heading3>
-      {title ? <View style={{height: 8}} /> : null}
+      {titleSpacer}
       <Content style={styles?.container}>
-        {data.map((datum, i) => {
-          return (
-            <RadioButtonComp
-              key={`radio-${i}`}
-              testID={`radio-${i}`}
-              {...radioType}
-              label={labels?.[i] || ''}
-              labelPosition={labelPosition}
-              onPress={() => selectValue?.(datum)}
-              selected={selectedValue === datum}
-              style={styles?.radio}
-              styles={styles?.radioStyles}
-              type={type}
-            />
-          );
-        })}
+        {radioButtons}
       </Content>
     </Container>
   );
 }
 
-export const RadioGroup = RadioGroupContainer;
+// Export memoized component for better performance
+export const RadioGroup = React.memo(RadioGroupContainer) as typeof RadioGroupContainer;
 
 export const RadioButton = RadioButtonComp;

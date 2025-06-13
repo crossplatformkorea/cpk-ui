@@ -1,13 +1,13 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
 import {Animated, Platform, View} from 'react-native';
 import styled, {css} from '@emotion/native';
 
-import {Icon} from '../Icon/Icon';
 import {
   CheckboxWrapper,
   CheckboxWrapperOutlined,
 } from '../Styled/StyledComponents';
+import {Icon} from '../Icon/Icon';
 import {useTheme} from '../../../providers/ThemeProvider';
 
 type Styles = {
@@ -79,24 +79,57 @@ export function Checkbox({
   const scaleAnim = useRef(animatedValue).current;
   const {theme} = useTheme();
 
+  // Memoize animation config
+  const animationConfig = useMemo(
+    () => ({
+      useNativeDriver: Platform.select({
+        web: false,
+        default: true,
+      }),
+    }),
+    [],
+  );
+
   useEffect(() => {
     Animated.sequence([
       Animated.spring(fadeAnim, {
         toValue: !checked ? 0 : 1,
-        useNativeDriver: Platform.select({
-          web: false,
-          default: true,
-        }),
+        ...animationConfig,
       }),
       Animated.spring(scaleAnim, {
         toValue: !checked ? 0 : 1,
-        useNativeDriver: Platform.select({
-          web: false,
-          default: true,
-        }),
+        ...animationConfig,
       }),
     ]).start();
-  }, [fadeAnim, scaleAnim, checked]);
+  }, [fadeAnim, scaleAnim, checked, animationConfig]);
+
+  // Memoize container styles
+  const containerStyles = useMemo(
+    () => [
+      css`
+        flex: 1;
+        padding: 6px 0;
+
+        flex-direction: row;
+        column-gap: 2px;
+        align-items: center;
+      `,
+      styles?.container,
+    ],
+    [styles?.container],
+  );
+
+  // Memoize animated styles
+  const animatedStyles = useMemo(
+    () => [
+      styles?.checkbox,
+      {
+        opacity: fadeAnim,
+        transform: [{scale: scaleAnim}],
+      },
+    ],
+    [styles?.checkbox, fadeAnim, scaleAnim],
+  );
 
   return (
     <Container
@@ -105,19 +138,7 @@ export function Checkbox({
       onPress={onPress}
       style={style}
     >
-      <View
-        style={[
-          css`
-            flex: 1;
-            padding: 6px 0;
-
-            flex-direction: row;
-            column-gap: 2px;
-            align-items: center;
-          `,
-          styles?.container,
-        ]}
-      >
+      <View style={containerStyles}>
         {startElement}
         <StyledCheckboxOutlined
           checked={checked}
@@ -129,17 +150,13 @@ export function Checkbox({
           <StyledCheckbox
             checked={checked}
             disabled={disabled}
-            style={[
-              styles?.checkbox,
-              {opacity: fadeAnim, transform: [{scale: scaleAnim}]},
-            ]}
+            style={animatedStyles}
             type={color}
           >
             <StyledCheck
               checked={checked}
               name="Check"
               style={styles?.check}
-              theme={theme}
             />
           </StyledCheckbox>
         </StyledCheckboxOutlined>
@@ -148,3 +165,6 @@ export function Checkbox({
     </Container>
   );
 }
+
+// Export memoized component for better performance
+export default React.memo(Checkbox) as typeof Checkbox;
