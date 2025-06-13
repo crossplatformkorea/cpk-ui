@@ -1,5 +1,5 @@
 // Caveat: Expo web needs React to be imported
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import type {LayoutChangeEvent} from 'react-native';
 import {Animated, Easing, View} from 'react-native';
 import styled, {css} from '@emotion/native';
@@ -61,6 +61,13 @@ export function AccordionItem<T, K>({
   const [itemHeight, setItemHeight] = useState(0);
   const [collapsed, setCollapsed] = useState(collapseOnStart);
 
+  // Memoize animation configuration
+  const animationConfig = useMemo(() => ({
+    duration: animDuration,
+    easing: Easing.linear,
+    useNativeDriver: false,
+  }), [animDuration]);
+
   useEffect(() => {
     Animated.timing(fadeItemAnim, {
       toValue: collapsed ? 0 : 1,
@@ -75,14 +82,11 @@ export function AccordionItem<T, K>({
     if (!shouldAnimate) {
       rotateAnimValueRef.current.setValue(targetValue);
       dropDownAnimValueRef.current.setValue(targetValue);
-
       return;
     }
 
     const config = {
-      duration: animDuration,
-      easing: Easing.linear,
-      useNativeDriver: false,
+      ...animationConfig,
       toValue: targetValue,
     };
 
@@ -90,9 +94,23 @@ export function AccordionItem<T, K>({
       Animated.timing(rotateAnimValueRef.current, config),
       Animated.timing(dropDownAnimValueRef.current, config),
     ]).start();
-  }, [collapsed, shouldAnimate, animDuration]);
+  }, [collapsed, shouldAnimate, animationConfig]);
 
-  const toggleElContainer = (
+  // Memoize callbacks
+  const handleToggle = useCallback(() => {
+    setCollapsed(!collapsed);
+  }, [collapsed]);
+
+  const handleItemPress = useCallback((body: K | string) => {
+    onPressItem?.(data.title, body);
+  }, [onPressItem, data.title]);
+
+  const handleLayout = useCallback((e: LayoutChangeEvent) => {
+    setItemHeight(e.nativeEvent.layout.height);
+  }, []);
+
+  // Memoize toggle element container
+  const toggleElContainer = useMemo(() => (
     <Animated.View
       style={[
         css`
@@ -113,24 +131,43 @@ export function AccordionItem<T, K>({
     >
       {toggleElement}
     </Animated.View>
-  );
+  ), [toggleElement, toggleElementPosition, styles?.toggleElement]);
+
+  // Memoize container styles
+  const containerStyles = useMemo(() => [
+    css`
+      background-color: transparent;
+      overflow: hidden;
+      flex-direction: column-reverse;
+    `,
+    styles?.container,
+  ], [styles?.container]);
+
+  const titleContainerStyles = useMemo(() => [
+    css`
+      justify-content: ${toggleElementPosition === 'right'
+        ? 'space-between'
+        : 'flex-start'};
+    `,
+    styles?.titleContainer,
+  ], [toggleElementPosition, styles?.titleContainer]);
+
+  // Memoize animated styles
+  const animatedItemStyles = useMemo(() => [
+    {
+      opacity: fadeItemAnim,
+      height: dropDownAnimValueRef.current.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, itemHeight],
+      }),
+    },
+  ], [fadeItemAnim, itemHeight]);
 
   return (
-    <Animated.View
-      style={[
-        css`
-          background-color: transparent;
-          overflow: hidden;
-          flex-direction: column-reverse;
-        `,
-        styles?.container,
-      ]}
-    >
+    <Animated.View style={containerStyles}>
       {/* Invisible: Place it at the top for z-index */}
       <View
-        onLayout={(e: LayoutChangeEvent) => {
-          setItemHeight(e.nativeEvent.layout.height);
-        }}
+        onLayout={handleLayout}
         style={css`
           position: absolute;
           opacity: 0;
@@ -140,7 +177,7 @@ export function AccordionItem<T, K>({
           <ItemTouch
             activeOpacity={activeOpacity}
             key={`body-${index}`}
-            onPress={() => onPressItem?.(data.title, body)}
+            onPress={() => handleItemPress(body)}
           >
             {typeof body === 'string' && !renderItem ? (
               <Typography.Body3 style={styles?.itemText}>
@@ -152,25 +189,18 @@ export function AccordionItem<T, K>({
           </ItemTouch>
         ))}
       </View>
+      
       {/* Item */}
       <Animated.View
         accessibilityState={{expanded: !collapsed}}
-        style={[
-          {
-            opacity: fadeItemAnim,
-            height: dropDownAnimValueRef.current.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, itemHeight],
-            }),
-          },
-        ]}
+        style={animatedItemStyles}
         testID={`body-${testID}`}
       >
         {data.items.map((body, index) => (
           <ItemTouch
             activeOpacity={activeOpacity}
             key={`body-${index}`}
-            onPress={() => onPressItem?.(data.title, body)}
+            onPress={() => handleItemPress(body)}
             style={styles?.itemContainer}
           >
             {typeof body === 'string' && !renderItem ? (
@@ -187,15 +217,12 @@ export function AccordionItem<T, K>({
       {/* Title */}
       <TitleTouch
         activeOpacity={activeOpacity}
-        onPress={() => setCollapsed(!collapsed)}
-        style={[
-          css`
-            justify-content: ${toggleElementPosition === 'right'
-              ? 'space-between'
-              : 'flex-start'};
-          `,
-          styles?.titleContainer,
-        ]}
+        onPress={handleToggle}
+        accessibilityRole="button"
+        accessibilityLabel={typeof data.title === 'string' ? data.title : 'Accordion section'}
+        accessibilityState={{expanded: !collapsed}}
+        accessibilityHint={collapsed ? 'Double tap to expand' : 'Double tap to collapse'}
+        style={titleContainerStyles}
         testID={`title-${testID}`}
       >
         {toggleElementPosition === 'left' ? toggleElContainer : null}
@@ -211,3 +238,6 @@ export function AccordionItem<T, K>({
     </Animated.View>
   );
 }
+
+// Export memoized component for better performance
+export default React.memo(AccordionItem) as typeof AccordionItem;

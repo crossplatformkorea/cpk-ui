@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
 import {Animated, TouchableOpacity} from 'react-native';
 import styled from '@emotion/native';
@@ -87,107 +87,183 @@ export function SwitchToggle({
 }: Props): React.JSX.Element {
   const {theme} = useTheme();
 
-  const {
-    backgroundColorOn = theme.role.primary,
-    backgroundColorOff = theme.bg.disabled,
-    circleColorOn = theme.text.contrast,
-    circleColorOff = theme.text.basic,
-    container = size === 'large'
-      ? largeContainer
-      : size === 'small'
+  // Memoize size-based configurations
+  const sizeConfig = useMemo(() => {
+    const containerConfig =
+      size === 'large'
+        ? largeContainer
+        : size === 'small'
         ? smallContainer
-        : mediumContainer,
-    circle = size === 'large'
-      ? largeCircle
-      : size === 'small'
+        : mediumContainer;
+
+    const circleConfig =
+      size === 'large'
+        ? largeCircle
+        : size === 'small'
         ? smallCircle
-        : mediumCircle,
-    button,
-    onElementContainer,
-    offElementContainer,
-  } = styles ?? {};
+        : mediumCircle;
 
-  const paddingLeft: number =
-    (container.padding as number) || (container.paddingLeft as number) || 0;
+    return {containerConfig, circleConfig};
+  }, [size]);
 
-  const paddingRight: number =
-    (container.padding as number) || (container.paddingRight as number) || 0;
+  // Memoize styles with defaults
+  const switchStyles = useMemo(() => {
+    const {
+      backgroundColorOn = theme.role.primary,
+      backgroundColorOff = theme.bg.disabled,
+      circleColorOn = theme.text.contrast,
+      circleColorOff = theme.text.basic,
+      container = sizeConfig.containerConfig,
+      circle = sizeConfig.circleConfig,
+      button,
+      onElementContainer,
+      offElementContainer,
+    } = styles ?? {};
 
-  const circlePosXStart = 0;
+    return {
+      backgroundColorOn,
+      backgroundColorOff,
+      circleColorOn,
+      circleColorOff,
+      container,
+      circle,
+      button,
+      onElementContainer,
+      offElementContainer,
+    };
+  }, [styles, theme, sizeConfig]);
 
-  const circlePosXEnd =
-    ((container.width ?? mediumContainer.width) as number) -
-    ((circle.width ?? mediumCircle.width) as number) -
-    (paddingRight + paddingLeft);
+  // Memoize padding calculations
+  const padding = useMemo(() => {
+    const paddingLeft =
+      (switchStyles.container.padding as number) ||
+      (switchStyles.container.paddingLeft as number) ||
+      0;
+    const paddingRight =
+      (switchStyles.container.padding as number) ||
+      (switchStyles.container.paddingRight as number) ||
+      0;
+    return {paddingLeft, paddingRight};
+  }, [switchStyles.container]);
+
+  // Memoize position calculations
+  const positions = useMemo(() => {
+    const circlePosXStart = 0;
+    const circlePosXEnd =
+      ((switchStyles.container.width ?? mediumContainer.width) as number) -
+      ((switchStyles.circle.width ?? mediumCircle.width) as number) -
+      (padding.paddingRight + padding.paddingLeft);
+
+    return {circlePosXStart, circlePosXEnd};
+  }, [
+    switchStyles.container.width,
+    switchStyles.circle.width,
+    padding,
+    mediumContainer,
+    smallContainer,
+    largeContainer,
+  ]);
 
   const [animXValue] = useState(new Animated.Value(isOn ? 1 : 0));
 
-  useEffect(() => {
-    const runAnimation = (): void => {
-      const option = {
-        fromValue: isOn ? 0 : 1,
-        toValue: isOn ? 1 : 0,
-        duration,
-        useNativeDriver: false,
-      };
-
-      Animated.timing(animXValue, option).start();
+  // Memoize animation function
+  const runAnimation = useCallback(() => {
+    const option = {
+      fromValue: isOn ? 0 : 1,
+      toValue: isOn ? 1 : 0,
+      duration,
+      useNativeDriver: false,
     };
 
-    runAnimation();
+    Animated.timing(animXValue, option).start();
   }, [animXValue, isOn, duration]);
 
-  const CircleButton = (
-    <Animated.View
-      style={[
-        circle,
-        {
-          backgroundColor: animXValue.interpolate({
-            inputRange: [0.5, 1],
-            outputRange: [
-              circleColorOff as string | number,
-              circleColorOn as string | number,
-            ] as string[] | number[],
-          }),
-        },
-        {
-          transform: [
-            {
-              translateX: animXValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [
-                  circlePosXStart as string | number,
-                  circlePosXEnd as string | number,
-                ] as string[] | number[],
-              }),
-            },
-          ],
-        },
-        button,
-      ]}
-    />
+  useEffect(() => {
+    runAnimation();
+  }, [runAnimation]);
+
+  // Memoize animated components
+  const CircleButton = useMemo(
+    () => (
+      <Animated.View
+        style={[
+          switchStyles.circle,
+          {
+            backgroundColor: animXValue.interpolate({
+              inputRange: [0.5, 1],
+              outputRange: [
+                switchStyles.circleColorOff as string | number,
+                switchStyles.circleColorOn as string | number,
+              ] as string[] | number[],
+            }),
+          },
+          {
+            transform: [
+              {
+                translateX: animXValue.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [
+                    positions.circlePosXStart as string | number,
+                    positions.circlePosXEnd as string | number,
+                  ] as string[] | number[],
+                }),
+              },
+            ],
+          },
+          switchStyles.button,
+        ]}
+      />
+    ),
+    [switchStyles, animXValue, positions]
   );
 
-  const OnElement = (
-    <Animated.View style={[{opacity: animXValue}, onElementContainer]}>
-      {onElement}
-    </Animated.View>
+  const OnElement = useMemo(
+    () => (
+      <Animated.View style={[{opacity: animXValue}, switchStyles.onElementContainer]}>
+        {onElement}
+      </Animated.View>
+    ),
+    [animXValue, switchStyles.onElementContainer, onElement]
   );
 
-  const OffElement = (
-    <Animated.View
-      style={[
-        {
-          opacity: animXValue.interpolate({
-            inputRange: [0, 1],
-            outputRange: [1, 0],
-          }),
-        },
-        offElementContainer,
-      ]}
-    >
-      {offElement}
-    </Animated.View>
+  const OffElement = useMemo(
+    () => (
+      <Animated.View
+        style={[
+          {
+            opacity: animXValue.interpolate({
+              inputRange: [0, 1],
+              outputRange: [1, 0],
+            }),
+          },
+          switchStyles.offElementContainer,
+        ]}
+      >
+        {offElement}
+      </Animated.View>
+    ),
+    [animXValue, switchStyles.offElementContainer, offElement]
+  );
+
+  // Memoize container styles
+  const containerStyles = useMemo(
+    () => [
+      switchStyles.container,
+      {
+        paddingLeft: padding.paddingLeft,
+        paddingRight: padding.paddingRight,
+      },
+      {
+        backgroundColor: animXValue.interpolate({
+          inputRange: [0, 1],
+          outputRange: [
+            switchStyles.backgroundColorOff as string | number,
+            switchStyles.backgroundColorOn as string | number,
+          ] as string[] | number[],
+        }),
+      },
+    ],
+    [switchStyles, padding, animXValue]
   );
 
   return (
@@ -198,27 +274,13 @@ export function SwitchToggle({
       style={style}
       testID={testID}
     >
-      <AnimatedContainer
-        style={[
-          container,
-          {
-            paddingLeft,
-            paddingRight,
-          },
-          {
-            backgroundColor: animXValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: [
-                backgroundColorOff as string | number,
-                backgroundColorOn as string | number,
-              ] as string[] | number[],
-            }),
-          },
-        ]}
-      >
+      <AnimatedContainer style={containerStyles}>
         {isOn ? OnElement : OffElement}
         {CircleButton}
       </AnimatedContainer>
     </TouchableOpacity>
   );
 }
+
+// Export memoized component for better performance
+export default React.memo(SwitchToggle) as typeof SwitchToggle;

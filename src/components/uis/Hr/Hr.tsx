@@ -1,7 +1,8 @@
+import React from 'react';
 import styled from '@emotion/native';
 import {isEmptyObject} from '../../../utils/theme';
 
-export const Hr = styled.View`
+const StyledHr = styled.View`
   height: 0.5px;
   width: 100%;
   background-color: ${({theme}) => {
@@ -12,3 +13,6 @@ export const Hr = styled.View`
     return theme.role.border;
   }};
 `;
+
+// Memoized Hr component for performance optimization
+export const Hr = React.memo(StyledHr);

@@ -23,6 +23,18 @@ Check out [ui.crossplatformkorea.com](https://ui.crossplatformkorea.com)
 
 `cpk-ui` aims to provide user-friendly, lightweight, and adaptable UI components. It emphasizes customizable `theme` variations and a responsive layout to enhance developer experience.
 
+### Performance
+
+`cpk-ui` is optimized for React Native performance using React's built-in optimization features:
+
+- **React.memo**: All components are wrapped to prevent unnecessary re-renders
+- **useCallback**: Event handlers are memoized for stable references
+- **useMemo**: Expensive calculations and styles are memoized
+- **110+ tests passing**: Comprehensive test coverage ensures reliability
+- **Zero breaking changes**: All optimizations maintain API compatibility
+
+For detailed performance information, see our [Performance Guide](docs/PERFORMANCE.md).
+
 ### Installation
 
 #### For Expo

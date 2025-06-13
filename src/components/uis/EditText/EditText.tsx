@@ -28,23 +28,7 @@ import {cloneElemWithDefaultColors} from '../../../utils/guards';
 import {Global} from '@emotion/react';
 import {useTheme} from '../../../providers/ThemeProvider';
 import {Typography} from '../Typography/Typography';
-
-// Add this helper function at the top of the file
-const isWeb = (): boolean => {
-  try {
-    return Platform && Platform.OS === 'web';
-  } catch (e) {
-    return false;
-  }
-};
-
-const safePlatformSelect = <T,>(options: {web?: T; default?: T}): T | undefined => {
-  try {
-    return Platform.select(options);
-  } catch (e) {
-    return options.default;
-  }
-};
+import {isWeb, safePlatformSelect} from '../../../utils/platform';
 
 export type EditTextStyles = {
   container?: StyleProp<ViewStyle>;
@@ -173,21 +157,35 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
     const inputRef = (ref as MutableRefObject<TextInput>) || defaultInputRef;
     const hovered = useHover(webRef);
 
-    const defaultContainerStyle = css`
+    // Memoize default container style
+    const defaultContainerStyle = useMemo(() => css`
       flex-direction: ${direction};
-    `;
+    `, [direction]);
 
-    const defaultColor = !editable
-      ? colors.disabled || theme.text.disabled
-      : error
-        ? colors.error || theme.text.validation
-        : focused
-          ? colors.focused || theme.text.basic
-          : hovered
-            ? colors.hovered || theme.text.basic
-            : colors.placeholder || theme.text.placeholder;
+    // Memoize default color calculation
+    const defaultColor = useMemo(() => {
+      if (!editable) return colors.disabled || theme.text.disabled;
+      if (error) return colors.error || theme.text.validation;
+      if (focused) return colors.focused || theme.text.basic;
+      if (hovered) return colors.hovered || theme.text.basic;
+      return colors.placeholder || theme.text.placeholder;
+    }, [
+      editable,
+      error,
+      focused,
+      hovered,
+      colors.disabled,
+      colors.error,
+      colors.focused,
+      colors.hovered,
+      colors.placeholder,
+      theme.text.disabled,
+      theme.text.validation,
+      theme.text.basic,
+      theme.text.placeholder,
+    ]);
 
-    // Default label placeholder color has different value compared to default input placeholder color
+    // Memoize label placeholder color
     const labelPlaceholderColor = useMemo(
       () =>
         defaultColor === (colors.placeholder || theme.text.placeholder) && {
@@ -201,16 +199,16 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       ],
     );
 
-    const status: EditTextStatus = !editable
-      ? 'disabled'
-      : error
-        ? 'error'
-        : hovered
-          ? 'hovered'
-          : focused
-            ? 'focused'
-            : 'basic';
+    // Memoize status calculation
+    const status: EditTextStatus = useMemo(() => {
+      if (!editable) return 'disabled';
+      if (error) return 'error';
+      if (hovered) return 'hovered';
+      if (focused) return 'focused';
+      return 'basic';
+    }, [editable, error, hovered, focused]);
 
+    // Memoize render label function
     const renderLabel = useCallback((): React.JSX.Element | null => {
       // eslint-disable-next-line react/no-unstable-nested-components
       function Wrapper({children}: {children: ReactNode}): React.JSX.Element {
@@ -272,6 +270,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       theme.role.danger,
     ]);
 
+    // Memoize render container function
     const renderContainer = useCallback(
       (children: ReactNode): React.JSX.Element => {
         return (
@@ -322,6 +321,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       ],
     );
 
+    // Memoize render input function
     const renderInput = useCallback((): React.JSX.Element | null => {
       return (
         <View
@@ -449,6 +449,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       value,
     ]);
 
+    // Memoize render error function
     const renderError = useCallback((): React.JSX.Element | null => {
       return error ? (
         typeof error === 'string' ? (
@@ -470,6 +471,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       ) : null;
     }, [error, status, styles?.error, theme.text.validation]);
 
+    // Memoize render counter function
     const renderCounter = useCallback((): React.JSX.Element | null => {
       if (hideCounter) {
         return null;
@@ -530,7 +532,8 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
   },
 );
 
-function WebStyles(): React.JSX.Element {
+// Memoize the WebStyles component
+const WebStyles = React.memo((): React.JSX.Element => {
   return (
     <Global
       // @ts-ignore
@@ -549,4 +552,9 @@ function WebStyles(): React.JSX.Element {
       `}
     />
   );
-}
+});
+
+WebStyles.displayName = 'WebStyles';
+
+// Export memoized EditText component for better performance
+export default React.memo(EditText) as typeof EditText;

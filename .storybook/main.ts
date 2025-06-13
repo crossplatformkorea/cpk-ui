@@ -25,4 +25,18 @@ module.exports = {
   typescript: {
     reactDocgen: 'react-docgen-typescript',
   },
+
+  webpackFinal: async (config) => {
+    // Add fallback for Node.js modules that are not available in the browser
+    config.resolve = config.resolve || {};
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      console: false, // Disable console polyfill for @testing-library/react-native
+      fs: false,
+      path: false,
+      os: false,
+    };
+
+    return config;
+  },
 };

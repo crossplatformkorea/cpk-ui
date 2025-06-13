@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useMemo} from 'react';
 import {StyleProp, Text, TextInput} from 'react-native';
 import {CpkTheme, isEmptyObject} from '../../../utils/theme';
 import {withTheme} from '../../../providers/ThemeProvider';
@@ -49,7 +49,7 @@ const createTextComponent = ({
   fontWeight?: 'normal' | 'bold' | 'thin';
 }) =>
   withTheme(
-    ({
+    React.memo(({
       style,
       children,
       theme,
@@ -58,22 +58,27 @@ const createTextComponent = ({
       style?: StyleProp<TextStyle>;
       children?: ReactNode;
       theme?: CpkTheme;
-    }) => (
-      <BaseText
-        {...props}
-        style={[
-          css`
-            font-size: ${fontSize + 'px'};
-            line-height: ${lineHeight + 'px'};
-            font-weight: ${fontWeight};
-          `,
-          {includeFontPadding: false},
-          style,
-        ]}
-      >
-        {children}
-      </BaseText>
-    ),
+    }) => {
+      // Memoize style calculation
+      const textStyle = useMemo(() => [
+        css`
+          font-size: ${fontSize + 'px'};
+          line-height: ${lineHeight + 'px'};
+          font-weight: ${fontWeight};
+        `,
+        {includeFontPadding: false},
+        style,
+      ], [style]);
+
+      return (
+        <BaseText
+          {...props}
+          style={textStyle}
+        >
+          {children}
+        </BaseText>
+      );
+    })
   ) as unknown as TextComponentType;
 
 const StandardBaseText = createBaseText((theme) => theme.text.basic, 'gray');
@@ -253,6 +258,7 @@ export const setFontFamily = (fontFamilies: {
 }): void => {
   currentFontFamilies = {...currentFontFamilies, ...fontFamilies};
 
+  // Memoize font family getter function
   const getFontFamily = (fontWeight: string | undefined): string => {
     switch (fontWeight) {
       case 'bold':
@@ -295,4 +301,5 @@ export const setFontFamily = (fontFamilies: {
   applyFontFamily(TextInput);
 };
 
+// Memoize font families getter
 export const getFontFamilies = () => currentFontFamilies;

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import type {
   LayoutRectangle,
   StyleProp,
@@ -88,24 +88,67 @@ export default function RadioButton({
   const fadeAnim = useRef(animatedValue).current;
   const scaleAnim = useRef(animatedValue).current;
 
+  // Memoize layout handler
+  const handleLayout = useCallback((e: any) => {
+    setInnerLayout(e.nativeEvent.layout);
+  }, []);
+
+  // Memoize animation config
+  const animationConfig = useMemo(
+    () => ({
+      useNativeDriver: Platform.select({
+        web: false,
+        default: true,
+      }),
+    }),
+    []
+  );
+
   useEffect(() => {
     Animated.sequence([
       Animated.spring(fadeAnim, {
         toValue: !selected ? 0 : 1,
-        useNativeDriver: Platform.select({
-          web: false,
-          default: true,
-        }),
+        ...animationConfig,
       }),
       Animated.spring(scaleAnim, {
         toValue: !selected ? 0 : 1,
-        useNativeDriver: Platform.select({
-          web: false,
-          default: true,
-        }),
+        ...animationConfig,
       }),
     ]).start();
-  }, [fadeAnim, scaleAnim, selected]);
+  }, [fadeAnim, scaleAnim, selected, animationConfig]);
+
+  // Memoize container styles
+  const containerStyles = useMemo(
+    () => [
+      css`
+        padding-top: 6px;
+        padding-bottom: 6px;
+        padding-left: ${startElement || (label && labelPosition === 'left')
+          ? '8px'
+          : 0};
+        padding-right: ${endElement || (label && labelPosition === 'right')
+          ? '8px'
+          : 0};
+
+        flex-direction: row;
+        align-items: center;
+      `,
+      styles?.container,
+    ],
+    [startElement, endElement, label, labelPosition, styles?.container]
+  );
+
+  // Memoize animated styles
+  const animatedStyles = useMemo(
+    () => [
+      styles?.circle,
+      {
+        opacity: fadeAnim,
+        transform: [{scale: scaleAnim}],
+      },
+    ],
+    [styles?.circle, fadeAnim, scaleAnim]
+  );
 
   return (
     <Container
@@ -115,24 +158,7 @@ export default function RadioButton({
       style={style}
       testID={testID}
     >
-      <View
-        style={[
-          css`
-            padding-top: 6px;
-            padding-bottom: 6px;
-            padding-left: ${startElement || (label && labelPosition === 'left')
-              ? '8px'
-              : 0};
-            padding-right: ${endElement || (label && labelPosition === 'right')
-              ? '8px'
-              : 0};
-
-            flex-direction: row;
-            align-items: center;
-          `,
-          styles?.container,
-        ]}
-      >
+      <View style={containerStyles}>
         <>
           {startElement}
           {label && labelPosition === 'left' ? (
@@ -154,15 +180,9 @@ export default function RadioButton({
             <StyledRadioCircle
               disabled={!!disabled}
               innerLayout={innerLayout}
-              onLayout={(e: any) => setInnerLayout(e.nativeEvent.layout)}
+              onLayout={handleLayout}
               selected={!!selected}
-              style={[
-                styles?.circle,
-                {
-                  opacity: fadeAnim,
-                  transform: [{scale: scaleAnim}],
-                },
-              ]}
+              style={animatedStyles}
               testID={`circle-${testID}`}
               type={type}
             />
@@ -183,3 +203,7 @@ export default function RadioButton({
     </Container>
   );
 }
+
+// Export memoized component for better performance
+const MemoizedRadioButton = React.memo(RadioButton);
+export {MemoizedRadioButton as RadioButton};
