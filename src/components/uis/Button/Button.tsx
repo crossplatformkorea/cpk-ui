@@ -206,10 +206,13 @@ const useButtonState = ({
   innerDisabled: boolean;
   isLoading: boolean;
 } => {
-  return useMemo(() => ({
-    innerDisabled: disabled || !onPress,
-    isLoading: loading,
-  }), [disabled, onPress, loading]);
+  return useMemo(
+    () => ({
+      innerDisabled: disabled || !onPress,
+      isLoading: loading,
+    }),
+    [disabled, onPress, loading],
+  );
 };
 
 export function Button({
@@ -238,33 +241,51 @@ export function Button({
   const {theme} = useTheme();
 
   const {innerDisabled} = useButtonState({disabled, onPress, loading});
-  
+
   // Memoize styles calculation
-  const compositeStyles: Styles = useMemo(() => calculateStyles({
-    theme,
-    type,
-    color,
-    size,
-    loading,
-    disabled: innerDisabled,
-    borderRadius,
-    hovered,
-    styles,
-  }), [theme, type, color, size, loading, innerDisabled, borderRadius, hovered, styles]);
+  const compositeStyles: Styles = useMemo(
+    () =>
+      calculateStyles({
+        theme,
+        type,
+        color,
+        size,
+        loading,
+        disabled: innerDisabled,
+        borderRadius,
+        hovered,
+        styles,
+      }),
+    [
+      theme,
+      type,
+      color,
+      size,
+      loading,
+      innerDisabled,
+      borderRadius,
+      hovered,
+      styles,
+    ],
+  );
 
   // Memoize loading view
-  const LoadingView = useMemo(() => loadingElement ?? (
-    <LoadingIndicator
-      color={
-        loadingColor
-          ? loadingColor
-          : type === 'solid'
-            ? theme.text.contrast
-            : theme.text.basic
-      }
-      size="small"
-    />
-  ), [loadingElement, loadingColor, type, theme.text.contrast, theme.text.basic]);
+  const LoadingView = useMemo(
+    () =>
+      loadingElement ?? (
+        <LoadingIndicator
+          color={
+            loadingColor
+              ? loadingColor
+              : type === 'solid'
+                ? theme.text.contrast
+                : theme.text.basic
+          }
+          size="small"
+        />
+      ),
+    [loadingElement, loadingColor, type, theme.text.contrast, theme.text.basic],
+  );
 
   // Memoize style resolvers
   const resolveStyle = useCallback(<T,>(style: StyleProp<T>): T | undefined => {
@@ -274,29 +295,47 @@ export function Button({
     return (style as T) || undefined;
   }, []);
 
-  const viewStyle = useMemo(() => resolveStyle<ViewStyle>(compositeStyles.container), [resolveStyle, compositeStyles.container]);
-  const textStyle = useMemo(() => resolveStyle<TextStyle>(compositeStyles.text), [resolveStyle, compositeStyles.text]);
+  const viewStyle = useMemo(
+    () => resolveStyle<ViewStyle>(compositeStyles.container),
+    [resolveStyle, compositeStyles.container],
+  );
+  const textStyle = useMemo(
+    () => resolveStyle<TextStyle>(compositeStyles.text),
+    [resolveStyle, compositeStyles.text],
+  );
 
   // Memoize child view
-  const ChildView = useMemo(() => (
-    <>
-      {cloneElemWithDefaultColors({
-        element: startElement,
-        backgroundColor: viewStyle?.backgroundColor,
-        color: textStyle?.color,
-      })}
-      {!text || typeof text === 'string' ? (
-        <Typography.Body2 style={compositeStyles.text}>{text}</Typography.Body2>
-      ) : (
-        text
-      )}
-      {cloneElemWithDefaultColors({
-        element: endElement,
-        backgroundColor: viewStyle?.backgroundColor,
-        color: textStyle?.color,
-      })}
-    </>
-  ), [startElement, endElement, text, compositeStyles.text, viewStyle?.backgroundColor, textStyle?.color]);
+  const ChildView = useMemo(
+    () => (
+      <>
+        {cloneElemWithDefaultColors({
+          element: startElement,
+          backgroundColor: viewStyle?.backgroundColor,
+          color: textStyle?.color,
+        })}
+        {!text || typeof text === 'string' ? (
+          <Typography.Body2 style={compositeStyles.text}>
+            {text}
+          </Typography.Body2>
+        ) : (
+          text
+        )}
+        {cloneElemWithDefaultColors({
+          element: endElement,
+          backgroundColor: viewStyle?.backgroundColor,
+          color: textStyle?.color,
+        })}
+      </>
+    ),
+    [
+      startElement,
+      endElement,
+      text,
+      compositeStyles.text,
+      viewStyle?.backgroundColor,
+      textStyle?.color,
+    ],
+  );
 
   // Memoize container renderer
   const renderContainer = useCallback(
@@ -318,6 +357,10 @@ export function Button({
               background-color: transparent;
             `,
           innerDisabled && compositeStyles.disabled,
+          !!borderRadius &&
+            css`
+              border-radius: ${borderRadius + 'px'};
+            `,
         ]}
         testID={loading ? 'loading-view' : 'button-container'}
         type={type}
@@ -341,20 +384,26 @@ export function Button({
   );
 
   // Memoize press handler
-  const handlePress = useCallback((e: any) => {
-    onPress?.(e);
-    if (hapticFeedback) {
-      Haptics.impactAsync(hapticFeedback);
-    }
-  }, [onPress, hapticFeedback]);
+  const handlePress = useCallback(
+    (e: any) => {
+      onPress?.(e);
+      if (hapticFeedback) {
+        Haptics.impactAsync(hapticFeedback);
+      }
+    },
+    [onPress, hapticFeedback],
+  );
 
   // Memoize button styles
-  const buttonStyles = useMemo(() => [
-    style,
-    css`
-      border-radius: ${borderRadius + 'px'};
-    `,
-  ], [style, borderRadius]);
+  const buttonStyles = useMemo(
+    () => [
+      style,
+      css`
+        border-radius: ${borderRadius + 'px'};
+      `,
+    ],
+    [style, borderRadius],
+  );
 
   return (
     <TouchableHighlight
