@@ -5,15 +5,15 @@
     "noImplicitAny": false,
     "removeComments": false,
     "sourceMap": false,
-    "declarationMap": false,
-    "moduleResolution": "node",
+    "declarationMap": true,
+    "moduleResolution": "bundler",
     "module": "esnext",
     "target": "esnext",
     "incremental": true,
     "outDir": "lib",
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "declaration": false
+    "declaration": true
   },
   "exclude": [
     "node_modules",

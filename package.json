@@ -26,7 +26,7 @@
     "jest": "jest --runInBand",
     "test:all": "yarn lint && yarn tsc && yarn test",
     "prebuild": "find ./lib -mindepth 1 ! -name 'package.json' -exec rm -rf {} +",
-    "build": "tsc --project tsconfigBuild.json && cpx './src/**/*.{ts,tsx}' ./lib/",
+    "build": "tsc --project tsconfigBuild.json && cpx './src/**/*.{ts,tsx}' ./lib/src/",
     "postbuild": "cp ./src/react-native.config.cjs ./lib/react-native.config.cjs && rm -rf ./lib/tsconfig* && cp README.md ./lib/README.md && mkdir -p ./lib/components/uis/Icon && find ./src/components/uis/Icon/ -type f \\( -name '*.otf' -o -name '*.ttf' -o -name '*.json' \\) -exec cp {} ./lib/components/uis/Icon/ \\;",
     "storybook:build": "storybook build --docs -o ./doc-build -c ./.storybook",
     "storybook:serve": "npx http-server ./doc-build",

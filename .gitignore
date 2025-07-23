@@ -1,5 +1,6 @@
 /storybook-static
 .DS_Store
+.claude
 .idea
 
 # node.js
