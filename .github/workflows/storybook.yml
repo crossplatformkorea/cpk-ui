@@ -13,10 +13,15 @@ jobs:
         with:
           node-version: 20.x
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.1
+
       - name: Install packages and build storybook
         run: |
-          yarn install
-          yarn storybook:build
+          bun install
+          bun run storybook:build
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
