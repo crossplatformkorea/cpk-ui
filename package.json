@@ -5,9 +5,9 @@
   },
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "predeploy": "yarn build",
+    "predeploy": "bun run build",
     "postinstall": "node bin/greeting.js",
-    "publish": "yarn build && cd lib && npm publish && cd ..",
+    "publish": "bun run build && cd lib && npm publish && cd ..",
     "lint": "eslint .",
     "lint:ci": "commitlint --from HEAD~0 --to HEAD --verbose",
     "start": "expo start",
@@ -24,7 +24,7 @@
     "tsc": "tsc",
     "start:reset": "watchman watch-del-all && lsof -t -i :8081 | xargs kill && expo start -c",
     "jest": "jest --runInBand",
-    "test:all": "yarn lint && yarn tsc && yarn test",
+    "test:all": "bun run lint && bun run tsc && bun run test",
     "prebuild": "find ./lib -mindepth 1 ! -name 'package.json' -exec rm -rf {} +",
     "build": "tsc --project tsconfigBuild.json && cpx './src/**/*.{ts,tsx}' ./lib/src/",
     "postbuild": "cp ./src/react-native.config.cjs ./lib/react-native.config.cjs && rm -rf ./lib/tsconfig* && cp README.md ./lib/README.md && mkdir -p ./lib/components/uis/Icon && find ./src/components/uis/Icon/ -type f \\( -name '*.otf' -o -name '*.ttf' -o -name '*.json' \\) -exec cp {} ./lib/components/uis/Icon/ \\;",
@@ -130,5 +130,6 @@
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "~5.7.3"
-  }
+  },
+  "packageManager": "bun@1.3.1"
 }

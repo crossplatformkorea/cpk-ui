@@ -544,11 +544,7 @@ describe('[Button]', () => {
       testingLib = render(
         Component({
           props: {
-            styles: {
-              container: {
-                borderTopRightRadius: borderRadius,
-              },
-            },
+            borderRadius: borderRadius,
           },
         }),
       );
