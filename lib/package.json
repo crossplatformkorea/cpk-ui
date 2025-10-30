@@ -18,6 +18,7 @@
   "homepage": "https://github.com/crossplatformkorea/cpk-ui#readme",
   "peerDependencies": {
     "kstyled": ">=0.1.0",
+    "babel-plugin-kstyled": ">=0.1.0",
     "react": ">=16.9",
     "react-native": ">=0.58",
     "react-native-gesture-handler": "*",

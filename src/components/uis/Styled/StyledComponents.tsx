@@ -25,7 +25,10 @@ export type SnackbarType =
 function resolveTheme(theme: undefined): typeof light;
 function resolveTheme<T extends CpkTheme>(theme: T): T;
 function resolveTheme<T extends CpkTheme>(theme?: T): T | typeof light {
-  return isEmptyObject(theme) ? light : theme!;
+  if (!theme || isEmptyObject(theme)) {
+    return light;
+  }
+  return theme;
 }
 
 // ButtonWrapper Component

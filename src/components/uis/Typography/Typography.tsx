@@ -69,6 +69,7 @@ const createTextComponent = ({
     return (
       <BaseText
         {...props}
+        $fontWeight={fontWeight}
         style={textStyle}
       >
         {children}
