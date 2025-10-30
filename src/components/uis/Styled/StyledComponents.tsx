@@ -43,7 +43,7 @@ export const ButtonWrapper = styled.View<{
     theme = resolveTheme(theme);
 
     if ($loading) {
-      return $outlined ? undefined : theme.button[$type!].bg;
+      return $outlined ? undefined : theme.button[$type ?? 'primary'].bg;
     }
     if ($disabled) {
       return undefined;
@@ -56,7 +56,7 @@ export const ButtonWrapper = styled.View<{
     if ($disabled) {
       return theme.bg.basic;
     }
-    return theme.button[$type!].bg;
+    return theme.button[$type ?? 'primary'].bg;
   }};
 `;
 
@@ -77,7 +77,7 @@ export const ButtonText = styled(Typography.Body2)<{
     if ($disabled) {
       return theme.text.disabled;
     }
-    return theme.button[$type!].text;
+    return theme.button[$type ?? 'primary'].text;
   }};
 `;
 
