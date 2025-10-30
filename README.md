@@ -17,7 +17,7 @@ Check out [ui.crossplatformkorea.com](https://ui.crossplatformkorea.com)
 
 ## Introduction
 
-`cpk-ui` is a foundational design system and UI components library managed by Cross-Platform Korea. It is built using our preferred technologies, including [emotion](https://emotion.sh/docs/@emotion/native), [typescript](https://www.typescriptlang.org/), [jest](https://jestjs.io), [react-native-testing-library](https://github.com/callstack/react-native-testing-library), [expo](https://expo.io), and [storybook](https://storybook.js.org).
+`cpk-ui` is a foundational design system and UI components library managed by Cross-Platform Korea. It is built using our preferred technologies, including [kstyled](https://hyodotdev.github.io/kstyled), [typescript](https://www.typescriptlang.org/), [jest](https://jestjs.io), [react-native-testing-library](https://github.com/callstack/react-native-testing-library), [expo](https://expo.io), and [storybook](https://storybook.js.org).
 
 ### Philosophy
 
@@ -40,17 +40,32 @@ For detailed performance information, see our [Performance Guide](docs/PERFORMAN
 #### For Expo
 
 ```sh
-expo install cpk-ui @emotion/react @emotion/native @expo/vector-icons react-native-gesture-handler react-native-svg expo-screen-orientation @expo/match-media expo-haptics
+expo install cpk-ui kstyled @expo/vector-icons react-native-gesture-handler react-native-svg expo-screen-orientation @expo/match-media expo-haptics
+
+# Install dev dependencies
+npm install -D babel-plugin-kstyled
 ```
 
 #### For React Native CLI
 
 ```sh
 # Using yarn
-yarn add cpk-ui @emotion/react @emotion/native @expo/vector-icons react-native-gesture-handler react-native-svg expo-screen-orientation @expo/match-media
+yarn add cpk-ui kstyled @expo/vector-icons react-native-gesture-handler react-native-svg expo-screen-orientation @expo/match-media
+yarn add -D babel-plugin-kstyled
 
 # Install expo modules
 npx install-expo-modules@latest
+```
+
+#### Configure Babel
+
+Add `babel-plugin-kstyled` to your `babel.config.js`:
+
+```javascript
+module.exports = {
+  presets: ['babel-preset-expo'],
+  plugins: ['babel-plugin-kstyled'],
+};
 ```
 
 ### Usage
@@ -130,14 +145,12 @@ return <Main/>
 
 ### Compatibility
 
-|      Package       | Version  |
-| :----------------: | :------: |
-|       react        | >=16.13  |
-|    react-native    |  >=0.58  |
-|      emotion       | >=11.0.0 |
-|   emotion/react    | >=11.0.0 |
-|   emotion/native   | >=11.0.0 |
-| @expo/vector-icons |    \*    |
+|      Package       | Version |
+| :----------------: | :-----: |
+|       react        | >=16.13 |
+|    react-native    | >=0.58  |
+|      kstyled       | >=0.1.0 |
+| @expo/vector-icons |   \*    |
 
 ### Troubleshooting
 

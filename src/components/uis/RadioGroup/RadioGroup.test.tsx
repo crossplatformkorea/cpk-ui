@@ -133,6 +133,15 @@ describe('[RadioButton]', () => {
 
     const circleRadio = testingLib.getByTestId('circle-radio-0');
 
+    // Get initial styles before layout
+    const initialStyle = circleRadio.props.style;
+    const initialMargin = Array.isArray(initialStyle)
+      ? initialStyle.find((s: any) => s && s.margin !== undefined)?.margin
+      : initialStyle?.margin;
+
+    // Initially margin should be 0 since innerLayout is not set
+    expect(initialMargin).toBe(0);
+
     act(() => {
       circleRadio.props.onLayout({
         nativeEvent: {
@@ -144,10 +153,15 @@ describe('[RadioButton]', () => {
       });
     });
 
-    expect(circleRadio.props.innerLayout).toEqual({
-      width: 40,
-      height: 40,
-    });
+    // After layout, the styles should reflect the innerLayout values
+    // margin should be 2 and borderRadius should be width/2 = 20
+    const updatedStyle = testingLib.getByTestId('circle-radio-0').props.style;
+    const styleWithLayout = Array.isArray(updatedStyle)
+      ? updatedStyle.find((s: any) => s && s.margin !== undefined)
+      : updatedStyle;
+
+    expect(styleWithLayout.margin).toBe(2);
+    expect(styleWithLayout.borderRadius).toBe(20); // 40 / 2
   });
 
   describe('colors', () => {

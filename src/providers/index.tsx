@@ -1,7 +1,7 @@
 import type {MutableRefObject} from 'react';
 import {useRef} from 'react';
 import {View} from 'react-native';
-import {css} from '@emotion/native';
+import {css} from 'kstyled';
 import {useFonts} from 'expo-font';
 
 import createCtx from '../utils/createCtx';

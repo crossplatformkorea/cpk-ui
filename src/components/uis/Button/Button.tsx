@@ -6,9 +6,9 @@ import type {
   TouchableHighlightProps,
   ViewStyle,
 } from 'react-native';
-import {Platform, Text, TouchableHighlight, View} from 'react-native';
+import {Platform, TouchableHighlight, View} from 'react-native';
 import {useHover} from 'react-native-web-hooks';
-import styled, {css} from '@emotion/native';
+import {styled, css} from 'kstyled';
 
 import {useTheme} from '../../../providers/ThemeProvider';
 import {cloneElemWithDefaultColors} from '../../../utils/guards';
@@ -64,11 +64,11 @@ type Styles = {
 };
 
 type ButtonContainerStyleProps = {
-  type: ButtonType;
-  size?: ButtonSizeType;
-  outlined?: boolean;
-  disabled?: boolean;
-  loading?: boolean;
+  $type: ButtonType;
+  $size?: ButtonSizeType;
+  $outlined?: boolean;
+  $disabled?: boolean;
+  $loading?: boolean;
 };
 
 const ButtonContainer = styled.View<ButtonContainerStyleProps>`
@@ -139,8 +139,11 @@ const calculateStyles = ({
     container: [
       css`
         background-color: ${backgroundColor};
-        border-color: ${borderColor};
-        border-width: ${borderWidth + 'px'};
+        border-top-color: ${borderColor};
+        border-bottom-color: ${borderColor};
+        border-left-color: ${borderColor};
+        border-right-color: ${borderColor};
+        border-width: ${borderWidth}px;
         padding: ${padding};
       `,
       styles?.container,
@@ -174,10 +177,8 @@ const calculateStyles = ({
             shadowOpacity: 0.24,
             shadowRadius: 16,
             elevation: 10,
+            borderRadius,
           },
-          css`
-            border-radius: ${borderRadius + 'px'};
-          `,
           styles?.hovered,
         ]
       : undefined,
@@ -185,7 +186,10 @@ const calculateStyles = ({
       ? [
           css`
             background-color: ${theme.button.disabled.bg};
-            border-color: ${theme.bg.disabled};
+            border-top-color: ${theme.bg.disabled};
+            border-bottom-color: ${theme.bg.disabled};
+            border-left-color: ${theme.bg.disabled};
+            border-right-color: ${theme.bg.disabled};
           `,
           styles?.disabled,
         ]
@@ -347,8 +351,8 @@ export function Button({
       loadingView: React.JSX.Element;
     }): React.JSX.Element => (
       <ButtonContainer
-        disabled={innerDisabled}
-        size={size}
+        $disabled={innerDisabled}
+        $size={size}
         style={[
           hovered && !innerDisabled && compositeStyles.hovered,
           compositeStyles.container,
@@ -357,13 +361,10 @@ export function Button({
               background-color: transparent;
             `,
           innerDisabled && compositeStyles.disabled,
-          !!borderRadius &&
-            css`
-              border-radius: ${borderRadius + 'px'};
-            `,
+          !!borderRadius && {borderRadius},
         ]}
         testID={loading ? 'loading-view' : 'button-container'}
-        type={type}
+        $type={type}
       >
         <View style={compositeStyles.content}>{children}</View>
         <View style={compositeStyles.loading}>{loadingView}</View>
@@ -399,7 +400,7 @@ export function Button({
     () => [
       style,
       css`
-        border-radius: ${borderRadius + 'px'};
+        border-radius: ${borderRadius}px;
       `,
     ],
     [style, borderRadius],

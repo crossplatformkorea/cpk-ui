@@ -37,6 +37,21 @@ module.exports = {
       os: false,
     };
 
+    // Ensure babel-loader processes our src files BEFORE TypeScript
+    const path = require('path');
+    const srcPath = path.resolve(__dirname, '../src');
+
+    // Find the babel-loader rule
+    const babelRule = config.module.rules.find(rule =>
+      rule.test && rule.test.toString().includes('jsx')
+    );
+
+    if (babelRule && babelRule.use) {
+      // Make sure our src directory is explicitly included
+      babelRule.include = [srcPath];
+      console.log('[Storybook] Configured babel-loader to process:', srcPath);
+    }
+
     return config;
   },
 };

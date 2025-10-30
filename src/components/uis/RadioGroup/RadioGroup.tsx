@@ -1,7 +1,7 @@
 import React, {useCallback, useMemo} from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {View} from 'react-native';
-import styled from '@emotion/native';
+import {styled} from 'kstyled';
 
 import type {RadioButtonProps, RadioButtonStyles} from './RadioButton';
 import RadioButtonComp from './RadioButton';

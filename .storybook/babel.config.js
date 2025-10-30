@@ -2,13 +2,17 @@ module.exports = {
   presets: [
     '@babel/preset-env',
     '@babel/preset-typescript',
+    '@babel/preset-react',
+  ],
+  plugins: [
     [
-      '@babel/preset-react',
+      'babel-plugin-kstyled',
       {
-        runtime: 'automatic',
-        importSource: '@emotion/react',
+        debug: false,
+        importName: 'kstyled',
+        platformStyles: true,
+        autoHoist: false,
       },
     ],
   ],
-  plugins: ['@emotion'],
 };

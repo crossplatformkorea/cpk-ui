@@ -2,16 +2,16 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
 import {Pressable, View} from 'react-native';
-import styled, {css} from '@emotion/native';
+import {styled, css} from 'kstyled';
 
 import type {IconName} from '../Icon/Icon';
 import {Icon} from '../Icon/Icon';
 
-const Container = styled.View`
+const Container = styled(View)`
   flex-direction: row;
 `;
 
-const StarContainer = styled.View`
+const StarContainer = styled(View)`
   padding: 1px;
 
   flex-direction: row;
@@ -68,7 +68,7 @@ export function Rating({
   const starContainerStyles = useMemo(
     () => [
       css`
-        width: ${size + 'px'};
+        width: ${size}px;
       `,
       styles?.starContainer,
     ],

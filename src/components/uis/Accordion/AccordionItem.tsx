@@ -1,15 +1,15 @@
 // Caveat: Expo web needs React to be imported
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import type {LayoutChangeEvent} from 'react-native';
-import {Animated, Easing, View} from 'react-native';
-import styled, {css} from '@emotion/native';
+import {Animated, Easing, TouchableOpacity, View} from 'react-native';
+import {styled, css} from 'kstyled';
 
 import {Icon} from '../Icon/Icon';
 import {Typography} from '../Typography/Typography';
 
 import type {AccordionBaseProps} from './Accordion';
 
-const TitleTouch = styled.TouchableOpacity`
+const TitleTouch = styled(TouchableOpacity)`
   height: 48px;
   background-color: ${({theme}) => theme.bg.basic};
 
@@ -23,7 +23,7 @@ const StyledIcon = styled(Icon)`
   font-weight: bold;
 `;
 
-const ItemTouch = styled.TouchableOpacity`
+const ItemTouch = styled(TouchableOpacity)`
   background-color: ${({theme}) => theme.bg.paper};
   padding: 8px 12px;
 

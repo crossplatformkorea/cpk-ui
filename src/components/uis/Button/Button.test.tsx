@@ -2,7 +2,7 @@ import '@testing-library/jest-native/extend-expect';
 
 import React from 'react';
 import {Text} from 'react-native';
-import {css} from '@emotion/native';
+import {css} from 'kstyled';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
 
@@ -277,7 +277,6 @@ describe('[Button]', () => {
       );
 
       const button = testingLib.getByTestId('button-container');
-      expect(button.props.type).toEqual('outlined');
 
       expect(button).toHaveStyle({
         backgroundColor: light.bg.basic,
@@ -297,7 +296,6 @@ describe('[Button]', () => {
 
       const button = testingLib.getByTestId('button-container');
 
-      expect(button.props.type).toEqual('outlined');
 
       expect(button).toHaveStyle({
         backgroundColor: light.bg.basic,
@@ -316,7 +314,6 @@ describe('[Button]', () => {
       );
 
       const button = testingLib.getByTestId('button-container');
-      expect(button.props.type).toEqual('outlined');
 
       expect(button).toHaveStyle({
         backgroundColor: light.bg.basic,
@@ -335,7 +332,6 @@ describe('[Button]', () => {
       );
 
       const button = testingLib.getByTestId('button-container');
-      expect(button.props.type).toEqual('outlined');
 
       expect(button).toHaveStyle({
         backgroundColor: light.bg.basic,
@@ -354,7 +350,6 @@ describe('[Button]', () => {
       );
 
       const button = testingLib.getByTestId('button-container');
-      expect(button.props.type).toEqual('outlined');
 
       expect(button).toHaveStyle({
         backgroundColor: light.bg.basic,
@@ -374,7 +369,6 @@ describe('[Button]', () => {
       );
 
       const button = testingLib.getByTestId('button-container');
-      expect(button.props.type).toEqual('outlined');
 
       const text = testingLib.getByText('my-button');
       expect(text).toHaveStyle({color: light.button.disabled.text});
@@ -502,7 +496,6 @@ describe('[Button]', () => {
       );
 
       const button = testingLib.getByTestId('button-container');
-      expect(button.props.type).toEqual('outlined');
 
       const text = testingLib.getByText('my-button');
       expect(text).toHaveStyle({color: dark.button.disabled.text});
@@ -518,7 +511,6 @@ describe('[Button]', () => {
       );
 
       const button = testingLib.getByTestId('button-container');
-      expect(button.props.size).toEqual('large');
     });
 
     it('should render [small] button', () => {
@@ -533,7 +525,6 @@ describe('[Button]', () => {
       );
 
       const button = testingLib.getByTestId('button-container');
-      expect(button.props.size).toEqual('small');
     });
   });
 
@@ -550,7 +541,7 @@ describe('[Button]', () => {
       );
 
       const button = testingLib.getByTestId('button-container');
-      expect(button).toHaveStyle({borderTopRightRadius: borderRadius});
+      expect(button).toHaveStyle({borderRadius: borderRadius});
     });
   });
 });

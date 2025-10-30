@@ -12,12 +12,9 @@ module.exports = (api) => {
       presets: [
         '@babel/preset-env',
         '@babel/preset-typescript',
-        [
-          '@babel/preset-react',
-          {runtime: 'automatic', importSource: '@emotion/react'},
-        ],
+        '@babel/preset-react',
       ],
-      plugins: ['@emotion'],
+      plugins: ['babel-plugin-kstyled'],
     };
   }
 
@@ -30,11 +27,7 @@ module.exports = (api) => {
         },
       ],
       '@babel/preset-typescript',
-      [
-        '@babel/preset-react',
-        {runtime: 'automatic', importSource: '@emotion/react'},
-      ],
     ],
-    plugins: ['@emotion', 'react-native-reanimated/plugin'],
+    plugins: ['babel-plugin-kstyled', 'react-native-reanimated/plugin'],
   };
 };

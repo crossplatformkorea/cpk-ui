@@ -1,5 +1,6 @@
 import type {ComponentProps} from 'react';
-import styled, {css} from '@emotion/native';
+import {SafeAreaView} from 'react-native';
+import {styled, css} from 'kstyled';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {withThemeProvider} from '../../../../.storybook/decorators';
@@ -8,7 +9,7 @@ import {Typography} from '../../uis/Typography/Typography';
 import {Button} from '../../uis/Button/Button';
 import AlertDialog from './AlertDialog';
 
-const Container = styled.SafeAreaView`
+const Container = styled(SafeAreaView)`
   background-color: ${({theme}) => theme.bg.basic};
 `;
 

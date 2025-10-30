@@ -7,8 +7,8 @@
 - Use **explicit type definitions** for function parameters and return values.
 - Always use **named exports** for utility functions.
 - Prefer **functional components** over class components.
-- Use `styled.View` instead of `View` for wrapping components.
-- **Use `css` from `@emotion/native` for inline styles instead of passing props to `styled-components`**.
+- Use `styled(View)` from `kstyled` instead of plain `View` for wrapping components.
+- **Use `css` from `kstyled` for inline styles instead of passing props to styled components**.
 - Follow **consistent indentation, double quotes for strings, and no semicolons**.
 
 ## 2️⃣ React Native Component Guidelines
@@ -36,8 +36,8 @@
    *
    * See the style guide: https://github.com/hyochan/style-guide/blob/main/docs/REACT.md
    */
-  import styled, {css} from '@emotion/native';
   import {View} from 'react-native';
+  import {styled, css} from 'kstyled';
 
   type Props = {};
 
@@ -65,13 +65,13 @@
     );
   }
 
-  const Container = styled.View`
+  const Container = styled(View)`
     flex: 1;
   `;
   ```
 
-- **Use `css` from `@emotion/native` for inline styles, rather than passing props to `styled-components`**.
-- **Avoid passing props to `styled-components`, unless necessary**.
+- **Use `css` from `kstyled` for inline styles, rather than passing props to styled components**.
+- **Avoid passing props to styled components, unless necessary**.
 - **React hooks (`useState`, `useEffect`, etc.)** should be used instead of class-based components.
 
 ## 3️⃣ File & Directory Structure
@@ -177,10 +177,10 @@ Each subfolder serves a specific purpose:
   );
   ```
 
-## 6️⃣ Styling Guidelines (Emotion & Inline CSS)
+## 6️⃣ Styling Guidelines (kstyled & Inline CSS)
 
-- **Use `css` from `@emotion/native` for inline styles instead of passing props to `styled-components`**.
-- **Avoid defining styles inside `styled-components` when dynamic styles are needed**.
+- **Use `css` from `kstyled` for inline styles instead of passing props to styled components**.
+- **Avoid defining styles inside styled components when dynamic styles are needed**.
 - **Prefer inline styles for components used less than twice in a file**.
 - **For responsive design, always use the `isTablet` property from `useCPK()`**:
   ```tsx
@@ -189,7 +189,8 @@ Each subfolder serves a specific purpose:
 - **Example (Allowed - `css` in inline style)**:
 
   ```tsx
-  import styled, {css} from '@emotion/native';
+  import {View, Text} from 'react-native';
+  import {styled, css} from 'kstyled';
 
   export default function ExampleComponent() {
     return (
@@ -207,20 +208,20 @@ Each subfolder serves a specific purpose:
     );
   }
 
-  const StyledView = styled.View`
+  const StyledView = styled(View)`
     padding: 16px;
   `;
   ```
 
-- **Example (Not Allowed - Using props inside `styled-components`)**:
+- **Example (Not Allowed - Using props inside styled components)**:
 
   ```tsx
-  const Button = styled.TouchableOpacity<{isActive: boolean}>`
+  const Button = styled(TouchableOpacity)<{isActive: boolean}>`
     background-color: ${(props) => (props.isActive ? 'blue' : 'gray')};
   `;
   ```
 
-  **🚨 Instead, use inline `css` from `@emotion/native`**:
+  **🚨 Instead, use inline `css` from `kstyled`**:
 
   ```tsx
   <TouchableOpacity
@@ -259,35 +260,28 @@ Each subfolder serves a specific purpose:
 
 - **Dynamic Values in CSS Strings**
 
-  When using dynamic values with units in CSS strings, always use string concatenation to avoid an Emotion bug that occurs with template literals:
+  With kstyled, you can directly append units to template literal values:
 
   ```tsx
   const height = 50;
-  
-  // ❌ Don't use this format - units will be stripped
+
+  // ✅ Use this format - direct unit concatenation
   <View
     style={css`
       height: ${height}px;
     `}
   />;
-  
-  // ✅ Always use this format instead
-  <View
-    style={css`
-      height: ${height + 'px'};
-    `}
-  />;
   ```
 
-  **🚨 Important:** The `+ 'px'` syntax is required because Emotion has a bug that strips units when using template literals with units directly. Always write `height: ${height + 'px'};` instead of `height: ${height}px;` to prevent this issue.
+  **💡 Note:** Unlike emotion, kstyled supports direct unit concatenation in template literals. Always write `height: ${height}px;` instead of `height: ${height + 'px'};` for cleaner code.
 
 - **Shadow and Elevation Styles**
 
-  For shadow and elevation styles, use React Native inline styles instead of Emotion CSS to ensure proper platform compatibility:
+  For shadow and elevation styles, use React Native inline styles instead of kstyled CSS to ensure proper platform compatibility:
 
   ```tsx
-  // ❌ Don't use shadow styles in Emotion CSS
-  const StyledView = styled.View`
+  // ❌ Don't use shadow styles in kstyled CSS
+  const StyledView = styled(View)`
     elevation: ${elevation};
     shadow-offset: {
       width: 0,
@@ -342,7 +336,7 @@ Each subfolder serves a specific purpose:
 - Use **TypeScript & React Hooks**.
 - Manage state with **Zustand**.
 - Fetch data using **React Query**.
-- **Use `css` from `@emotion/native` instead of passing props to `styled-components`**.
+- **Use `css` from `kstyled` instead of passing props to styled components**.
 - Structure files properly in `src/components/uis`, `app/`, and `stores/`.
 - Follow **consistent Git commit message rules**.
 
