@@ -5,8 +5,8 @@ import type {
   StyleProp,
   ViewStyle,
 } from "react-native";
-import { ActivityIndicator, Image } from "react-native";
-import styled from "@emotion/native";
+import { ActivityIndicator, Image, View } from "react-native";
+import {styled} from "kstyled";
 import { useTheme } from "../../../providers/ThemeProvider";
 import type {BaseComponentProps} from "../../../types/common";
 
@@ -24,7 +24,7 @@ export interface LoadingIndicatorProps extends BaseComponentProps {
   customElement?: React.JSX.Element | (() => React.JSX.Element);
 }
 
-const Container = styled.View`
+const Container = styled(View)`
   justify-content: center;
   align-items: center;
 `;

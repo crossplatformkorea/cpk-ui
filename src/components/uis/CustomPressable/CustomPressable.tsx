@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import type {PressableProps, StyleProp, ViewStyle} from 'react-native';
 import {Pressable} from 'react-native';
-import {css} from '@emotion/native';
+import {css} from 'kstyled';
 import {useCPK} from '../../../providers';
 
 const DEFAULT_HIT_SLOP = {top: 4, bottom: 4, left: 6, right: 6};

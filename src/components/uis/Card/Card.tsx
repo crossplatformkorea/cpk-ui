@@ -5,11 +5,10 @@
  */
 import React from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
-import {View} from 'react-native';
-import styled, {css} from '@emotion/native';
+import {TouchableOpacity, View} from 'react-native';
+import {styled, css} from 'kstyled';
 
 import {useTheme} from '../../../providers/ThemeProvider';
-import type {CpkTheme} from '../../../utils/theme';
 
 type Styles = {
   container?: StyleProp<ViewStyle>;
@@ -91,12 +90,12 @@ export default function Card({
 }
 
 const Container = styled.View`
-  background-color: ${({theme}: {theme: CpkTheme}) => theme.bg.paper};
+  background-color: ${({theme}) => theme.bg.paper};
   border-radius: 8px;
 `;
 
 const TouchableContainer = styled.TouchableOpacity`
-  background-color: ${({theme}: {theme: CpkTheme}) => theme.bg.paper};
+  background-color: ${({theme}) => theme.bg.paper};
   border-radius: 8px;
 `;
 

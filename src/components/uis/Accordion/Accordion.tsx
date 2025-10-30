@@ -1,11 +1,12 @@
 import React, {useMemo} from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
-import styled from '@emotion/native';
+import {View} from 'react-native';
+import {styled} from 'kstyled';
 
 import type {AccordionItemDataType} from './AccordionItem';
 import {AccordionItem} from './AccordionItem';
 
-const Container = styled.View`
+const Container = styled(View)`
   flex-direction: column;
 `;
 

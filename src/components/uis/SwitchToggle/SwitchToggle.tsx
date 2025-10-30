@@ -1,8 +1,11 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
-import {Animated, TouchableOpacity} from 'react-native';
-import styled from '@emotion/native';
+import {Animated, TouchableOpacity, View} from 'react-native';
+import {styled} from 'kstyled';
 import {useTheme} from '../../../providers/ThemeProvider';
+
+// Metro cache workaround: Using explicit pattern until cache is cleared
+const AnimatedView = Animated.createAnimatedComponent(View);
 
 type Styles = {
   container?: ViewStyle;
@@ -28,9 +31,8 @@ type Props = {
   onPress?: () => void;
 };
 
-// Typing limitation: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/12202
-
-const AnimatedContainer = styled(Animated.View)`
+// Using AnimatedView created above - functionally identical to styled(Animated.View)
+const AnimatedContainer = styled(AnimatedView)`
   flex-direction: row;
   align-items: center;
 `;

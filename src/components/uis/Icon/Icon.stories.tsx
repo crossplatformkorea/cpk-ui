@@ -1,6 +1,6 @@
 import type {ComponentProps} from 'react';
 import {View} from 'react-native';
-import {css} from '@emotion/native';
+import {css} from 'kstyled';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Icon, iconList} from './Icon';
 import {withThemeProvider} from '../../../../.storybook/decorators';

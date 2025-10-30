@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useRef} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
-import {Animated, Platform, View} from 'react-native';
-import styled, {css} from '@emotion/native';
+import {Animated, Platform, TouchableOpacity, View} from 'react-native';
+import {styled, css} from 'kstyled';
 
 import {
   CheckboxWrapper,
@@ -35,7 +35,7 @@ export interface CheckboxProps {
   startElement?: React.JSX.Element;
 }
 
-const Container = styled.TouchableOpacity`
+const Container = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
 `;
@@ -50,7 +50,9 @@ const StyledCheckboxOutlined = styled(CheckboxWrapperOutlined)`
   align-items: center;
 `;
 
-const StyledCheckbox = styled(CheckboxWrapper)`
+// Create animated version for checkbox that needs animation
+const AnimatedView = Animated.createAnimatedComponent(View);
+const AnimatedCheckbox = styled(AnimatedView)`
   width: 20px;
   height: 20px;
   margin: 0 6px;
@@ -59,9 +61,9 @@ const StyledCheckbox = styled(CheckboxWrapper)`
   align-items: center;
 `;
 
-const StyledCheck = styled(Icon)<{checked?: boolean}>`
+const StyledCheck = styled(Icon)<{$checked?: boolean}>`
   font-weight: bold;
-  color: ${({theme, checked}) => (checked ? theme.bg.basic : 'transparent')};
+  color: ${({theme, $checked}) => ($checked ? theme.bg.basic : 'transparent')};
 `;
 
 export function Checkbox({
@@ -74,9 +76,9 @@ export function Checkbox({
   checked = false,
   onPress,
 }: CheckboxProps): React.JSX.Element {
-  const animatedValue = new Animated.Value(0);
-  const fadeAnim = useRef(animatedValue).current;
-  const scaleAnim = useRef(animatedValue).current;
+  // Separate animated values for fade and scale
+  const fadeAnim = useRef(new Animated.Value(checked ? 1 : 0)).current;
+  const scaleAnim = useRef(new Animated.Value(checked ? 1 : 0.8)).current; // Start from 0.8, not 0
   const {theme} = useTheme();
 
   // Memoize animation config
@@ -91,13 +93,13 @@ export function Checkbox({
   );
 
   useEffect(() => {
-    Animated.sequence([
+    Animated.parallel([
       Animated.spring(fadeAnim, {
-        toValue: !checked ? 0 : 1,
+        toValue: checked ? 1 : 0,
         ...animationConfig,
       }),
       Animated.spring(scaleAnim, {
-        toValue: !checked ? 0 : 1,
+        toValue: checked ? 1 : 0.8, // Scale to 0.8 when unchecked, not 0
         ...animationConfig,
       }),
     ]).start();
@@ -141,24 +143,19 @@ export function Checkbox({
       <View style={containerStyles}>
         {startElement}
         <StyledCheckboxOutlined
-          checked={checked}
-          disabled={disabled}
+          $checked={checked}
+          $disabled={disabled}
           style={styles?.checkbox}
           testID="cpk-ui-checkbox"
-          type={color}
+          $type={color}
         >
-          <StyledCheckbox
-            checked={checked}
-            disabled={disabled}
-            style={animatedStyles}
-            type={color}
-          >
+          <AnimatedCheckbox style={animatedStyles}>
             <StyledCheck
-              checked={checked}
+              $checked={checked}
               name="Check"
               style={styles?.check}
             />
-          </StyledCheckbox>
+          </AnimatedCheckbox>
         </StyledCheckboxOutlined>
         {endElement}
       </View>

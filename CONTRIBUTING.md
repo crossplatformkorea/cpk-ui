@@ -8,7 +8,7 @@
 2. [Expo](https://expo.io)
 3. [vscode](https://code.visualstudio.com)
    - We use `vscode` as our IDE. Please install the `eslint` plugin.
-4. [emotion](https://emotion.sh/docs/introduction)
+4. [kstyled](https://hyodotdev.github.io/kstyled)
 
 ### Things to Keep in Mind
 

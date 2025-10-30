@@ -21,11 +21,10 @@ import {
   View,
 } from 'react-native';
 import {useHover} from 'react-native-web-hooks';
-import {css} from '@emotion/native';
+import {css} from 'kstyled';
 
 import {Icon} from '../Icon/Icon';
 import {cloneElemWithDefaultColors} from '../../../utils/guards';
-import {Global} from '@emotion/react';
 import {useTheme} from '../../../providers/ThemeProvider';
 import {Typography} from '../Typography/Typography';
 import {isWeb, safePlatformSelect} from '../../../utils/platform';
@@ -497,64 +496,37 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
     ]);
 
     return (
-      <>
-        {isWeb() ? <WebStyles /> : null}
-        <View
-          ref={safePlatformSelect({web: webRef, default: undefined})}
-          style={[
-            css`
-              width: 100%;
-            `,
-            style,
-          ]}
-          testID="edit-text"
-        >
-          {renderLabel()}
-          {renderContainer(renderInput())}
-          {renderError() || renderCounter() ? (
-            <View
-              style={css`
-                margin-top: 6px;
+      <View
+        ref={safePlatformSelect({web: webRef, default: undefined})}
+        style={[
+          css`
+            width: 100%;
+          `,
+          style,
+        ]}
+        testID="edit-text"
+      >
+        {renderLabel()}
+        {renderContainer(renderInput())}
+        {renderError() || renderCounter() ? (
+          <View
+            style={css`
+              margin-top: 6px;
 
-                flex-direction: ${!renderError() && renderCounter()
-                  ? 'row-reverse'
-                  : 'row'};
-                gap: 4px;
-              `}
-            >
-              {renderError()}
-              {renderCounter()}
-            </View>
-          ) : null}
-        </View>
-      </>
+              flex-direction: ${!renderError() && renderCounter()
+                ? 'row-reverse'
+                : 'row'};
+              gap: 4px;
+            `}
+          >
+            {renderError()}
+            {renderCounter()}
+          </View>
+        ) : null}
+      </View>
     );
   },
 );
-
-// Memoize the WebStyles component
-const WebStyles = React.memo((): React.JSX.Element => {
-  return (
-    <Global
-      // @ts-ignore
-      styles={css`
-        input:autofill,
-        input:autofill:hover,
-        input:autofill:focus,
-        input:autofill:active {
-          -webkit-text-fill-color: #787878;
-          box-shadow: 0 0 0px 1000px #ededed inset;
-          transition: background-color 5000s ease-in-out 0s;
-        }
-        ::-webkit-scrollbar {
-          display: none;
-        }
-      `}
-    />
-  );
-});
-
-WebStyles.displayName = 'WebStyles';
 
 // Export memoized EditText component for better performance
 export default React.memo(EditText) as typeof EditText;

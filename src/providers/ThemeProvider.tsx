@@ -3,11 +3,7 @@ import "@expo/match-media";
 import { useEffect, useState } from "react";
 import type { ColorSchemeName } from "react-native";
 import { useMediaQuery } from "react-responsive";
-import type { Theme } from "@emotion/react";
-import {
-  ThemeProvider as EmotionThemeProvider,
-  withTheme,
-} from "@emotion/react";
+import { ThemeProvider as KStyledThemeProvider } from "kstyled";
 
 import type { CpkTheme, ThemeParam } from "../utils/theme";
 import { dark, light } from "../utils/colors";
@@ -25,7 +21,7 @@ export type ThemeContext = {
     isTablet: boolean;
     isDesktop: boolean;
   };
-  theme: Theme & CpkTheme;
+  theme: CpkTheme;
   changeThemeType: (themeType?: ColorSchemeName) => void;
 };
 
@@ -170,11 +166,11 @@ export function ThemeProvider({
       }}
     >
       {/* @ts-ignore */}
-      <EmotionThemeProvider theme={{ ...theme, ...media }}>
+      <KStyledThemeProvider theme={{ ...theme, ...media }}>
         {children}
-      </EmotionThemeProvider>
+      </KStyledThemeProvider>
     </CpkProvider>
   );
 }
 
-export { useCtx as useTheme, withTheme };
+export { useCtx as useTheme };

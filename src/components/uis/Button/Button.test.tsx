@@ -2,7 +2,7 @@ import '@testing-library/jest-native/extend-expect';
 
 import React from 'react';
 import {Text} from 'react-native';
-import {css} from '@emotion/native';
+import {css} from 'kstyled';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
 

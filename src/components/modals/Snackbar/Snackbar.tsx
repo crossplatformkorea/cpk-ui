@@ -1,7 +1,7 @@
 import React, {forwardRef, useImperativeHandle, useState, useCallback, useMemo} from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
-import {Modal, Platform, StyleSheet, View} from 'react-native';
-import styled, {css} from '@emotion/native';
+import {Modal, Platform, SafeAreaView, StyleSheet, View} from 'react-native';
+import {styled, css} from 'kstyled';
 
 import {SnackbarTimer} from './const';
 import {Button, ButtonColorType} from '../../uis/Button/Button';
@@ -9,7 +9,7 @@ import {useTheme} from '../../../providers/ThemeProvider';
 import {Icon} from '../../uis/Icon/Icon';
 import {Typography} from '../../uis/Typography/Typography';
 
-const Container = styled.View`
+const Container = styled(View)`
   flex: 1;
   align-self: stretch;
 
@@ -17,8 +17,8 @@ const Container = styled.View`
   justify-content: center;
 `;
 
-const SnackbarContainer = styled.SafeAreaView<{color: ButtonColorType}>`
-  background-color: ${({theme, color}) => theme.button[color].bg};
+const SnackbarContainer = styled(SafeAreaView)<{$color: ButtonColorType}>`
+  background-color: ${({theme, $color}) => theme.button[$color].bg};
   border-radius: 8px;
   margin-bottom: 52px;
   margin-left: 12px;
@@ -29,12 +29,12 @@ const SnackbarContainer = styled.SafeAreaView<{color: ButtonColorType}>`
   align-items: center;
 `;
 
-const ActionContainer = styled.View`
+const ActionContainer = styled(View)`
   margin-right: 4px;
 `;
 
-const SnackbarText = styled(Typography.Body2)<{color: ButtonColorType}>`
-  color: ${({theme, color}) => theme.button[color].text};
+const SnackbarText = styled(Typography.Body2)<{$color: ButtonColorType}>`
+  color: ${({theme, $color}) => theme.button[$color].text};
   flex: 1;
   padding: 12px;
 `;
@@ -159,11 +159,11 @@ function Snackbar(
   const SnackbarContent = useMemo(() => (
     <Container>
       <SnackbarContainer
-        color={color}
+        $color={color}
         style={containerStyles}
       >
         <SnackbarText
-          color={color}
+          $color={color}
           style={textStyles}
         >
           {text}

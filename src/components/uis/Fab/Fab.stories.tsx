@@ -1,5 +1,5 @@
 import type {ComponentProps} from 'react';
-import {css} from '@emotion/native';
+import {css} from 'kstyled';
 import type {Meta, StoryObj} from '@storybook/react';
 import {withThemeProvider} from '../../../../.storybook/decorators';
 import {Fab} from './Fab';

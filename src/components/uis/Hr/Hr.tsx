@@ -1,8 +1,9 @@
 import React from 'react';
-import styled from '@emotion/native';
+import {View} from 'react-native';
+import {styled} from 'kstyled';
 import {isEmptyObject} from '../../../utils/theme';
 
-const StyledHr = styled.View`
+const StyledHr = styled(View)`
   height: 0.5px;
   width: 100%;
   background-color: ${({theme}) => {

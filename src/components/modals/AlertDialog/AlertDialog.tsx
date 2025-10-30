@@ -15,7 +15,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import styled, {css} from '@emotion/native';
+import {styled, css} from 'kstyled';
 import {useTheme} from '../../../providers/ThemeProvider';
 import {Typography} from '../../uis/Typography/Typography';
 import {Button} from '../../uis/Button/Button';

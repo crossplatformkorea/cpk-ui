@@ -2,7 +2,7 @@ import React, {useCallback, useMemo, useRef} from 'react';
 import type {StyleProp, TouchableHighlightProps, ViewStyle} from 'react-native';
 import {Platform, TouchableHighlight, View} from 'react-native';
 import {useHover} from 'react-native-web-hooks';
-import {css} from '@emotion/native';
+import {css} from 'kstyled';
 
 import type {IconName} from '../Icon/Icon';
 import {Icon} from '../Icon/Icon';
@@ -144,7 +144,7 @@ export function IconButton({
 
   // Memoize style strings
   const borderRadiusStr = useMemo(() => '99px', []);
-  const borderWidthStr = useMemo(() => `${buttonStylesConfig.borderWidth + 'px'}`, [buttonStylesConfig.borderWidth]);
+  const borderWidthStr = useMemo(() => `${buttonStylesConfig.borderWidth}px`, [buttonStylesConfig.borderWidth]);
 
   // Memoize composite styles
   const compositeStyles: Styles = useMemo(() => ({
@@ -198,8 +198,8 @@ export function IconButton({
         style={css`
           justify-content: center;
           align-items: center;
-          height: ${iconSize + 'px'};
-          width: ${iconSize + 'px'};
+          height: ${iconSize}px;
+          width: ${iconSize}px;
         `}
       />
     ),

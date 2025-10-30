@@ -1,10 +1,9 @@
 import React, {ReactNode, useMemo} from 'react';
 import {StyleProp, Text, TextInput} from 'react-native';
 import {CpkTheme, isEmptyObject} from '../../../utils/theme';
-import {withTheme} from '../../../providers/ThemeProvider';
 import {light} from '../../../utils/colors';
 import {type TextStyle} from 'react-native';
-import styled, {css} from '@emotion/native';
+import {styled, css} from 'kstyled';
 
 type FontFamilyOptions = {
   normal: string;
@@ -15,10 +14,10 @@ type FontFamilyOptions = {
 const createBaseText = (
   colorResolver: (theme: CpkTheme) => string,
   fallbackColor: string,
-) => styled.Text<{theme?: CpkTheme; fontWeight?: 'normal' | 'bold' | 'thin'}>`
-  font-family: ${({fontWeight}) => {
+) => styled(Text)<{theme?: CpkTheme; $fontWeight?: 'normal' | 'bold' | 'thin'}>`
+  font-family: ${({$fontWeight}) => {
     const {normal, thin = normal, bold = normal} = getFontFamilies();
-    switch (fontWeight) {
+    switch ($fontWeight) {
       case 'bold':
         return bold;
       case 'thin':
@@ -35,7 +34,7 @@ const createBaseText = (
   }};
 `;
 
-type TextComponentType = ReturnType<typeof styled.Text>;
+type TextComponentType = ReturnType<typeof createBaseText>;
 
 const createTextComponent = ({
   BaseText,
@@ -48,38 +47,34 @@ const createTextComponent = ({
   lineHeight: number;
   fontWeight?: 'normal' | 'bold' | 'thin';
 }) =>
-  withTheme(
-    React.memo(({
+  React.memo(({
+    style,
+    children,
+    ...props
+  }: {
+    style?: StyleProp<TextStyle>;
+    children?: ReactNode;
+  }) => {
+    // Memoize style calculation
+    const textStyle = useMemo(() => [
+      css`
+        font-size: ${fontSize}px;
+        line-height: ${lineHeight}px;
+        font-weight: ${fontWeight};
+      `,
+      {includeFontPadding: false},
       style,
-      children,
-      theme,
-      ...props
-    }: {
-      style?: StyleProp<TextStyle>;
-      children?: ReactNode;
-      theme?: CpkTheme;
-    }) => {
-      // Memoize style calculation
-      const textStyle = useMemo(() => [
-        css`
-          font-size: ${fontSize + 'px'};
-          line-height: ${lineHeight + 'px'};
-          font-weight: ${fontWeight};
-        `,
-        {includeFontPadding: false},
-        style,
-      ], [style]);
+    ], [style]);
 
-      return (
-        <BaseText
-          {...props}
-          style={textStyle}
-        >
-          {children}
-        </BaseText>
-      );
-    })
-  ) as unknown as TextComponentType;
+    return (
+      <BaseText
+        {...props}
+        style={textStyle}
+      >
+        {children}
+      </BaseText>
+    );
+  }) as unknown as TextComponentType;
 
 const StandardBaseText = createBaseText((theme) => theme.text.basic, 'gray');
 const InvertedBaseText = createBaseText(

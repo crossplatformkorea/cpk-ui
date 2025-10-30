@@ -31,6 +31,7 @@
     "docgen",
     "hostingchannels",
     "hyochan",
+    "kstyled",
     "ondevice",
     "oneline",
     "Phosphoricons",
@@ -39,5 +40,13 @@
     "Pressable",
     "Pretendard",
     "unhovered"
-  ]
+  ],
+  "scm.defaultViewMode": "tree",
+  "scm.repositories.visible": 1,
+  "scm.repositories.sortOrder": "discovery time",
+  "git.decorations.enabled": true,
+  "git.openRepositoryInParentFolders": "never",
+  "git.autoRepositoryDetection": false,
+  "git.scanRepositories": [],
+  "git.detectSubmodules": false
 }

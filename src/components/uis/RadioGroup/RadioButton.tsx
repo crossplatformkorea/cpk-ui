@@ -5,8 +5,8 @@ import type {
   TextStyle,
   ViewStyle,
 } from 'react-native';
-import {Animated, Platform, View} from 'react-native';
-import styled, {css} from '@emotion/native';
+import {Animated, Platform, TouchableOpacity, View} from 'react-native';
+import {styled, css} from 'kstyled';
 
 import {
   ColoredText,
@@ -42,33 +42,7 @@ const Container = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const StyledRadioButton = styled(RadioButtonWrapper)<{
-  selected?: boolean;
-  disabled?: boolean;
-  type?: RadioButtonType;
-}>`
-  width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  border-width: 1px;
-  margin: 0 6px;
-
-  justify-content: center;
-  align-items: center;
-`;
-
-const StyledRadioCircle = styled(RadioWrapper)<{
-  selected?: boolean;
-  disabled?: boolean;
-  innerLayout?: LayoutRectangle;
-}>`
-  flex: 1;
-  align-self: stretch;
-
-  margin: ${({innerLayout}) => innerLayout && '2px'};
-  border-radius: ${({innerLayout}) =>
-    innerLayout && `${innerLayout.width / 2 + 'px'}`};
-`;
+const StyledRadioCircle = Animated.createAnimatedComponent(RadioWrapper);
 
 export default function RadioButton({
   testID,
@@ -84,9 +58,8 @@ export default function RadioButton({
   labelPosition = 'right',
 }: RadioButtonProps): React.JSX.Element {
   const [innerLayout, setInnerLayout] = useState<LayoutRectangle>();
-  const animatedValue = new Animated.Value(0);
-  const fadeAnim = useRef(animatedValue).current;
-  const scaleAnim = useRef(animatedValue).current;
+  const fadeAnim = useRef(new Animated.Value(selected ? 1 : 0)).current;
+  const scaleAnim = useRef(new Animated.Value(selected ? 1 : 0)).current;
 
   // Memoize layout handler
   const handleLayout = useCallback((e: any) => {
@@ -138,16 +111,18 @@ export default function RadioButton({
     [startElement, endElement, label, labelPosition, styles?.container]
   );
 
-  // Memoize animated styles
+  // Memoize animated styles with margin and borderRadius
   const animatedStyles = useMemo(
     () => [
       styles?.circle,
       {
+        margin: innerLayout ? 2 : 0,
+        borderRadius: innerLayout ? innerLayout.width / 2 : 0,
         opacity: fadeAnim,
         transform: [{scale: scaleAnim}],
       },
     ],
-    [styles?.circle, fadeAnim, scaleAnim]
+    [innerLayout, styles?.circle, fadeAnim, scaleAnim]
   );
 
   return (
@@ -159,46 +134,43 @@ export default function RadioButton({
       testID={testID}
     >
       <View style={containerStyles}>
-        <>
-          {startElement}
-          {label && labelPosition === 'left' ? (
-            <ColoredText
-              disabled={!!disabled}
-              selected={!!selected}
-              style={styles?.label}
-              type={type}
-            >
-              {label}
-            </ColoredText>
-          ) : null}
-          <StyledRadioButton
-            disabled={disabled}
-            selected={!!selected}
-            style={styles?.circleWrapper}
-            type={type}
+        {startElement}
+        {label && labelPosition === 'left' ? (
+          <ColoredText
+            $disabled={!!disabled}
+            $selected={!!selected}
+            style={styles?.label}
+            $type={type}
           >
-            <StyledRadioCircle
-              disabled={!!disabled}
-              innerLayout={innerLayout}
-              onLayout={handleLayout}
-              selected={!!selected}
-              style={animatedStyles}
-              testID={`circle-${testID}`}
-              type={type}
-            />
-          </StyledRadioButton>
-          {label && labelPosition === 'right' ? (
-            <ColoredText
-              disabled={!!disabled}
-              selected={!!selected}
-              style={styles?.label}
-              type={type}
-            >
-              {label}
-            </ColoredText>
-          ) : null}
-          {endElement}
-        </>
+            {label}
+          </ColoredText>
+        ) : null}
+        <RadioButtonWrapper
+          $disabled={disabled}
+          $selected={!!selected}
+          style={styles?.circleWrapper}
+          $type={type}
+        >
+          <StyledRadioCircle
+            $disabled={!!disabled}
+            onLayout={handleLayout}
+            $selected={!!selected}
+            style={animatedStyles}
+            testID={`circle-${testID}`}
+            $type={type}
+          />
+        </RadioButtonWrapper>
+        {label && labelPosition === 'right' ? (
+          <ColoredText
+            $disabled={!!disabled}
+            $selected={!!selected}
+            style={styles?.label}
+            $type={type}
+          >
+            {label}
+          </ColoredText>
+        ) : null}
+        {endElement}
       </View>
     </Container>
   );

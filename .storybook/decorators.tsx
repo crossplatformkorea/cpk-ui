@@ -2,7 +2,7 @@ import React from 'react';
 import {View} from 'react-native';
 import {ThemeProvider} from '../src/providers/ThemeProvider';
 import {dark, light} from '../src/utils/colors';
-import styled from '@emotion/native';
+import {styled} from 'kstyled';
 import {CpkProvider} from '../src/providers';
 import {ThemeParam} from '../src/utils/theme';
 
@@ -27,7 +27,7 @@ export const withThemeProvider = (
   );
 };
 
-const Container = styled.View`
+const Container = styled(View)`
   height: 100%;
   padding: 36px;
   background-color: ${({theme}) => theme.bg.paper};

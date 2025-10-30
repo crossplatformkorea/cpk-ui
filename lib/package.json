@@ -17,13 +17,17 @@
   },
   "homepage": "https://github.com/crossplatformkorea/cpk-ui#readme",
   "peerDependencies": {
-    "@emotion/native": ">=11.0.0",
-    "@emotion/react": ">=11.0.0",
+    "kstyled": ">=0.1.0",
     "react": ">=16.9",
     "react-native": ">=0.58",
     "react-native-gesture-handler": "*",
     "@expo/vector-icons": "*",
     "expo-haptics": "*"
+  },
+  "peerDependenciesMeta": {
+    "babel-plugin-kstyled": {
+      "optional": false
+    }
   },
   "dependencies": {
     "hyochan-welcome": "^1.0.1",
