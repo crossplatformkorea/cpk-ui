@@ -1,7 +1,6 @@
 import {Animated} from 'react-native';
 import {styled, css} from 'kstyled';
-import {CpkTheme, isEmptyObject} from '../../../utils/theme';
-import {light} from '../../../utils/colors';
+import {getTheme} from '../../../utils/theme';
 import {Typography} from '../Typography/Typography';
 
 export type ButtonType =
@@ -21,16 +20,6 @@ export type SnackbarType =
   | 'info'
   | 'danger';
 
-// Default theme resolver
-function resolveTheme(theme: undefined): typeof light;
-function resolveTheme<T extends CpkTheme>(theme: T): T;
-function resolveTheme<T extends CpkTheme>(theme?: T): T | typeof light {
-  if (!theme || isEmptyObject(theme)) {
-    return light;
-  }
-  return theme;
-}
-
 // ButtonWrapper Component
 export const ButtonWrapper = styled.View<{
   $type?: ButtonType;
@@ -40,23 +29,23 @@ export const ButtonWrapper = styled.View<{
 }>`
   border-width: ${({$outlined}) => ($outlined ? '1px' : undefined)};
   background-color: ${({theme, $type, $outlined, $loading, $disabled}) => {
-    theme = resolveTheme(theme);
+    const resolvedTheme = getTheme(theme);
 
     if ($loading) {
-      return $outlined ? undefined : theme.button[$type ?? 'primary'].bg;
+      return $outlined ? undefined : resolvedTheme.button[$type ?? 'primary'].bg;
     }
     if ($disabled) {
       return undefined;
     }
-    return $outlined ? theme.bg.basic : theme.button[$type ?? 'primary'].bg;
+    return $outlined ? resolvedTheme.bg.basic : resolvedTheme.button[$type ?? 'primary'].bg;
   }};
   border-color: ${({theme, $type, $disabled}) => {
-    theme = resolveTheme(theme);
+    const resolvedTheme = getTheme(theme);
 
     if ($disabled) {
-      return theme.bg.basic;
+      return resolvedTheme.bg.basic;
     }
-    return theme.button[$type ?? 'primary'].bg;
+    return resolvedTheme.button[$type ?? 'primary'].bg;
   }};
 `;
 
@@ -66,18 +55,17 @@ export const ButtonText = styled(Typography.Body2)<{
   $type?: ButtonType | SnackbarType;
   $disabled?: boolean;
   $loading?: boolean;
-  theme?: CpkTheme;
 }>`
   color: ${({theme, $outlined, $type, $disabled}) => {
-    theme = resolveTheme(theme);
+    const resolvedTheme = getTheme(theme);
 
     if ($outlined) {
-      return theme.text.basic;
+      return resolvedTheme.text.basic;
     }
     if ($disabled) {
-      return theme.text.disabled;
+      return resolvedTheme.text.disabled;
     }
-    return theme.button[$type ?? 'primary'].text;
+    return resolvedTheme.button[$type ?? 'primary'].text;
   }};
 `;
 
@@ -89,14 +77,14 @@ export const CheckboxWrapperOutlined = styled.View<{
 }>`
   border-width: 1px;
   border-color: ${({theme, $type, $disabled}) => {
-    theme = resolveTheme(theme);
+    const resolvedTheme = getTheme(theme);
 
     if ($disabled) {
-      return theme.bg.disabled;
+      return resolvedTheme.bg.disabled;
     }
     return $type === 'light'
-      ? theme.role.primary
-      : theme.button[$type ?? 'primary'].bg;
+      ? resolvedTheme.role.primary
+      : resolvedTheme.button[$type ?? 'primary'].bg;
   }};
 `;
 
@@ -107,17 +95,17 @@ export const CheckboxWrapper = styled.View<{
   $checked?: boolean;
 }>`
   background-color: ${({theme, $checked, $type, $disabled}) => {
-    theme = resolveTheme(theme);
+    const resolvedTheme = getTheme(theme);
 
     if ($disabled) {
       return undefined;
     }
     if (!$checked) {
-      return theme.bg.disabled;
+      return resolvedTheme.bg.disabled;
     }
     return $type === 'light'
-      ? theme.role.primary
-      : theme.button[$type ?? 'primary'].bg;
+      ? resolvedTheme.role.primary
+      : resolvedTheme.button[$type ?? 'primary'].bg;
   }};
 `;
 
@@ -135,15 +123,15 @@ export const RadioButtonWrapper = styled.View<{
   align-items: center;
   border-width: 1px;
   border-color: ${({theme, $type, $selected, $disabled}) => {
-    theme = resolveTheme(theme);
+    const resolvedTheme = getTheme(theme);
 
     if ($disabled) {
-      return theme.bg.disabled;
+      return resolvedTheme.bg.disabled;
     }
     const buttonColor = $type === 'light'
-      ? theme.role.primary
-      : theme.button[$type ?? 'primary'].bg;
-    return $selected ? buttonColor : theme.text.basic;
+      ? resolvedTheme.role.primary
+      : resolvedTheme.button[$type ?? 'primary'].bg;
+    return $selected ? buttonColor : resolvedTheme.text.basic;
   }};
   background-color: transparent;
 `;
@@ -157,17 +145,17 @@ export const RadioWrapper = styled(Animated.View)<{
   flex: 1;
   align-self: stretch;
   background-color: ${({theme, $type, $disabled, $selected}) => {
-    theme = resolveTheme(theme);
+    const resolvedTheme = getTheme(theme);
 
     if ($disabled) {
-      return theme.bg.disabled;
+      return resolvedTheme.bg.disabled;
     }
     if (!$selected) {
       return 'transparent';
     }
     return $type === 'light'
-      ? theme.role.primary
-      : theme.button[$type ?? 'primary'].bg;
+      ? resolvedTheme.role.primary
+      : resolvedTheme.button[$type ?? 'primary'].bg;
   }};
 `;
 
@@ -178,17 +166,17 @@ export const ColoredText = styled(Typography.Body2)<{
   $selected?: boolean;
 }>`
   color: ${({theme, $selected, $type, $disabled}) => {
-    theme = resolveTheme(theme);
+    const resolvedTheme = getTheme(theme);
 
     if ($disabled) {
       return undefined;
     }
     if (!$selected) {
-      return theme.text.basic;
+      return resolvedTheme.text.basic;
     }
     return $type === 'light'
-      ? theme.role.primary
-      : theme.button[$type ?? 'primary'].bg;
+      ? resolvedTheme.role.primary
+      : resolvedTheme.button[$type ?? 'primary'].bg;
   }};
 `;
 
@@ -198,9 +186,9 @@ export const SnackbarWrapper = styled.View<{
   $checked?: boolean;
 }>`
   background-color: ${({theme, $type}) => {
-    theme = resolveTheme(theme);
+    const resolvedTheme = getTheme(theme);
 
-    return !$type ? theme.bg.disabled : theme.button[$type ?? 'light'].bg;
+    return !$type ? resolvedTheme.bg.disabled : resolvedTheme.button[$type ?? 'light'].bg;
   }};
   flex-direction: row;
   text-align: left;

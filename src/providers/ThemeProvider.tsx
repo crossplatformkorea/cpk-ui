@@ -1,17 +1,18 @@
-import "@expo/match-media";
+import '@expo/match-media';
 
-import { useEffect, useState } from "react";
-import type { ColorSchemeName } from "react-native";
-import { useMediaQuery } from "react-responsive";
-import { ThemeProvider as KStyledThemeProvider } from "kstyled";
+import {useEffect, useState} from 'react';
+import type {ColorSchemeName} from 'react-native';
+import {useMediaQuery} from 'react-responsive';
+import {ThemeProvider as KStyledThemeProvider} from 'kstyled';
+import type {DefaultTheme} from 'kstyled';
 
-import type { CpkTheme, ThemeParam } from "../utils/theme";
-import { dark, light } from "../utils/colors";
-import { useDebouncedColorScheme } from "../hooks/useDebouncedColorScheme";
-import createCtx from "../utils/createCtx";
+import type {CpkTheme, ThemeParam} from '../utils/theme';
+import {dark, light} from '../utils/colors';
+import {useDebouncedColorScheme} from '../hooks/useDebouncedColorScheme';
+import createCtx from '../utils/createCtx';
 
-type ResponsiveDesignMode = "mobile-first" | "desktop-first";
-export type ThemeType = "light" | "dark";
+type ResponsiveDesignMode = 'mobile-first' | 'desktop-first';
+export type ThemeType = 'light' | 'dark';
 
 export type ThemeContext = {
   themeType: ColorSchemeName;
@@ -21,7 +22,7 @@ export type ThemeContext = {
     isTablet: boolean;
     isDesktop: boolean;
   };
-  theme: CpkTheme;
+  theme: DefaultTheme & CpkTheme;
   changeThemeType: (themeType?: ColorSchemeName) => void;
 };
 
@@ -41,7 +42,7 @@ export type ThemeProps = {
 };
 
 const genTheme = (type: ThemeType, themeParam: ThemeParam): any => {
-  const theme = type === "light" ? light : dark;
+  const theme = type === 'light' ? light : dark;
 
   return {
     ...themeParam?.[type],
@@ -99,26 +100,24 @@ export function ThemeProvider({
   children,
   initialThemeType,
   customTheme = {},
-  responsiveDesignMode = "mobile-first",
+  responsiveDesignMode = 'mobile-first',
 }: ThemeProps): React.JSX.Element {
-  const isPortrait = useMediaQuery({ orientation: "portrait" });
+  const isPortrait = useMediaQuery({orientation: 'portrait'});
 
   const isMobile = useMediaQuery(
-    responsiveDesignMode === "mobile-first"
-      ? { minWidth: 0 }
-      : { minWidth: 0, maxWidth: 767 }
+    responsiveDesignMode === 'mobile-first'
+      ? {minWidth: 0}
+      : {minWidth: 0, maxWidth: 767},
   );
 
   const isTablet = useMediaQuery(
-    responsiveDesignMode === "mobile-first"
-      ? { minWidth: 767 }
-      : { minWidth: 768, maxWidth: 992 }
+    responsiveDesignMode === 'mobile-first'
+      ? {minWidth: 767}
+      : {minWidth: 768, maxWidth: 992},
   );
 
   const isDesktop = useMediaQuery(
-    responsiveDesignMode === "mobile-first"
-      ? { minWidth: 992 }
-      : { minWidth: 0 }
+    responsiveDesignMode === 'mobile-first' ? {minWidth: 992} : {minWidth: 0},
   );
 
   const colorScheme = useDebouncedColorScheme();
@@ -132,7 +131,7 @@ export function ThemeProvider({
 
   const changeThemeType = (themeTypeProp?: ColorSchemeName): void => {
     if (!themeTypeProp) {
-      setThemeType(themeType === "light" ? "dark" : "light");
+      setThemeType(themeType === 'light' ? 'dark' : 'light');
 
       return;
     }
@@ -140,13 +139,10 @@ export function ThemeProvider({
     setThemeType(themeTypeProp);
   };
 
-  const theme: Omit<
-    CpkTheme,
-    "isPortrait" | "isMobile" | "isTablet" | "isDesktop"
-  > = {
-    light: genTheme("light", customTheme),
-    dark: genTheme("dark", customTheme),
-  }[themeType || "light"];
+  const baseTheme = {
+    light: genTheme('light', customTheme),
+    dark: genTheme('dark', customTheme),
+  }[themeType || 'light'];
 
   const media = {
     isPortrait,
@@ -155,22 +151,23 @@ export function ThemeProvider({
     isDesktop,
   };
 
+  const theme = {
+    ...baseTheme,
+    ...media,
+  } as DefaultTheme & CpkTheme;
+
   return (
     <CpkProvider
       value={{
         media,
         themeType,
         changeThemeType,
-        // @ts-ignore
         theme,
       }}
     >
-      {/* @ts-ignore */}
-      <KStyledThemeProvider theme={{ ...theme, ...media }}>
-        {children}
-      </KStyledThemeProvider>
+      <KStyledThemeProvider theme={theme}>{children}</KStyledThemeProvider>
     </CpkProvider>
   );
 }
 
-export { useCtx as useTheme };
+export {useCtx as useTheme};
