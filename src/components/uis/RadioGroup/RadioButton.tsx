@@ -78,7 +78,7 @@ export default function RadioButton({
   );
 
   useEffect(() => {
-    Animated.sequence([
+    Animated.parallel([
       Animated.spring(fadeAnim, {
         toValue: !selected ? 0 : 1,
         ...animationConfig,

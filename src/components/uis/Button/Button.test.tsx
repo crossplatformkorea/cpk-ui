@@ -10,7 +10,7 @@ import {createComponent} from '../../../../test/testUtils';
 import {Button} from './Button';
 import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
 import type {Props as ButtonProps} from './Button';
-import {ThemeType} from '../../../providers/ThemeProvider';
+import {ThemeType, ThemeProvider} from '../../../providers/ThemeProvider';
 import {dark, light} from '../../../utils/colors';
 
 let testingLib: RenderAPI;
@@ -542,6 +542,79 @@ describe('[Button]', () => {
 
       const button = testingLib.getByTestId('button-container');
       expect(button).toHaveStyle({borderRadius: borderRadius});
+    });
+  });
+
+  describe('[Button] custom theme', () => {
+    it('should render with custom primary color from theme', () => {
+      const customTheme = {
+        light: {
+          button: {
+            primary: {
+              bg: '#FF5733',
+              text: '#FFFFFF',
+            },
+          },
+        },
+      };
+
+      testingLib = render(
+        <ThemeProvider customTheme={customTheme}>
+          <Button color="primary" onPress={jest.fn} testID="custom-button" />
+        </ThemeProvider>,
+      );
+
+      const button = testingLib.getByTestId('button-container');
+      expect(button).toHaveStyle({backgroundColor: '#FF5733'});
+    });
+
+    it('should render with custom primary color in dark mode', () => {
+      const customTheme = {
+        dark: {
+          button: {
+            primary: {
+              bg: '#00BFFF',
+              text: '#000000',
+            },
+          },
+        },
+      };
+
+      testingLib = render(
+        <ThemeProvider initialThemeType="dark" customTheme={customTheme}>
+          <Button color="primary" onPress={jest.fn} testID="custom-button" />
+        </ThemeProvider>,
+      );
+
+      const button = testingLib.getByTestId('button-container');
+      expect(button).toHaveStyle({backgroundColor: '#00BFFF'});
+    });
+
+    it('should render outlined button with custom primary color', () => {
+      const customTheme = {
+        light: {
+          button: {
+            primary: {
+              bg: '#9C27B0',
+              text: '#FFFFFF',
+            },
+          },
+        },
+      };
+
+      testingLib = render(
+        <ThemeProvider customTheme={customTheme}>
+          <Button
+            type="outlined"
+            color="primary"
+            onPress={jest.fn}
+            testID="custom-button"
+          />
+        </ThemeProvider>,
+      );
+
+      const button = testingLib.getByTestId('button-container');
+      expect(button).toHaveStyle({borderBottomColor: '#9C27B0'});
     });
   });
 });

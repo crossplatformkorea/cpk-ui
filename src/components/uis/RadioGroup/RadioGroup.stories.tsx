@@ -1,4 +1,4 @@
-import type {ComponentProps} from 'react';
+import {useState} from 'react';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {withThemeProvider} from '../../../../.storybook/decorators';
@@ -29,6 +29,21 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
+  render: (args) => {
+    const [selectedValue, setSelectedValue] = useState(args.selectedValue);
+
+    return (
+      <RadioGroup
+        data={args.data}
+        labels={args.labels}
+        title={args.title}
+        labelPosition={args.labelPosition}
+        type={args.type}
+        selectedValue={selectedValue}
+        selectValue={setSelectedValue}
+      />
+    );
+  },
   args: {
     data: ['Person', 'Animal', 'Bird', 'Other'],
     labels: ['Person', 'Animal', 'Bird', 'Other'],
