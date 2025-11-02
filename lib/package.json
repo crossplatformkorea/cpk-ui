@@ -12,6 +12,10 @@
     "pack": "yarn pack",
     "publish:next": "npm publish <package>.tgz --tag next"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crossplatformkorea/cpk-ui"
+  },
   "bugs": {
     "url": "https://github.com/crossplatformkorea/cpk-ui/issues"
   },
