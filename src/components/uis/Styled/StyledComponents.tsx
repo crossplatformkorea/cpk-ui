@@ -114,10 +114,20 @@ export const RadioButtonWrapper = styled.View<{
   $type: ButtonType;
   $selected?: boolean;
   $disabled?: boolean;
+  $size?: 'small' | 'medium' | 'large' | number;
 }>`
-  width: 20px;
-  height: 20px;
-  border-radius: 10px;
+  width: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size;
+    return $size === 'small' ? 16 : $size === 'large' ? 24 : 20;
+  }};
+  height: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size;
+    return $size === 'small' ? 16 : $size === 'large' ? 24 : 20;
+  }};
+  border-radius: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size / 2;
+    return $size === 'small' ? 8 : $size === 'large' ? 12 : 10;
+  }};
   margin: 0px 6px;
   justify-content: center;
   align-items: center;
@@ -164,6 +174,7 @@ export const ColoredText = styled(Typography.Body2)<{
   $type: ButtonType;
   $disabled?: boolean;
   $selected?: boolean;
+  $size?: 'small' | 'medium' | 'large' | number;
 }>`
   color: ${({theme, $selected, $type, $disabled}) => {
     const resolvedTheme = getTheme(theme);
@@ -178,6 +189,10 @@ export const ColoredText = styled(Typography.Body2)<{
       ? resolvedTheme.role.primary
       : resolvedTheme.button[$type ?? 'primary'].bg;
   }};
+  font-size: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.7;
+    return $size === 'small' ? 12 : $size === 'large' ? 16 : 14;
+  }}px;
 `;
 
 // SnackbarWrapper Component

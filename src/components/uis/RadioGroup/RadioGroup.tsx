@@ -3,7 +3,7 @@ import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {View} from 'react-native';
 import {styled} from 'kstyled';
 
-import type {RadioButtonProps, RadioButtonStyles} from './RadioButton';
+import type {RadioButtonProps, RadioButtonStyles, RadioButtonSizeType} from './RadioButton';
 import RadioButtonComp from './RadioButton';
 import {Typography} from '../Typography/Typography';
 
@@ -29,10 +29,12 @@ type Props<T> = {
   selectedValue: T;
   selectValue?: (item: T) => void;
   type?: RadioButtonType;
+  size?: RadioButtonSizeType;
+  disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   styles?: Styles;
   labels?: string[];
-  radioType?: Omit<RadioButtonProps, 'type'>;
+  radioType?: Omit<RadioButtonProps, 'type' | 'size' | 'disabled'>;
   labelPosition?: 'left' | 'right';
 };
 
@@ -53,21 +55,23 @@ function RadioGroupContainer<T>({
   style,
   styles,
   type,
+  size = 'medium',
+  disabled = false,
   labels,
   labelPosition,
   radioType,
 }: Omit<Props<T>, 'selected'>): ReactElement {
   // Memoize title spacer to avoid re-creating View
-  const titleSpacer = useMemo(() => 
+  const titleSpacer = useMemo(() =>
     title ? <View style={{height: 8}} /> : null,
     [title]
   );
 
   // Memoize radio buttons to prevent unnecessary re-renders
-  const radioButtons = useMemo(() => 
+  const radioButtons = useMemo(() =>
     data.map((datum, i) => {
-      const handlePress = () => selectValue?.(datum);
-      
+      const handlePress = () => !disabled && selectValue?.(datum);
+
       return (
         <RadioButtonComp
           key={`radio-${i}`}
@@ -80,15 +84,17 @@ function RadioGroupContainer<T>({
           style={styles?.radio}
           styles={styles?.radioStyles}
           type={type}
+          size={size}
+          disabled={disabled}
         />
       );
     }),
-    [data, selectedValue, selectValue, labels, labelPosition, radioType, styles?.radio, styles?.radioStyles, type]
+    [data, selectedValue, selectValue, labels, labelPosition, radioType, styles?.radio, styles?.radioStyles, type, size, disabled]
   );
 
   return (
     <Container style={style}>
-      <Typography.Heading3 style={styles?.title}>{title}</Typography.Heading3>
+      {title ? <Typography.Heading3 style={styles?.title}>{title}</Typography.Heading3> : null}
       {titleSpacer}
       <Content style={styles?.container}>
         {radioButtons}

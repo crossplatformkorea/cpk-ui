@@ -3,6 +3,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 
 import {withThemeProvider} from '../../../../.storybook/decorators';
 import {RadioButtonType, RadioGroup} from './RadioGroup';
+import type {RadioButtonSizeType} from './RadioButton';
 
 const meta = {
   title: 'RadioGroup',
@@ -19,6 +20,14 @@ const meta = {
         'success',
         'warning',
       ] as RadioButtonType[],
+    },
+    size: {
+      control: 'radio',
+      options: ['small', 'medium', 'large', 16, 20, 24, 32],
+      description: 'Size can be "small", "medium", "large" or a custom number',
+    },
+    disabled: {
+      control: 'boolean',
     },
   },
   decorators: [withThemeProvider],
@@ -39,6 +48,8 @@ export const Basic: Story = {
         title={args.title}
         labelPosition={args.labelPosition}
         type={args.type}
+        size={args.size}
+        disabled={args.disabled}
         selectedValue={selectedValue}
         selectValue={setSelectedValue}
       />
@@ -50,13 +61,56 @@ export const Basic: Story = {
     labels: ['Person', 'Animal', 'Bird', 'Other'],
     selectedValue: 'Person',
     title: 'RadioGroup',
-    labelPosition: 'left',
+    labelPosition: 'right',
     type: 'primary',
+    size: 'medium',
+    disabled: false,
   },
   argTypes: {
     theme: {
       control: 'select',
       options: ['light', 'dark'],
+    },
+  },
+};
+
+export const CustomSize: Story = {
+  render: (args) => {
+    const [selectedValue, setSelectedValue] = useState(args.selectedValue);
+
+    return (
+      <RadioGroup
+        data={args.data}
+        labels={args.labels}
+        title={args.title}
+        labelPosition={args.labelPosition}
+        type={args.type}
+        size={args.size}
+        disabled={args.disabled}
+        selectedValue={selectedValue}
+        selectValue={setSelectedValue}
+      />
+    );
+  },
+  args: {
+    theme: 'light',
+    data: ['Person', 'Animal', 'Bird', 'Other'],
+    labels: ['Person', 'Animal', 'Bird', 'Other'],
+    selectedValue: 'Person',
+    title: 'RadioGroup with Custom Size',
+    labelPosition: 'right',
+    type: 'primary',
+    size: 28,
+    disabled: false,
+  },
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: ['light', 'dark'],
+    },
+    size: {
+      control: {type: 'number', min: 12, max: 48, step: 2},
+      description: 'Custom size in pixels',
     },
   },
 };

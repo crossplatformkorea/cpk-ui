@@ -16,6 +16,8 @@ import {
 
 import type {RadioButtonType} from './RadioGroup';
 
+export type RadioButtonSizeType = 'small' | 'medium' | 'large' | number;
+
 export type RadioButtonStyles = {
   container?: StyleProp<ViewStyle>;
   label?: StyleProp<TextStyle>;
@@ -31,6 +33,7 @@ export type RadioButtonProps = {
   style?: StyleProp<ViewStyle>;
   styles?: RadioButtonStyles;
   type?: RadioButtonType;
+  size?: RadioButtonSizeType;
   disabled?: boolean;
   selected?: boolean;
   endElement?: ReactElement;
@@ -51,6 +54,7 @@ export default function RadioButton({
   endElement,
   startElement,
   type = 'primary',
+  size = 'medium',
   disabled = false,
   selected,
   onPress,
@@ -94,13 +98,13 @@ export default function RadioButton({
   const containerStyles = useMemo(
     () => [
       css`
-        padding-top: 6px;
-        padding-bottom: 6px;
+        padding-top: 6;
+        padding-bottom: 6;
         padding-left: ${startElement || (label && labelPosition === 'left')
-          ? '8px'
+          ? 8
           : 0};
         padding-right: ${endElement || (label && labelPosition === 'right')
-          ? '8px'
+          ? 8
           : 0};
 
         flex-direction: row;
@@ -139,6 +143,7 @@ export default function RadioButton({
           <ColoredText
             $disabled={!!disabled}
             $selected={!!selected}
+            $size={size}
             style={styles?.label}
             $type={type}
           >
@@ -148,6 +153,7 @@ export default function RadioButton({
         <RadioButtonWrapper
           $disabled={disabled}
           $selected={!!selected}
+          $size={size}
           style={styles?.circleWrapper}
           $type={type}
         >
@@ -164,6 +170,7 @@ export default function RadioButton({
           <ColoredText
             $disabled={!!disabled}
             $selected={!!selected}
+            $size={size}
             style={styles?.label}
             $type={type}
           >
