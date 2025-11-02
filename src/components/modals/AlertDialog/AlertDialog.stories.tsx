@@ -1,3 +1,4 @@
+import React, {type ReactElement} from 'react';
 import type {ComponentProps} from 'react';
 import {SafeAreaView} from 'react-native';
 import {styled, css} from 'kstyled';
@@ -10,22 +11,18 @@ import {Button} from '../../uis/Button/Button';
 import AlertDialog from './AlertDialog';
 
 const Container = styled(SafeAreaView)`
-  background-color: ${({theme}) => theme.bg.basic};
+  flex-direction: column;
+  padding: 48px 24px;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
 `;
 
-function AlertDialogBasicStory(): React.JSX.Element {
+function AlertDialogBasicStory(): ReactElement {
   const {alertDialog} = useCPK();
 
   return (
-    <Container
-      style={css`
-        flex-direction: column;
-        padding: 48px 24px;
-        align-self: stretch;
-        justify-content: center;
-        align-items: center;
-      `}
-    >
+    <Container>
       <Typography.Title>AlertDialog</Typography.Title>
       <Button
         color="primary"

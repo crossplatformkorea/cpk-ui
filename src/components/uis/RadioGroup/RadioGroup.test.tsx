@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {type ReactElement} from 'react';
 import {View} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {act, fireEvent, render, waitFor} from '@testing-library/react-native';
@@ -8,7 +9,7 @@ import RadioButton from './RadioButton';
 import {type RadioButtonType, RadioGroup} from './RadioGroup';
 
 let props: any;
-let component: React.JSX.Element;
+let component: ReactElement;
 let testingLib: RenderAPI;
 
 const data = ['Person', 'Animal', 'Bird', 'Other'];

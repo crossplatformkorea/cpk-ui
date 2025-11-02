@@ -1,4 +1,4 @@
-import React, {cloneElement} from 'react';
+import React, {cloneElement, type ReactElement} from 'react';
 import type {ColorValue, ViewStyle} from 'react-native';
 import {
   Button,
@@ -14,7 +14,7 @@ import {
 import {Icon} from '../components/uis/Icon/Icon';
 
 const getRootElementStyleType = (
-  element: React.JSX.Element,
+  element: ReactElement,
 ): 'TextStyle' | 'ViewStyle' | 'unknown' => {
   if (React.isValidElement(element)) {
     if (
@@ -45,7 +45,7 @@ type CloneElemColorsParams = {
   /**
    * ReactElement to be cloned to shape default colors.
    */
-  element?: React.JSX.Element;
+  element?: ReactElement;
   /**
    * Text color to be applied.
    * If not passed, default color will be applied.
@@ -68,14 +68,14 @@ type CloneElemColorsParams = {
  * This function applies default colors to cloned element.
  *
  * @param {CloneElemColorsParams} params
- * @returns {React.JSX.Element} - Cloned element with default colors if exists. Otherwise, null.
+ * @returns {ReactElement} - Cloned element with default colors if exists. Otherwise, null.
  */
 export const cloneElemWithDefaultColors = ({
   element,
   color,
   backgroundColor,
   style,
-}: CloneElemColorsParams): React.JSX.Element | null => {
+}: CloneElemColorsParams): ReactElement | null => {
   return element
     ? cloneElement(element, {
         style: [
@@ -86,8 +86,8 @@ export const cloneElemWithDefaultColors = ({
             borderColor: color,
             backgroundColor: backgroundColor,
           },
-          {...style, ...element.props.style},
+          {...style, ...(element.props as any).style},
         ],
-      })
+      } as any)
     : null;
 };

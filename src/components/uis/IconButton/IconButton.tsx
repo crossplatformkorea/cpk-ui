@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef} from 'react';
+import React, {useCallback, useMemo, useRef, type ReactElement} from 'react';
 import type {StyleProp, TouchableHighlightProps, ViewStyle} from 'react-native';
 import {Platform, TouchableHighlight, View} from 'react-native';
 import {useHover} from 'react-native-web-hooks';
@@ -90,9 +90,9 @@ export type IconButtonProps = {
   size?: ButtonSizeType | number;
   disabled?: boolean;
   loading?: boolean;
-  loadingElement?: React.JSX.Element;
+  loadingElement?: ReactElement;
   icon?: IconName;
-  iconElement?: React.JSX.Element;
+  iconElement?: ReactElement;
   style?: StyleProp<Omit<ViewStyle, 'borderRadius' | 'padding'>>;
   styles?: Styles;
   onPress?: TouchableHighlightProps['onPress'];
@@ -117,7 +117,7 @@ export function IconButton({
   activeOpacity = 0.95,
   touchableHighlightProps,
   hapticFeedback,
-}: IconButtonProps): React.JSX.Element {
+}: IconButtonProps): ReactElement {
   const ref = useRef<React.ElementRef<typeof TouchableHighlight>>(null);
   const hovered = useHover(ref);
   const {theme} = useTheme();

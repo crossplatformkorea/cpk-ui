@@ -1,6 +1,6 @@
 import '@testing-library/jest-native/extend-expect';
 
-import React from 'react';
+import React, {type ReactElement} from 'react';
 import {Text} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
@@ -18,7 +18,7 @@ const Component = ({
 }: {
   props?: CardProps;
   themeType?: ThemeType;
-}): React.JSX.Element =>
+}): ReactElement =>
   createComponent(
     <Card {...props}>
       <Text>Test Content</Text>

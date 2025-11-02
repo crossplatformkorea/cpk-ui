@@ -1,5 +1,4 @@
-import type {MutableRefObject} from 'react';
-import {useRef} from 'react';
+import React, {type MutableRefObject, useRef, type ReactElement} from 'react';
 import {View} from 'react-native';
 import {css} from 'kstyled';
 import {useFonts} from 'expo-font';
@@ -34,8 +33,8 @@ const [useCtx, Provider] = createCtx<CpkContext>();
 function AppProvider({
   children,
 }: {
-  children: React.JSX.Element;
-}): React.JSX.Element {
+  children: ReactElement;
+}): ReactElement {
   const [assetLoaded] = useFonts({
     cpk: require('../components/uis/Icon/cpk.ttf'),
     'Pretendard-Bold': require('../components/uis/Icon/Pretendard-Bold.otf'),
@@ -115,10 +114,10 @@ function AppProvider({
 export type CpkProviderProps = {
   themeConfig?: Omit<ThemeProps, 'children'>;
   snackbarConfig?: SnackbarOptions;
-  children: React.JSX.Element;
+  children: ReactElement;
 };
 
-function CpkWithThemeProvider(props: CpkProviderProps): React.JSX.Element {
+function CpkWithThemeProvider(props: CpkProviderProps): ReactElement {
   const {themeConfig} = props;
 
   return (

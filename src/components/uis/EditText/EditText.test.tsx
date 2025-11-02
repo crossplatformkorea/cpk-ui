@@ -13,7 +13,7 @@ jest.mock('@expo/vector-icons', () => ({
 
 import '@testing-library/jest-native/extend-expect';
 
-import React from 'react';
+import React, {type ReactElement} from 'react';
 import {Text} from 'react-native';
 import RNWebHooks from 'react-native-web-hooks';
 import type {RenderAPI} from '@testing-library/react-native';
@@ -30,7 +30,7 @@ jest.mock('react-native-web-hooks', () => ({
 
 let testingLib: RenderAPI;
 
-const Component = (editProps?: EditTextProps): React.JSX.Element =>
+const Component = (editProps?: EditTextProps): ReactElement =>
   createComponent(<EditText {...editProps} />);
 
 describe('[EditText]', () => {
@@ -73,7 +73,7 @@ describe('[EditText]', () => {
       });
 
       it('renders custom label style', async () => {
-        const renderCustomLabel = (): React.JSX.Element => {
+        const renderCustomLabel = (): ReactElement => {
           return (
             <Text
               style={{
@@ -284,7 +284,7 @@ describe('[EditText]', () => {
     });
 
     it('should have render custom error', () => {
-      const renderCustomError = (): React.JSX.Element => <Text>custom error</Text>;
+      const renderCustomError = (): ReactElement => <Text>custom error</Text>;
 
       testingLib = render(
         Component({

@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback, useMemo, type ReactElement} from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {View} from 'react-native';
 import {styled} from 'kstyled';
@@ -56,7 +56,7 @@ function RadioGroupContainer<T>({
   labels,
   labelPosition,
   radioType,
-}: Omit<Props<T>, 'selected'>): React.JSX.Element {
+}: Omit<Props<T>, 'selected'>): ReactElement {
   // Memoize title spacer to avoid re-creating View
   const titleSpacer = useMemo(() => 
     title ? <View style={{height: 8}} /> : null,

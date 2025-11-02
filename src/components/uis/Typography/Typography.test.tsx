@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {type ReactElement} from 'react';
 import {View} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {render} from '@testing-library/react-native';
@@ -9,7 +9,7 @@ import {ThemeProvider} from '../../../providers/ThemeProvider';
 
 let testingLib: RenderAPI;
 
-const Component = (): React.JSX.Element =>
+const Component = (): ReactElement =>
   createComponent(
     <View>
       <Typography.Title />,

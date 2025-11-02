@@ -30,6 +30,18 @@ const preview: Preview = {
       },
     },
   },
+
+  args: {
+    theme: 'light',
+  },
+
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: ['light', 'dark'],
+      description: 'Theme mode',
+    },
+  },
 };
 
 export default preview;

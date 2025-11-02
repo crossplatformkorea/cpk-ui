@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {type ReactElement} from 'react';
 import {Text} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
@@ -7,7 +7,7 @@ import {createComponent, createTestProps} from '../../../../test/testUtils';
 import {Accordion} from './Accordion';
 
 let props: any;
-let component: React.JSX.Element;
+let component: ReactElement;
 let testingLib: RenderAPI;
 
 const data: any[] = [

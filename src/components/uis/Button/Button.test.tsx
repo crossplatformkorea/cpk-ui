@@ -1,6 +1,6 @@
 import '@testing-library/jest-native/extend-expect';
 
-import React from 'react';
+import React, {type ReactElement} from 'react';
 import {Text} from 'react-native';
 import {css} from 'kstyled';
 import type {RenderAPI} from '@testing-library/react-native';
@@ -25,7 +25,7 @@ const Component = ({
 }: {
   props?: ButtonProps;
   themeType?: ThemeType;
-}): React.JSX.Element =>
+}): ReactElement =>
   createComponent(<Button onPress={jest.fn} {...props} />, themeType);
 
 describe('[Button]', () => {

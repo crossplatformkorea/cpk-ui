@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, type ReactElement} from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {View} from 'react-native';
 import {styled} from 'kstyled';
@@ -28,9 +28,9 @@ export type AccordionBaseProps<T = string, K = string> = {
   animDuration?: number;
   activeOpacity?: number;
   toggleElementPosition?: 'left' | 'right';
-  toggleElement?: React.JSX.Element | null;
-  renderTitle?: (title: T) => React.JSX.Element;
-  renderItem?: (body: K) => React.JSX.Element;
+  toggleElement?: ReactElement | null;
+  renderTitle?: (title: T) => ReactElement;
+  renderItem?: (body: K) => ReactElement;
   onPressItem?: (title: T | string, body: K | string) => void;
 };
 
@@ -41,7 +41,7 @@ function Accordion<T, K>({
   toggleElementPosition = 'right',
   data,
   ...rest
-}: AccordionProps<T, K>): React.JSX.Element {
+}: AccordionProps<T, K>): ReactElement {
   // Memoize accordion items rendering
   const accordionItems = useMemo(() => 
     data.map((datum, titleKey) => (

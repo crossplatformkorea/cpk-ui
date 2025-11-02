@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState, type ReactElement} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
 import {Animated, TouchableOpacity, View} from 'react-native';
 import {styled} from 'kstyled';
@@ -86,7 +86,7 @@ export function SwitchToggle({
   size = 'medium',
   offElement,
   onPress,
-}: Props): React.JSX.Element {
+}: Props): ReactElement {
   const {theme} = useTheme();
 
   // Memoize size-based configurations

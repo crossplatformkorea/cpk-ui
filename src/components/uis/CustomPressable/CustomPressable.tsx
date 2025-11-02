@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, type ReactElement} from 'react';
 import type {PressableProps, StyleProp, ViewStyle} from 'react-native';
 import {Pressable} from 'react-native';
 import {css} from 'kstyled';
@@ -8,7 +8,7 @@ const DEFAULT_HIT_SLOP = {top: 4, bottom: 4, left: 6, right: 6};
 
 function CustomPressable(
   props: PressableProps & {style?: StyleProp<ViewStyle>},
-): React.JSX.Element {
+): ReactElement {
   const {children, style, hitSlop, ...restProps} = props;
   const {theme} = useCPK();
 

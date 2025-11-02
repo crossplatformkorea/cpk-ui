@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, type ReactElement} from 'react';
 import type {StatusBarStyle} from 'react-native';
 import {StatusBar} from 'react-native';
 import {useTheme} from '../../../providers/ThemeProvider';
@@ -7,7 +7,7 @@ type StatusBarBrightnessProps = {
   type?: StatusBarStyle;
 };
 
-function StatusBarBrightness({type}: StatusBarBrightnessProps): React.JSX.Element {
+function StatusBarBrightness({type}: StatusBarBrightnessProps): ReactElement {
   const {themeType} = useTheme();
 
   // Memoize status bar color calculation

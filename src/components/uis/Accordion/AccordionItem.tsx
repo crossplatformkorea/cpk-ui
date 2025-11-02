@@ -1,5 +1,5 @@
 // Caveat: Expo web needs React to be imported
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState, type ReactElement} from 'react';
 import type {LayoutChangeEvent} from 'react-native';
 import {Animated, Easing, TouchableOpacity, View} from 'react-native';
 import {styled, css} from 'kstyled';
@@ -54,7 +54,7 @@ export function AccordionItem<T, K>({
   renderTitle,
   renderItem,
   styles,
-}: Props<T, K>): React.JSX.Element {
+}: Props<T, K>): ReactElement {
   const dropDownAnimValueRef = useRef(new Animated.Value(0));
   const rotateAnimValueRef = useRef(new Animated.Value(0));
   const fadeItemAnim = useRef(new Animated.Value(0)).current;

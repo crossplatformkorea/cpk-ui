@@ -1,3 +1,4 @@
+import React, {type ReactElement} from 'react';
 import type {ComponentProps} from 'react';
 import {SafeAreaView} from 'react-native';
 import {styled, css} from 'kstyled';
@@ -9,22 +10,18 @@ import {withThemeProvider} from '../../../../.storybook/decorators';
 import Snackbar from './Snackbar';
 
 const Container = styled(SafeAreaView)`
-  background-color: ${({theme}) => theme.bg.basic};
+  flex-direction: column;
+  padding: 48px 24px;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
 `;
 
-function SnackbarBasicStory(): React.JSX.Element {
+function SnackbarBasicStory(): ReactElement {
   const {snackbar} = useCPK();
 
   return (
-    <Container
-      style={css`
-        flex-direction: column;
-        padding: 48px 24px;
-        align-self: stretch;
-        justify-content: center;
-        align-items: center;
-      `}
-    >
+    <Container>
       <Typography.Title>Snackbar</Typography.Title>
       <Button
         color="primary"

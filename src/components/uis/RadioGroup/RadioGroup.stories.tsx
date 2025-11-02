@@ -45,11 +45,18 @@ export const Basic: Story = {
     );
   },
   args: {
+    theme: 'light',
     data: ['Person', 'Animal', 'Bird', 'Other'],
     labels: ['Person', 'Animal', 'Bird', 'Other'],
     selectedValue: 'Person',
     title: 'RadioGroup',
     labelPosition: 'left',
     type: 'primary',
+  },
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: ['light', 'dark'],
+    },
   },
 };

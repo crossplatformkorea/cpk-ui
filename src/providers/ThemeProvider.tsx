@@ -1,6 +1,6 @@
 import '@expo/match-media';
 
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState, type ReactElement} from 'react';
 import type {ColorSchemeName} from 'react-native';
 import {useMediaQuery} from 'react-responsive';
 import {ThemeProvider as KStyledThemeProvider} from 'kstyled';
@@ -29,7 +29,7 @@ export type ThemeContext = {
 const [useCtx, CpkProvider] = createCtx<ThemeContext>();
 
 export type ThemeProps = {
-  children?: React.JSX.Element;
+  children?: ReactElement;
   initialThemeType?: ThemeType;
   customTheme?: ThemeParam;
   /*
@@ -43,54 +43,54 @@ export type ThemeProps = {
 
 const genTheme = (type: ThemeType, themeParam: ThemeParam): any => {
   const theme = type === 'light' ? light : dark;
+  const customTheme = themeParam?.[type] || {};
 
   return {
-    ...themeParam?.[type],
     bg: {
       ...theme.bg,
-      ...(themeParam?.[type]?.bg || {}),
+      ...(customTheme.bg || {}),
     },
     role: {
       ...theme.role,
-      ...(themeParam?.[type]?.role || {}),
+      ...(customTheme.role || {}),
     },
     text: {
       ...theme.text,
-      ...(themeParam?.[type]?.text || {}),
+      ...(customTheme.text || {}),
     },
     button: {
       ...theme.button,
       primary: {
         ...theme.button.primary,
-        ...(themeParam?.[type]?.button?.primary || {}),
+        ...(customTheme.button?.primary || {}),
       },
       secondary: {
         ...theme.button.secondary,
-        ...(themeParam?.[type]?.button?.secondary || {}),
+        ...(customTheme.button?.secondary || {}),
       },
       success: {
         ...theme.button.success,
-        ...(themeParam?.[type]?.button?.success || {}),
+        ...(customTheme.button?.success || {}),
       },
       warning: {
         ...theme.button.warning,
-        ...(themeParam?.[type]?.button?.warning || {}),
+        ...(customTheme.button?.warning || {}),
       },
       danger: {
         ...theme.button.danger,
-        ...(themeParam?.[type]?.button?.danger || {}),
+        ...(customTheme.button?.danger || {}),
       },
       info: {
         ...theme.button.info,
-        ...(themeParam?.[type]?.button?.info || {}),
+        ...(customTheme.button?.info || {}),
       },
       light: {
         ...theme.button.light,
-        ...(themeParam?.[type]?.button?.light || {}),
+        ...(customTheme.button?.light || {}),
       },
       disabled: {
         ...theme.button.disabled,
-        ...(themeParam?.[type]?.button?.disabled || {}),
+        ...(customTheme.button?.disabled || {}),
       },
     },
   };
@@ -101,7 +101,9 @@ export function ThemeProvider({
   initialThemeType,
   customTheme = {},
   responsiveDesignMode = 'mobile-first',
-}: ThemeProps): React.JSX.Element {
+}: ThemeProps): ReactElement {
+  console.log('🎨 ThemeProvider rendered with initialThemeType:', initialThemeType);
+
   const isPortrait = useMediaQuery({orientation: 'portrait'});
 
   const isMobile = useMediaQuery(
@@ -124,7 +126,9 @@ export function ThemeProvider({
   const [themeType, setThemeType] = useState(initialThemeType ?? colorScheme);
 
   useEffect(() => {
-    if (!initialThemeType) {
+    if (initialThemeType) {
+      setThemeType(initialThemeType);
+    } else {
       setThemeType(colorScheme);
     }
   }, [colorScheme, initialThemeType]);

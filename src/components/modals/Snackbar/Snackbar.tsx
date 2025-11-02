@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useState, useCallback, useMemo} from 'react';
+import React, {forwardRef, useImperativeHandle, useState, useCallback, useMemo, type ReactElement} from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {Modal, Platform, SafeAreaView, StyleSheet, View} from 'react-native';
 import {styled, css} from 'kstyled';
@@ -75,7 +75,7 @@ function clearTimer(): void {
 function Snackbar(
   {style}: SnackbarProps,
   ref: React.Ref<SnackbarContext>,
-): React.JSX.Element {
+): ReactElement {
   const [options, setOptions] = useState<SnackbarOptions | null>(null);
   const [visible, setVisible] = useState(false);
   const {theme} = useTheme();

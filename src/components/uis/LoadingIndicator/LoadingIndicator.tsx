@@ -1,4 +1,4 @@
-import React, {useMemo, useCallback} from "react";
+import React, {useMemo, useCallback, type ReactElement} from "react";
 import type {
   ImageSourcePropType,
   ImageStyle,
@@ -21,7 +21,7 @@ export interface LoadingIndicatorProps extends BaseComponentProps {
   color?: string;
   size?: ActivityIndicator["props"]["size"];
   imgSource?: string | ImageSourcePropType;
-  customElement?: React.JSX.Element | (() => React.JSX.Element);
+  customElement?: ReactElement | (() => ReactElement);
 }
 
 const Container = styled(View)`
@@ -37,7 +37,7 @@ function LoadingIndicator({
   color,
   imgSource,
   testID,
-}: LoadingIndicatorProps): React.JSX.Element {
+}: LoadingIndicatorProps): ReactElement {
   const { theme } = useTheme();
 
   // Memoize image source processing

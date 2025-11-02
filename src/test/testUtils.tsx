@@ -1,5 +1,5 @@
 import {render, fireEvent, waitFor} from '@testing-library/react-native';
-import React from 'react';
+import React, {type ReactElement} from 'react';
 import {CpkProvider} from '../providers';
 import {light as lightTheme} from '../utils/colors';
 
@@ -7,7 +7,7 @@ import {light as lightTheme} from '../utils/colors';
  * Custom render function that wraps components with necessary providers
  */
 export function renderWithProviders(
-  ui: React.ReactElement,
+  ui: ReactElement,
   options: {
     theme?: 'light' | 'dark';
     initialTheme?: typeof lightTheme;
@@ -15,7 +15,7 @@ export function renderWithProviders(
 ) {
   const {theme = 'light', initialTheme} = options;
 
-  const Wrapper = ({children}: {children: React.JSX.Element}) => (
+  const Wrapper = ({children}: {children: ReactElement}) => (
     <CpkProvider>{children}</CpkProvider>
   );
 

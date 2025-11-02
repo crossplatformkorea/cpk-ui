@@ -18,13 +18,13 @@ const preview: Preview = {
     },
   },
 
-  globals: {
-    theme: 'light', // 기본값 설정
+  initialGlobals: {
+    theme: 'light',
   },
 
   globalTypes: {
     theme: {
-      name: 'Theme', // 툴바의 레이블
+      name: 'Theme',
       description: 'Global theme for components',
       defaultValue: 'light',
       toolbar: {
@@ -34,6 +34,7 @@ const preview: Preview = {
           {value: 'dark', title: 'Dark'},
         ],
         showName: true,
+        dynamicTitle: true,
       },
     },
   },

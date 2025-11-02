@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState, type ReactElement} from 'react';
 import type {
   LayoutRectangle,
   StyleProp,
@@ -33,8 +33,8 @@ export type RadioButtonProps = {
   type?: RadioButtonType;
   disabled?: boolean;
   selected?: boolean;
-  endElement?: React.JSX.Element;
-  startElement?: React.JSX.Element;
+  endElement?: ReactElement;
+  startElement?: ReactElement;
 };
 
 const Container = styled.TouchableOpacity`
@@ -56,7 +56,7 @@ export default function RadioButton({
   onPress,
   label,
   labelPosition = 'right',
-}: RadioButtonProps): React.JSX.Element {
+}: RadioButtonProps): ReactElement {
   const [innerLayout, setInnerLayout] = useState<LayoutRectangle>();
   const fadeAnim = useRef(new Animated.Value(selected ? 1 : 0)).current;
   const scaleAnim = useRef(new Animated.Value(selected ? 1 : 0)).current;

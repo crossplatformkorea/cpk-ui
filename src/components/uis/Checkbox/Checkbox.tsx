@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, type ReactElement} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
 import {Animated, Platform, TouchableOpacity, View} from 'react-native';
 import {styled, css} from 'kstyled';
@@ -31,8 +31,8 @@ export interface CheckboxProps {
   color?: CheckboxColor;
   disabled?: boolean;
   checked?: boolean;
-  endElement?: React.JSX.Element;
-  startElement?: React.JSX.Element;
+  endElement?: ReactElement;
+  startElement?: ReactElement;
 }
 
 const Container = styled(TouchableOpacity)`
@@ -75,7 +75,7 @@ export function Checkbox({
   disabled = false,
   checked = false,
   onPress,
-}: CheckboxProps): React.JSX.Element {
+}: CheckboxProps): ReactElement {
   // Separate animated values for fade and scale
   const fadeAnim = useRef(new Animated.Value(checked ? 1 : 0)).current;
   const scaleAnim = useRef(new Animated.Value(checked ? 1 : 0.8)).current; // Start from 0.8, not 0

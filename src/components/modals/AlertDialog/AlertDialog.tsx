@@ -6,6 +6,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  type ReactElement,
 } from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {
@@ -68,11 +69,11 @@ export type AlertDialogStyles = {
 
 export type AlertDialogOptions = {
   styles?: AlertDialogStyles;
-  title?: string | React.JSX.Element;
-  body?: string | React.JSX.Element;
+  title?: string | ReactElement;
+  body?: string | ReactElement;
   backdropOpacity?: number;
   closeOnTouchOutside?: boolean;
-  actions?: React.JSX.Element[];
+  actions?: ReactElement[];
   showCloseButton?: boolean;
 };
 
@@ -84,7 +85,7 @@ export type AlertDialogContext = {
 function AlertDialog(
   {style}: AlertDialogProps,
   ref: React.Ref<AlertDialogContext>,
-): React.JSX.Element {
+): ReactElement {
   const [options, setOptions] = useState<AlertDialogOptions | null>(null);
   const [visible, setVisible] = useState(false);
   const {theme, themeType} = useTheme();
@@ -155,15 +156,6 @@ function AlertDialog(
     [shadowStyles, styles?.container]
   );
 
-  // Memoize modal styles
-  const modalStyles = useMemo(() => [
-    css`
-      flex: 1;
-      align-self: stretch;
-    `,
-    style,
-  ], [style]);
-
   // Memoize backdrop press handler
   const handleBackdropPress = useCallback(() => {
     if (closeOnTouchOutside) {
@@ -197,7 +189,7 @@ function AlertDialog(
   );
 
   // Memoize actions content
-  const actionsContent = useMemo(() => 
+  const actionsContent = useMemo(() =>
     actions ? (
       <ActionRow style={styles?.actionContainer}>
         {actions.map((action, index) =>
@@ -207,7 +199,7 @@ function AlertDialog(
               flex: 1,
               marginLeft: index !== 0 ? 12 : 0,
             },
-          }),
+          } as any),
         )}
       </ActionRow>
     ) : null,
@@ -270,10 +262,9 @@ function AlertDialog(
 
   return (
     // https://github.com/facebook/react-native/issues/48526#issuecomment-2579478884
-    <View>
+    <View style={style}>
       <Modal
         animationType="fade"
-        style={modalStyles}
         transparent={true}
         visible={visible}
       >

@@ -1,5 +1,5 @@
 // React import is needed for expo-web
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState, type ReactElement} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
 import {Pressable, View} from 'react-native';
 import {styled, css} from 'kstyled';
@@ -47,7 +47,7 @@ export function Rating({
   allowHalfRating = true,
   disabled = false,
   color,
-}: RatingProps): React.JSX.Element {
+}: RatingProps): ReactElement {
   const [rating, setRating] = useState(initialRating);
 
   const iconPrefix = useMemo(
@@ -95,7 +95,7 @@ export function Rating({
     }: {
       key: string;
       position: number;
-    }): React.JSX.Element => {
+    }): ReactElement => {
       const filled = rating >= position + (allowHalfRating ? 0.5 : 0);
       const iconName: IconName = filled ? `${iconPrefix}Fill` : `${iconPrefix}`;
       const halfFilled =

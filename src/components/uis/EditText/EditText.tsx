@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useRef,
   useState,
+  type ReactElement,
 } from 'react';
 import type {
   StyleProp,
@@ -46,10 +47,10 @@ export type EditTextStatus =
   | 'hovered'
   | 'basic';
 
-type RenderType = (stats: EditTextStatus) => React.JSX.Element;
+type RenderType = (stats: EditTextStatus) => ReactElement;
 
 type CustomRenderType =
-  | (({color, status}: {color: string; status: EditTextStatus}) => React.JSX.Element)
+  | (({color, status}: {color: string; status: EditTextStatus}) => ReactElement)
   | null;
 
 export type EditTextProps = {
@@ -59,8 +60,8 @@ export type EditTextProps = {
   styles?: EditTextStyles;
 
   // Component
-  startElement?: React.JSX.Element | CustomRenderType;
-  endElement?: React.JSX.Element | CustomRenderType;
+  startElement?: ReactElement | CustomRenderType;
+  endElement?: ReactElement | CustomRenderType;
   required?: boolean;
   label?: string | RenderType;
   error?: string | RenderType;
@@ -146,7 +147,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       required = false,
     }: EditTextProps,
     ref,
-  ): React.JSX.Element => {
+  ): ReactElement => {
     EditText.displayName = 'EditText';
 
     const {theme} = useTheme();
@@ -208,9 +209,9 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
     }, [editable, error, hovered, focused]);
 
     // Memoize render label function
-    const renderLabel = useCallback((): React.JSX.Element | null => {
+    const renderLabel = useCallback((): ReactElement | null => {
       // eslint-disable-next-line react/no-unstable-nested-components
-      function Wrapper({children}: {children: ReactNode}): React.JSX.Element {
+      function Wrapper({children}: {children: ReactNode}): ReactElement {
         return (
           <View
             style={[
@@ -271,7 +272,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
 
     // Memoize render container function
     const renderContainer = useCallback(
-      (children: ReactNode): React.JSX.Element => {
+      (children: ReactNode): ReactElement => {
         return (
           <TouchableWithoutFeedback
             onPress={() => inputRef.current?.focus()}
@@ -321,7 +322,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
     );
 
     // Memoize render input function
-    const renderInput = useCallback((): React.JSX.Element | null => {
+    const renderInput = useCallback((): ReactElement | null => {
       return (
         <View
           style={[
@@ -449,7 +450,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
     ]);
 
     // Memoize render error function
-    const renderError = useCallback((): React.JSX.Element | null => {
+    const renderError = useCallback((): ReactElement | null => {
       return error ? (
         typeof error === 'string' ? (
           <Text
@@ -471,7 +472,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
     }, [error, status, styles?.error, theme.text.validation]);
 
     // Memoize render counter function
-    const renderCounter = useCallback((): React.JSX.Element | null => {
+    const renderCounter = useCallback((): ReactElement | null => {
       if (hideCounter) {
         return null;
       }

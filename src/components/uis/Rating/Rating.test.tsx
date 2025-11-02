@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {type ReactElement} from 'react';
 import {fireEvent, render} from '@testing-library/react-native';
 
 import type {RatingProps} from './Rating';
 import {Rating} from './Rating';
 import {createComponent} from '../../../../test/testUtils';
 
-const Component = (props?: RatingProps): React.JSX.Element =>
+const Component = (props?: RatingProps): ReactElement =>
   createComponent(<Rating {...props} />);
 
 describe('Rating', () => {

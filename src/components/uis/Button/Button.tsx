@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef} from 'react';
+import React, {useCallback, useMemo, useRef, type ReactElement} from 'react';
 import type {
   Insets,
   StyleProp,
@@ -36,11 +36,11 @@ export type Props = {
   disabled?: boolean;
   loading?: boolean;
   loadingColor?: string;
-  loadingElement?: React.JSX.Element;
-  text?: string | React.JSX.Element;
+  loadingElement?: ReactElement;
+  text?: string | ReactElement;
   borderRadius?: number;
-  startElement?: React.JSX.Element;
-  endElement?: React.JSX.Element;
+  startElement?: ReactElement;
+  endElement?: ReactElement;
   style?: StyleProp<Omit<ViewStyle, 'borderRadius' | 'padding'>>;
   styles?: Styles;
   onPress?: TouchableHighlightProps['onPress'];
@@ -239,7 +239,7 @@ export function Button({
   loadingColor,
   hitSlop = {top: 8, bottom: 8, left: 8, right: 8},
   hapticFeedback,
-}: Props): React.JSX.Element {
+}: Props): ReactElement {
   const ref = useRef<React.ElementRef<typeof TouchableHighlight>>(null);
   const hovered = useHover(ref);
   const {theme} = useTheme();
@@ -347,9 +347,9 @@ export function Button({
       children,
       loadingView,
     }: {
-      children: React.JSX.Element;
-      loadingView: React.JSX.Element;
-    }): React.JSX.Element => (
+      children: ReactElement;
+      loadingView: ReactElement;
+    }): ReactElement => (
       <ButtonContainer
         $disabled={innerDisabled}
         $size={size}
