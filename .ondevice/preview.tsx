@@ -27,15 +27,6 @@ const preview: Preview = {
         title: 'Notes',
       },
     },
-
-    toolbar: {
-      theme: {
-        title: 'Theme',
-        icon: 'circlehollow',
-        items: ['light', 'dark'],
-        dynamicTitle: true,
-      },
-    },
   },
 
   initialGlobals: {
@@ -56,18 +47,6 @@ const preview: Preview = {
         showName: true,
         dynamicTitle: true,
       },
-    },
-  },
-
-  args: {
-    theme: 'light',
-  },
-
-  argTypes: {
-    theme: {
-      control: 'select',
-      options: ['light', 'dark'],
-      description: 'Theme mode',
     },
   },
 

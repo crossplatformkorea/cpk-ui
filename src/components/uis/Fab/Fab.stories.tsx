@@ -6,6 +6,7 @@ import {action} from '@storybook/addon-actions';
 import {withThemeProvider} from '../../../../.storybook/decorators';
 import {Fab} from './Fab';
 import type {IconName} from '../Icon/Icon';
+import type {ButtonSizeType} from '../Button/Button';
 
 const Container = styled(View)`
   position: relative;
@@ -21,7 +22,11 @@ const InfoText = styled(Text)`
   font-size: 16px;
 `;
 
-function FabInteractiveStory(props: any): ReactElement {
+interface FabStoryProps {
+  buttonSize?: ButtonSizeType | number;
+}
+
+function FabInteractiveStory(props: FabStoryProps): ReactElement {
   const [isActive, setIsActive] = useState(false);
   const [lastPressed, setLastPressed] = useState<string>('');
 

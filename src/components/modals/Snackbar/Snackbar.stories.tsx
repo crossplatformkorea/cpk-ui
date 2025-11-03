@@ -94,61 +94,6 @@ const meta = {
   title: 'Snackbar',
   component: SnackbarBasicStory,
   parameters: {
-    notes: `
-A brief message component that appears at the bottom of the screen to provide feedback about an operation.
-
-## Features
-- **Flexible Sizing**: Preset sizes (small, medium, large) and custom numeric values
-- **Color Variants**: Support for primary, info, danger, light, and other theme colors
-- **Action Button**: Optional action button with custom text
-- **Auto-dismiss**: Automatically dismisses after a configurable timer
-- **Customizable**: Custom styles for container, text, and action elements
-
-## Size Options
-- \`small\`: 12px text, 14px icon
-- \`medium\`: 14px text, 16px icon (default)
-- \`large\`: 16px text, 18px icon
-- Custom number: Custom font size in pixels with proportional spacing
-
-## Usage
-\`\`\`tsx
-const {snackbar} = useCPK();
-
-snackbar.open({
-  text: 'Item saved successfully',
-  size: 'medium',
-  color: 'primary',
-});
-\`\`\`
-
-### Basic Snackbar
-\`\`\`tsx
-snackbar.open({
-  text: 'Hello there!',
-  size: 'medium',
-});
-\`\`\`
-
-### With Action Button
-\`\`\`tsx
-snackbar.open({
-  text: 'Item deleted',
-  actionText: 'Undo',
-  size: 'large',
-  color: 'danger',
-});
-\`\`\`
-
-### With Custom Timer
-\`\`\`tsx
-snackbar.open({
-  text: 'Connection established',
-  size: 'small',
-  color: 'info',
-  timer: 5000, // 5 seconds
-});
-\`\`\`
-        `,
     docs: {
       description: {
         component: `

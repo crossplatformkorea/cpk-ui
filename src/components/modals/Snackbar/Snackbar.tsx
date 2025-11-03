@@ -9,6 +9,13 @@ import {useTheme} from '../../../providers/ThemeProvider';
 import {Icon} from '../../uis/Icon/Icon';
 import {Typography} from '../../uis/Typography/Typography';
 
+export type SnackbarSizeType = 'small' | 'medium' | 'large' | number;
+
+const calculateSpacing = (size: SnackbarSizeType = 'medium'): number => {
+  if (typeof size === 'number') return size * 0.75;
+  return size === 'small' ? 10 : size === 'large' ? 14 : 12;
+};
+
 const Container = styled(View)`
   flex: 1;
   align-self: stretch;
@@ -21,14 +28,8 @@ const SnackbarContainer = styled(SafeAreaView)<{$color: ButtonColorType; $size?:
   background-color: ${({theme, $color}) => theme.button[$color].bg};
   border-radius: 8px;
   margin-bottom: 52px;
-  margin-left: ${({$size = 'medium'}) => {
-    if (typeof $size === 'number') return $size * 0.75;
-    return $size === 'small' ? 10 : $size === 'large' ? 14 : 12;
-  }};
-  margin-right: ${({$size = 'medium'}) => {
-    if (typeof $size === 'number') return $size * 0.75;
-    return $size === 'small' ? 10 : $size === 'large' ? 14 : 12;
-  }};
+  margin-left: ${({$size}) => calculateSpacing($size)};
+  margin-right: ${({$size}) => calculateSpacing($size)};
   align-self: flex-end;
 
   flex-direction: row;
@@ -42,13 +43,8 @@ const ActionContainer = styled(View)`
 const SnackbarText = styled(Typography.Body2)<{$color: ButtonColorType; $size?: SnackbarSizeType}>`
   color: ${({theme, $color}) => theme.button[$color].text};
   flex: 1;
-  padding: ${({$size = 'medium'}) => {
-    if (typeof $size === 'number') return $size * 0.75;
-    return $size === 'small' ? 10 : $size === 'large' ? 14 : 12;
-  }};
+  padding: ${({$size}) => calculateSpacing($size)};
 `;
-
-export type SnackbarSizeType = 'small' | 'medium' | 'large' | number;
 
 export type SnackbarProps = {
   style?: StyleProp<ViewStyle>;

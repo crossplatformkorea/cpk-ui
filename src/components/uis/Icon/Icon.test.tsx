@@ -18,21 +18,28 @@ describe('[Icon]', () => {
   });
 
   describe('sizes', () => {
-    it('should render with size prop as number', () => {
-      testingLib = render(createComponent(<Icon name="Person" size={24} />));
+    it('should render with small size preset', () => {
+      testingLib = render(createComponent(<Icon name="Person" size="small" />));
 
       const json = testingLib.toJSON();
       expect(json).toBeTruthy();
     });
 
-    it('should render with small size prop', () => {
-      testingLib = render(createComponent(<Icon name="Person" size={16} />));
+    it('should render with medium size preset', () => {
+      testingLib = render(createComponent(<Icon name="Person" size="medium" />));
 
       const json = testingLib.toJSON();
       expect(json).toBeTruthy();
     });
 
-    it('should render with large size prop', () => {
+    it('should render with large size preset', () => {
+      testingLib = render(createComponent(<Icon name="Person" size="large" />));
+
+      const json = testingLib.toJSON();
+      expect(json).toBeTruthy();
+    });
+
+    it('should render with custom numeric size', () => {
       testingLib = render(createComponent(<Icon name="Person" size={32} />));
 
       const json = testingLib.toJSON();

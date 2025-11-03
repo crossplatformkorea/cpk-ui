@@ -3,7 +3,7 @@ import {Text} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render, waitFor} from '@testing-library/react-native';
 import {createComponent} from '../../../../test/testUtils';
-import {SwitchToggle} from './SwitchToggle';
+import {SwitchToggle, type SwitchToggleSizeType} from './SwitchToggle';
 
 let testingLib: RenderAPI;
 
@@ -27,10 +27,11 @@ describe('[SwitchToggle]', () => {
     expect(handlePress).toBeCalled();
   });
 
-  const getSwitchToggle = ({isOn}: {isOn: boolean}): ReactElement =>
+  const getSwitchToggle = ({isOn, size}: {isOn: boolean; size?: SwitchToggleSizeType}): ReactElement =>
     createComponent(
       <SwitchToggle
         isOn={isOn}
+        size={size}
         offElement={<Text>off</Text>}
         onElement={<Text>on</Text>}
         onPress={handlePress}
