@@ -200,7 +200,6 @@ export const WithCustomElement: Story = {
       <Typography.Body2
         style={css`
           font-weight: bold;
-          color: #333;
         `}
       >
         Custom Element

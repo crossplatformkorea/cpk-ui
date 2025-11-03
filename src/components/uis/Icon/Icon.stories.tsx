@@ -26,37 +26,6 @@ const meta = {
     </View>
   ),
   parameters: {
-    notes: `
-A flexible Icon component with a comprehensive icon library and size presets.
-
-## Features
-- **Extensive Icon Library**: Large collection of commonly used icons
-- **Flexible Sizing**: Preset sizes and custom numeric values
-- **Color Customization**: Support for custom icon colors
-- **Optimized Performance**: Efficiently rendered vector icons
-
-## Size Options
-- \`small\`: 18px icon
-- \`medium\`: 24px icon (default)
-- \`large\`: 32px icon
-- Custom number: Any pixel value (e.g., \`size={40}\`)
-
-## Available Icons
-The component includes a wide variety of icons such as:
-- UI elements (MagnifyingGlass, Bell, Settings, etc.)
-- Actions (Check, X, Plus, Minus, etc.)
-- Navigation (ChevronUp, ChevronDown, ArrowLeft, ArrowRight, etc.)
-- And many more...
-
-## Usage
-\`\`\`tsx
-<Icon
-  name="MagnifyingGlass"
-  size="medium"
-  color="#000000"
-/>
-\`\`\`
-        `,
     docs: {
       description: {
         component: `

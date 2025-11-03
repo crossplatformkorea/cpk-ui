@@ -23,7 +23,7 @@ const InfoText = styled(Text)`
 `;
 
 interface FabStoryProps {
-  buttonSize?: ButtonSizeType | number;
+  buttonSize?: ButtonSizeType;
 }
 
 function FabInteractiveStory(props: FabStoryProps): ReactElement {
