@@ -7,6 +7,88 @@ import {ThemeParam} from '../../../utils/theme';
 const meta = {
   title: 'Typography',
   component: Typography.Title,
+  parameters: {
+    notes: `
+A comprehensive typography system with predefined text styles for consistent design.
+
+## Features
+- **Pre-defined Text Styles**: Multiple typography variants for different use cases
+- **Theme Integration**: Automatically uses theme colors and styles
+- **Responsive**: Works across all platforms (iOS, Android, Web)
+- **Customizable**: Can override styles while maintaining base typography
+
+## Available Typography Variants
+- **Title**: Large heading text
+- **Heading1**: Primary heading
+- **Heading2**: Secondary heading
+- **Heading3**: Tertiary heading
+- **Subtitle1**: Large subtitle
+- **Subtitle2**: Standard subtitle
+- **Body1**: Primary body text
+- **Body2**: Secondary body text
+- **Body3**: Tertiary body text
+- **Body4**: Small body text
+- **Caption**: Small caption text
+- **Button**: Button text style
+
+## Usage
+\`\`\`tsx
+<Typography.Title>Page Title</Typography.Title>
+<Typography.Heading1>Main Heading</Typography.Heading1>
+<Typography.Body1>This is body text.</Typography.Body1>
+<Typography.Caption>Small caption text</Typography.Caption>
+\`\`\`
+
+### With Custom Styling
+\`\`\`tsx
+<Typography.Body1 style={{color: 'blue', fontWeight: 'bold'}}>
+  Custom styled text
+</Typography.Body1>
+\`\`\`
+        `,
+    docs: {
+      description: {
+        component: `
+A comprehensive typography system with predefined text styles for consistent design.
+
+## Features
+- **Pre-defined Text Styles**: Multiple typography variants for different use cases
+- **Theme Integration**: Automatically uses theme colors and styles
+- **Responsive**: Works across all platforms (iOS, Android, Web)
+- **Customizable**: Can override styles while maintaining base typography
+
+## Available Typography Variants
+- **Title**: Large heading text
+- **Heading1**: Primary heading
+- **Heading2**: Secondary heading
+- **Heading3**: Tertiary heading
+- **Subtitle1**: Large subtitle
+- **Subtitle2**: Standard subtitle
+- **Body1**: Primary body text
+- **Body2**: Secondary body text
+- **Body3**: Tertiary body text
+- **Body4**: Small body text
+- **Caption**: Small caption text
+- **Button**: Button text style
+
+## Usage
+\`\`\`tsx
+<Typography.Title>Page Title</Typography.Title>
+<Typography.Heading1>Main Heading</Typography.Heading1>
+<Typography.Body1>This is body text.</Typography.Body1>
+<Typography.Caption>Small caption text</Typography.Caption>
+\`\`\`
+
+### With Custom Styling
+\`\`\`tsx
+<Typography.Body1 style={{color: 'blue', fontWeight: 'bold'}}>
+  Custom styled text
+</Typography.Body1>
+\`\`\`
+        `,
+      },
+    },
+  },
   decorators: [
     (Story, context) =>
       withThemeProvider(

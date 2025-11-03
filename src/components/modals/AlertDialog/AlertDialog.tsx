@@ -30,10 +30,25 @@ const Container = styled.View`
   flex-direction: row;
 `;
 
-const AlertDialogContainer = styled.View`
+const AlertDialogContainer = styled.View<{$size?: AlertDialogSizeType}>`
   flex: 0.87;
   background-color: ${({theme}) => theme.bg.basic};
-  padding: 20px 20px 28px 24px;
+  padding-top: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 1.25;
+    return $size === 'small' ? 16 : $size === 'large' ? 24 : 20;
+  }};
+  padding-right: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 1.25;
+    return $size === 'small' ? 16 : $size === 'large' ? 24 : 20;
+  }};
+  padding-bottom: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 1.75;
+    return $size === 'small' ? 22 : $size === 'large' ? 32 : 28;
+  }};
+  padding-left: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 1.5;
+    return $size === 'small' ? 18 : $size === 'large' ? 28 : 24;
+  }};
   border-radius: 8px;
 `;
 
@@ -43,16 +58,18 @@ const TitleRow = styled.View`
   align-items: center;
 `;
 
-const BodyRow = styled.View`
-  margin-top: 12px;
-  margin-bottom: 8px;
+const BodyRow = styled.View<{$marginTop: number; $marginBottom: number}>`
+  margin-top: ${({$marginTop}) => $marginTop};
+  margin-bottom: ${({$marginBottom}) => $marginBottom};
 `;
 
-const ActionRow = styled.View`
-  margin-top: 20px;
+const ActionRow = styled.View<{$marginTop: number}>`
+  margin-top: ${({$marginTop}) => $marginTop};
   padding-right: 4px;
   flex-direction: row;
 `;
+
+export type AlertDialogSizeType = 'small' | 'medium' | 'large' | number;
 
 export type AlertDialogProps = {
   style?: StyleProp<ViewStyle>;
@@ -75,6 +92,7 @@ export type AlertDialogOptions = {
   closeOnTouchOutside?: boolean;
   actions?: ReactElement[];
   showCloseButton?: boolean;
+  size?: AlertDialogSizeType;
 };
 
 export type AlertDialogContext = {
@@ -131,7 +149,52 @@ function AlertDialog(
     actions,
     closeOnTouchOutside = true,
     showCloseButton = true,
+    size = 'medium',
   } = options ?? {};
+
+  // Calculate sizes based on size prop
+  const sizeConfig = useMemo(() => {
+    if (typeof size === 'number') {
+      return {
+        titleFontSize: size,
+        bodyFontSize: size * 0.875,
+        iconSize: size * 1.125,
+        actionMarginTop: size * 1.25,
+        bodyMarginTop: size * 0.75,
+        bodyMarginBottom: size * 0.5,
+      };
+    }
+
+    switch (size) {
+      case 'small':
+        return {
+          titleFontSize: 14,
+          bodyFontSize: 12,
+          iconSize: 16,
+          actionMarginTop: 16,
+          bodyMarginTop: 10,
+          bodyMarginBottom: 6,
+        };
+      case 'large':
+        return {
+          titleFontSize: 18,
+          bodyFontSize: 16,
+          iconSize: 20,
+          actionMarginTop: 24,
+          bodyMarginTop: 14,
+          bodyMarginBottom: 10,
+        };
+      default: // 'medium'
+        return {
+          titleFontSize: 16,
+          bodyFontSize: 14,
+          iconSize: 18,
+          actionMarginTop: 20,
+          bodyMarginTop: 12,
+          bodyMarginBottom: 8,
+        };
+    }
+  }, [size]);
 
   // Memoize backdrop color calculation
   const backdropColor = useMemo(() => 
@@ -167,31 +230,31 @@ function AlertDialog(
   const handleCloseButtonPress = useCallback(() => setVisible(false), []);
 
   // Memoize title content
-  const titleContent = useMemo(() => 
+  const titleContent = useMemo(() =>
     typeof title === 'string' ? (
-      <Typography.Heading3 style={styles?.title}>
+      <Typography.Heading3 style={[{fontSize: sizeConfig.titleFontSize}, styles?.title]}>
         {title}
       </Typography.Heading3>
     ) : (
       title
     ),
-    [title, styles?.title]
+    [title, sizeConfig.titleFontSize, styles?.title]
   );
 
   // Memoize body content
-  const bodyContent = useMemo(() => 
+  const bodyContent = useMemo(() =>
     typeof body === 'string' ? (
-      <Typography.Body3 style={styles?.body}>{body}</Typography.Body3>
+      <Typography.Body3 style={[{fontSize: sizeConfig.bodyFontSize}, styles?.body]}>{body}</Typography.Body3>
     ) : (
       body
     ),
-    [body, styles?.body]
+    [body, sizeConfig.bodyFontSize, styles?.body]
   );
 
   // Memoize actions content
   const actionsContent = useMemo(() =>
     actions ? (
-      <ActionRow style={styles?.actionContainer}>
+      <ActionRow $marginTop={sizeConfig.actionMarginTop} style={styles?.actionContainer}>
         {actions.map((action, index) =>
           cloneElement(action, {
             key: `action-${index}`,
@@ -203,20 +266,20 @@ function AlertDialog(
         )}
       </ActionRow>
     ) : null,
-    [actions, styles?.actionContainer]
+    [actions, sizeConfig.actionMarginTop, styles?.actionContainer]
   );
 
   // Memoize close button content
-  const closeButtonContent = useMemo(() => 
+  const closeButtonContent = useMemo(() =>
     showCloseButton ? (
       <Button
         onPress={handleCloseButtonPress}
         borderRadius={24}
-        text={<Icon color={theme.text.basic} name="X" size={18} />}
+        text={<Icon color={theme.text.basic} name="X" size={sizeConfig.iconSize} />}
         type="text"
       />
     ) : null,
-    [showCloseButton, handleCloseButtonPress, theme.text.basic]
+    [showCloseButton, handleCloseButtonPress, sizeConfig.iconSize, theme.text.basic]
   );
 
   const AlertDialogContent = useMemo(() => (
@@ -232,6 +295,7 @@ function AlertDialog(
       </TouchableWithoutFeedback>
       
       <AlertDialogContainer
+        $size={size}
         accessibilityRole="alert"
         accessibilityLabel={typeof title === 'string' ? title : 'Alert dialog'}
         style={containerStyles}
@@ -240,7 +304,7 @@ function AlertDialog(
           {titleContent}
           {closeButtonContent}
         </TitleRow>
-        <BodyRow style={styles?.bodyContainer}>
+        <BodyRow $marginTop={sizeConfig.bodyMarginTop} $marginBottom={sizeConfig.bodyMarginBottom} style={styles?.bodyContainer}>
           {bodyContent}
         </BodyRow>
         {actionsContent}
@@ -251,9 +315,12 @@ function AlertDialog(
     closeOnTouchOutside,
     handleCloseButtonPress,
     title,
+    size,
     containerStyles,
     styles?.titleContainer,
     styles?.bodyContainer,
+    sizeConfig.bodyMarginTop,
+    sizeConfig.bodyMarginBottom,
     titleContent,
     closeButtonContent,
     bodyContent,

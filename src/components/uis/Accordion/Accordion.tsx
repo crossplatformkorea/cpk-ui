@@ -19,10 +19,13 @@ type Styles = {
   toggleElement?: StyleProp<ViewStyle>;
 };
 
+export type AccordionSizeType = 'small' | 'medium' | 'large' | number;
+
 export type AccordionBaseProps<T = string, K = string> = {
   data: AccordionItemDataType<T, K>[];
   style?: StyleProp<ViewStyle>;
   styles?: Styles;
+  size?: AccordionSizeType;
   shouldAnimate?: boolean;
   collapseOnStart?: boolean;
   animDuration?: number;
@@ -39,21 +42,23 @@ export type AccordionProps<T = string, K = string> = AccordionBaseProps<T, K>;
 function Accordion<T, K>({
   style,
   toggleElementPosition = 'right',
+  size = 'medium',
   data,
   ...rest
 }: AccordionProps<T, K>): ReactElement {
   // Memoize accordion items rendering
-  const accordionItems = useMemo(() => 
+  const accordionItems = useMemo(() =>
     data.map((datum, titleKey) => (
       <AccordionItem
         data={datum}
         key={titleKey}
         testID={`${titleKey}`}
         toggleElementPosition={toggleElementPosition}
+        size={size}
         {...rest}
       />
     )),
-    [data, toggleElementPosition, rest]
+    [data, toggleElementPosition, size, rest]
   );
 
   return (

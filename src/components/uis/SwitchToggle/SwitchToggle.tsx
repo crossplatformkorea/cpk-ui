@@ -19,9 +19,11 @@ type Styles = {
   backgroundColorOff?: string;
 };
 
+export type SwitchToggleSizeType = 'small' | 'medium' | 'large' | number;
+
 type Props = {
   testID?: string;
-  size?: 'small' | 'medium' | 'large';
+  size?: SwitchToggleSizeType;
   isOn: boolean;
   style?: StyleProp<ViewStyle>;
   styles?: Styles;
@@ -91,6 +93,21 @@ export function SwitchToggle({
 
   // Memoize size-based configurations
   const sizeConfig = useMemo(() => {
+    if (typeof size === 'number') {
+      const containerConfig: ViewStyle = {
+        width: size * 1.87,
+        height: size,
+        borderRadius: size / 2,
+        padding: size * 0.17,
+      };
+      const circleConfig: ViewStyle = {
+        width: size * 0.67,
+        height: size * 0.67,
+        borderRadius: size / 3,
+      };
+      return {containerConfig, circleConfig};
+    }
+
     const containerConfig =
       size === 'large'
         ? largeContainer

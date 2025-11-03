@@ -40,6 +40,8 @@ export type EditTextStyles = {
   counter?: StyleProp<TextStyle>;
 };
 
+export type EditTextSizeType = 'small' | 'medium' | 'large' | number;
+
 export type EditTextStatus =
   | 'disabled'
   | 'error'
@@ -58,6 +60,7 @@ export type EditTextProps = {
   inputRef?: MutableRefObject<TextInput | undefined> | RefObject<TextInput>;
   style?: StyleProp<ViewStyle>;
   styles?: EditTextStyles;
+  size?: EditTextSizeType;
 
   // Component
   startElement?: ReactElement | CustomRenderType;
@@ -121,6 +124,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       textInputProps,
       style,
       styles,
+      size = 'medium',
       label,
       error,
       startElement,
@@ -151,6 +155,54 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
     EditText.displayName = 'EditText';
 
     const {theme} = useTheme();
+
+    // Calculate sizes based on size prop
+    const sizeConfig = useMemo(() => {
+      if (typeof size === 'number') {
+        return {
+          fontSize: size,
+          labelFontSize: size,
+          iconSize: size * 0.875,
+          padding: size * 0.625,
+          labelMargin: size * 0.875,
+          errorFontSize: size * 0.75,
+          counterFontSize: size * 0.75,
+        };
+      }
+
+      switch (size) {
+        case 'small':
+          return {
+            fontSize: 14,
+            labelFontSize: 14,
+            iconSize: 12,
+            padding: 8,
+            labelMargin: 12,
+            errorFontSize: 10,
+            counterFontSize: 10,
+          };
+        case 'large':
+          return {
+            fontSize: 18,
+            labelFontSize: 18,
+            iconSize: 16,
+            padding: 12,
+            labelMargin: 16,
+            errorFontSize: 14,
+            counterFontSize: 14,
+          };
+        default: // 'medium'
+          return {
+            fontSize: 16,
+            labelFontSize: 16,
+            iconSize: 14,
+            padding: 10,
+            labelMargin: 14,
+            errorFontSize: 12,
+            counterFontSize: 12,
+          };
+      }
+    }, [size]);
     const webRef = useRef<View>(null);
     const [focused, setFocused] = useState(false);
     const defaultInputRef = useRef(null);
@@ -216,7 +268,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
           <View
             style={[
               css`
-                margin-bottom: ${decoration === 'boxed' ? '14px' : 0};
+                margin-bottom: ${decoration === 'boxed' ? sizeConfig.labelMargin : 0}px;
 
                 flex-direction: row;
                 align-items: center;
@@ -228,6 +280,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
             {required ? (
               <Icon
                 name="AsteriskBold"
+                size={sizeConfig.iconSize}
                 style={css`
                   color: ${theme.role.danger};
                   opacity: ${focused ? '1' : '0.5'};
@@ -245,7 +298,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
               css`
                 color: ${defaultColor};
                 margin-right: 4px;
-                font-size: 16px;
+                font-size: ${sizeConfig.labelFontSize}px;
               `,
               labelPlaceholderColor,
               styles?.label,
@@ -264,6 +317,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       label,
       labelPlaceholderColor,
       required,
+      sizeConfig,
       status,
       styles?.label,
       styles?.labelContainer,
@@ -295,8 +349,8 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
                   ? css`
                       border-radius: 4px;
                       border-width: 1px;
-                      padding-left: 12px;
-                      padding-right: 12px;
+                      padding-left: ${sizeConfig.padding}px;
+                      padding-right: ${sizeConfig.padding}px;
                     `
                   : css`
                       border-bottom-width: 1px;
@@ -317,6 +371,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
         direction,
         inputRef,
         labelPlaceholderColor,
+        sizeConfig,
         styles?.container,
       ],
     );
@@ -334,7 +389,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
                   align-self: stretch;
                 `,
             css`
-              padding: ${decoration === 'boxed' ? '4px 0' : '2px 0'};
+              padding: ${decoration === 'boxed' ? `${sizeConfig.padding * 0.4}px 0` : `${sizeConfig.padding * 0.2}px 0`};
 
               flex-direction: row;
               align-items: center;
@@ -382,7 +437,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
                 css`
                   font-family: Pretendard;
                   flex: 1;
-                  font-size: 16px;
+                  font-size: ${sizeConfig.fontSize}px;
                   text-align-vertical: ${multiline ? 'top' : 'center'};
                 `,
                 isWeb() &&
@@ -391,14 +446,14 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
                   `,
                 direction === 'column'
                   ? css`
-                      padding-top: 12px;
+                      padding-top: ${sizeConfig.padding}px;
                     `
                   : css`
-                      padding-left: 12px;
+                      padding-left: ${sizeConfig.padding}px;
                     `,
                 css`
                   color: ${defaultColor};
-                  padding: 10px 0 12px 0;
+                  padding: ${sizeConfig.padding}px 0 ${sizeConfig.padding * 1.2}px 0;
                 `,
                 styles?.input,
               ]}
@@ -439,6 +494,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       placeholder,
       placeholderColor,
       secureTextEntry,
+      sizeConfig,
       startElement,
       styles?.input,
       styles?.inputContainer,
@@ -458,7 +514,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
               css`
                 flex: 1;
                 color: ${theme.text.validation};
-                font-size: 12px;
+                font-size: ${sizeConfig.errorFontSize}px;
               `,
               styles?.error,
             ]}
@@ -469,7 +525,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
           error?.(status)
         )
       ) : null;
-    }, [error, status, styles?.error, theme.text.validation]);
+    }, [error, sizeConfig, status, styles?.error, theme.text.validation]);
 
     // Memoize render counter function
     const renderCounter = useCallback((): ReactElement | null => {
@@ -482,7 +538,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
           style={[
             css`
               color: ${theme.text.placeholder};
-              font-size: 12px;
+              font-size: ${sizeConfig.counterFontSize}px;
             `,
             styles?.counter,
           ]}
@@ -491,6 +547,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
     }, [
       hideCounter,
       maxLength,
+      sizeConfig,
       styles?.counter,
       theme.text.placeholder,
       value.length,

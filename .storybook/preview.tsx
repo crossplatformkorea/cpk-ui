@@ -16,6 +16,13 @@ const preview: Preview = {
         {name: 'dark', value: '#333333'},
       ],
     },
+
+    previewTabs: {
+      'storybook/docs/panel': {
+        index: -1,
+        title: 'Notes',
+      },
+    },
   },
 
   initialGlobals: {

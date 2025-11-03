@@ -17,12 +17,18 @@ const Container = styled(View)`
   justify-content: center;
 `;
 
-const SnackbarContainer = styled(SafeAreaView)<{$color: ButtonColorType}>`
+const SnackbarContainer = styled(SafeAreaView)<{$color: ButtonColorType; $size?: SnackbarSizeType}>`
   background-color: ${({theme, $color}) => theme.button[$color].bg};
   border-radius: 8px;
   margin-bottom: 52px;
-  margin-left: 12px;
-  margin-right: 12px;
+  margin-left: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.75;
+    return $size === 'small' ? 10 : $size === 'large' ? 14 : 12;
+  }};
+  margin-right: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.75;
+    return $size === 'small' ? 10 : $size === 'large' ? 14 : 12;
+  }};
   align-self: flex-end;
 
   flex-direction: row;
@@ -33,11 +39,16 @@ const ActionContainer = styled(View)`
   margin-right: 4px;
 `;
 
-const SnackbarText = styled(Typography.Body2)<{$color: ButtonColorType}>`
+const SnackbarText = styled(Typography.Body2)<{$color: ButtonColorType; $size?: SnackbarSizeType}>`
   color: ${({theme, $color}) => theme.button[$color].text};
   flex: 1;
-  padding: 12px;
+  padding: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.75;
+    return $size === 'small' ? 10 : $size === 'large' ? 14 : 12;
+  }};
 `;
+
+export type SnackbarSizeType = 'small' | 'medium' | 'large' | number;
 
 export type SnackbarProps = {
   style?: StyleProp<ViewStyle>;
@@ -56,6 +67,7 @@ export type SnackbarOptions = {
   text?: string;
   actionText?: string;
   timer?: SnackbarTimer | number;
+  size?: SnackbarSizeType;
 };
 
 export type SnackbarContext = {
@@ -105,7 +117,35 @@ function Snackbar(
     close: handleClose,
   }), [handleOpen, handleClose]);
 
-  const {text, styles, actionText, color = 'primary'} = options ?? {};
+  const {text, styles, actionText, color = 'primary', size = 'medium'} = options ?? {};
+
+  // Calculate sizes based on size prop
+  const sizeConfig = useMemo(() => {
+    if (typeof size === 'number') {
+      return {
+        fontSize: size,
+        iconSize: size,
+      };
+    }
+
+    switch (size) {
+      case 'small':
+        return {
+          fontSize: 12,
+          iconSize: 14,
+        };
+      case 'large':
+        return {
+          fontSize: 16,
+          iconSize: 18,
+        };
+      default: // 'medium'
+        return {
+          fontSize: 14,
+          iconSize: 16,
+        };
+    }
+  }, [size]);
 
   // Memoize shadow styles
   const shadowStyles = useMemo(() => 
@@ -123,14 +163,15 @@ function Snackbar(
   );
 
   // Memoize text styles
-  const textStyles = useMemo(() => 
+  const textStyles = useMemo(() =>
     StyleSheet.flatten([
       css`
         color: ${theme.button[color].text};
+        font-size: ${sizeConfig.fontSize}px;
       `,
       styles?.text,
     ]),
-    [theme.button, color, styles?.text]
+    [theme.button, color, sizeConfig.fontSize, styles?.text]
   );
 
   // Memoize action text styles
@@ -160,10 +201,12 @@ function Snackbar(
     <Container>
       <SnackbarContainer
         $color={color}
+        $size={size}
         style={containerStyles}
       >
         <SnackbarText
           $color={color}
+          $size={size}
           style={textStyles}
         >
           {text}
@@ -181,7 +224,7 @@ function Snackbar(
           ) : (
             <Button
               onPress={handleActionPress}
-              text={<Icon color={theme.button[color].text} name="X" />}
+              text={<Icon color={theme.button[color].text} name="X" size={sizeConfig.iconSize} />}
               type="text"
             />
           )}
@@ -190,6 +233,7 @@ function Snackbar(
     </Container>
   ), [
     color,
+    size,
     containerStyles,
     textStyles,
     text,
@@ -197,6 +241,7 @@ function Snackbar(
     actionText,
     actionTextStyles,
     handleActionPress,
+    sizeConfig.iconSize,
     theme.button,
   ]);
 

@@ -3782,9 +3782,11 @@ export const iconList = [
 export type IconNames = typeof iconList;
 export type IconName = IconNames[number];
 
+export type IconSizeType = 'small' | 'medium' | 'large' | number;
+
 export type IconProps = {
   name: IconName;
-  size?: number;
+  size?: IconSizeType;
   color?: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -3796,9 +3798,22 @@ const BaseIconComponent: FC<IconProps> = createIconSetFromIcoMoon(
   require('./cpk.ttf'),
 ) as any;
 
-export const Icon = styled(BaseIconComponent)<IconProps>`
+const StyledIcon = styled(BaseIconComponent)<IconProps>`
   color: ${({theme, color}) => color || theme?.text?.basic || '#000'};
 `;
+
+// Wrapper component to handle size presets
+export const Icon: FC<IconProps> = ({size = 'medium', ...props}) => {
+  const iconSize = typeof size === 'number'
+    ? size
+    : size === 'small'
+      ? 18
+      : size === 'large'
+        ? 32
+        : 24;
+
+  return <StyledIcon {...props} size={iconSize} />;
+};
 
 // Export the icon component
 export default Icon;
