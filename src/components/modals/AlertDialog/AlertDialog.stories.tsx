@@ -205,5 +205,14 @@ type Story = StoryObj<typeof meta>;
 export const Basic: Story = {
   args: {
     size: 'medium',
+    // @ts-expect-error - theme is for storybook control
+    theme: 'light',
+  },
+  argTypes: {
+    // @ts-expect-error - theme is for storybook control
+    theme: {
+      control: 'select',
+      options: ['light', 'dark'],
+    },
   },
 };

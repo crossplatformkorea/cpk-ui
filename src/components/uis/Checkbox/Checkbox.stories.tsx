@@ -164,6 +164,13 @@ export const Basic: Story = {
     direction: 'right',
     checked: false,
     onPress: () => {},
+    theme: 'light',
+  },
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: ['light', 'dark'],
+    },
   },
 };
 
@@ -175,6 +182,13 @@ export const WithLeftText: Story = {
     direction: 'left',
     checked: false,
     onPress: () => {},
+    theme: 'light',
+  },
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: ['light', 'dark'],
+    },
   },
 };
 
@@ -195,5 +209,12 @@ export const WithCustomElement: Story = {
     direction: 'right',
     checked: true,
     onPress: () => {},
+    theme: 'light',
+  },
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: ['light', 'dark'],
+    },
   },
 };

@@ -89,14 +89,8 @@ A comprehensive typography system with predefined text styles for consistent des
       },
     },
   },
-  decorators: [
-    (Story, context) =>
-      withThemeProvider(
-        Story,
-        context,
-        (context.args.theme as any) || undefined,
-      ),
-  ],
+  argTypes: {},
+  decorators: [withThemeProvider],
 } satisfies Meta<typeof Typography.Title>;
 
 export default meta;
@@ -117,6 +111,14 @@ export const AllTypography: Story = {
   ),
   args: {
     children: 'Hello world',
+    // @ts-expect-error - theme is for storybook control
+    theme: 'light',
+  },
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: ['light', 'dark'],
+    },
   },
 };
 
@@ -137,4 +139,13 @@ export const CustomTitle: Story = {
       },
     } as ThemeParam,
   },
+  decorators: [
+    (Story, context) =>
+      withThemeProvider(
+        Story,
+        context,
+        // @ts-ignore
+        context.args.theme as ThemeParam,
+      ),
+  ],
 };

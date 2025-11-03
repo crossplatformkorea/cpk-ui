@@ -71,5 +71,12 @@ type Story = StoryObj<typeof meta>;
 export const Basic: Story = {
   args: {
     size: 'medium',
+    theme: 'light',
+  },
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: ['light', 'dark'],
+    },
   },
 };

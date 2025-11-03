@@ -142,5 +142,14 @@ export const Basic: Story = {
       },
     ],
     shouldAnimate: true,
+    // @ts-expect-error - theme is for storybook control
+    theme: 'light',
+  },
+  argTypes: {
+    // @ts-expect-error - theme is for storybook control
+    theme: {
+      control: 'select',
+      options: ['light', 'dark'],
+    },
   },
 };

@@ -65,5 +65,12 @@ export const Basic: Story = {
   args: {
     isOn: false,
     size: 'medium',
+    theme: 'light',
+  },
+  argTypes: {
+    theme: {
+      control: 'select',
+      options: ['light', 'dark'],
+    },
   },
 };
