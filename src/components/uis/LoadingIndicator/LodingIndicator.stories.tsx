@@ -93,7 +93,7 @@ A loading indicator component that displays a spinner or custom loading animatio
     color: {
       description: 'Custom color for the loading indicator',
     },
-    element: {
+    customElement: {
       description: 'Custom loading element to replace the default spinner',
     },
   },

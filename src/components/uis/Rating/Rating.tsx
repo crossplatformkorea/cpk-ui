@@ -145,8 +145,8 @@ export function Rating({
           >
             <View
               style={{
-                width: size / 2,
-                height: size,
+                width: iconSize / 2,
+                height: iconSize,
                 backgroundColor: 'transparent',
               }}
             />
@@ -158,8 +158,8 @@ export function Rating({
           >
             <View
               style={{
-                width: size / 2,
-                height: size,
+                width: iconSize / 2,
+                height: iconSize,
                 backgroundColor: 'transparent',
               }}
             />

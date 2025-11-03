@@ -67,4 +67,38 @@ describe('[SwitchToggle]', () => {
       expect(baseElement).toBeTruthy();
     });
   });
+
+  describe('sizes', () => {
+    it('renders with small size', () => {
+      const component = createComponent(getSwitchToggle({size: 'small'}));
+      testingLib = render(component);
+
+      const baseElement = testingLib.toJSON();
+      expect(baseElement).toBeTruthy();
+    });
+
+    it('renders with medium size', () => {
+      const component = createComponent(getSwitchToggle({size: 'medium'}));
+      testingLib = render(component);
+
+      const baseElement = testingLib.toJSON();
+      expect(baseElement).toBeTruthy();
+    });
+
+    it('renders with large size', () => {
+      const component = createComponent(getSwitchToggle({size: 'large'}));
+      testingLib = render(component);
+
+      const baseElement = testingLib.toJSON();
+      expect(baseElement).toBeTruthy();
+    });
+
+    it('renders with custom numeric size', () => {
+      const component = createComponent(getSwitchToggle({size: 28}));
+      testingLib = render(component);
+
+      const baseElement = testingLib.toJSON();
+      expect(baseElement).toBeTruthy();
+    });
+  });
 });

@@ -408,4 +408,70 @@ describe('[EditText]', () => {
       });
     });
   });
+
+  describe('sizes', () => {
+    it('should render with small size', () => {
+      testingLib = render(
+        Component({
+          testID: 'INPUT_TEST',
+          size: 'small',
+          label: 'Small Input',
+        }),
+      );
+
+      const input = testingLib.getByTestId('INPUT_TEST');
+      expect(input).toBeTruthy();
+
+      const label = testingLib.getByText('Small Input');
+      expect(label).toBeTruthy();
+    });
+
+    it('should render with medium size', () => {
+      testingLib = render(
+        Component({
+          testID: 'INPUT_TEST',
+          size: 'medium',
+          label: 'Medium Input',
+        }),
+      );
+
+      const input = testingLib.getByTestId('INPUT_TEST');
+      expect(input).toBeTruthy();
+
+      const label = testingLib.getByText('Medium Input');
+      expect(label).toBeTruthy();
+    });
+
+    it('should render with large size', () => {
+      testingLib = render(
+        Component({
+          testID: 'INPUT_TEST',
+          size: 'large',
+          label: 'Large Input',
+        }),
+      );
+
+      const input = testingLib.getByTestId('INPUT_TEST');
+      expect(input).toBeTruthy();
+
+      const label = testingLib.getByText('Large Input');
+      expect(label).toBeTruthy();
+    });
+
+    it('should render with custom numeric size', () => {
+      testingLib = render(
+        Component({
+          testID: 'INPUT_TEST',
+          size: 20,
+          label: 'Custom Size Input',
+        }),
+      );
+
+      const input = testingLib.getByTestId('INPUT_TEST');
+      expect(input).toBeTruthy();
+
+      const label = testingLib.getByText('Custom Size Input');
+      expect(label).toBeTruthy();
+    });
+  });
 });

@@ -126,3 +126,65 @@ describe('[Accordion] event test', () => {
     ).toBeTruthy();
   });
 });
+
+describe('[Accordion] sizes', () => {
+  it('should render with small size', () => {
+    props = createTestProps({
+      data: data,
+      size: 'small',
+      renderTitle: (title) => <Text>{title}</Text>,
+      renderItem: (item) => <Text>{item}</Text>,
+    });
+
+    component = createComponent(<Accordion {...props} />);
+    testingLib = render(component);
+
+    const json = testingLib.toJSON();
+    expect(json).toBeTruthy();
+  });
+
+  it('should render with medium size', () => {
+    props = createTestProps({
+      data: data,
+      size: 'medium',
+      renderTitle: (title) => <Text>{title}</Text>,
+      renderItem: (item) => <Text>{item}</Text>,
+    });
+
+    component = createComponent(<Accordion {...props} />);
+    testingLib = render(component);
+
+    const json = testingLib.toJSON();
+    expect(json).toBeTruthy();
+  });
+
+  it('should render with large size', () => {
+    props = createTestProps({
+      data: data,
+      size: 'large',
+      renderTitle: (title) => <Text>{title}</Text>,
+      renderItem: (item) => <Text>{item}</Text>,
+    });
+
+    component = createComponent(<Accordion {...props} />);
+    testingLib = render(component);
+
+    const json = testingLib.toJSON();
+    expect(json).toBeTruthy();
+  });
+
+  it('should render with custom numeric size', () => {
+    props = createTestProps({
+      data: data,
+      size: 20,
+      renderTitle: (title) => <Text>{title}</Text>,
+      renderItem: (item) => <Text>{item}</Text>,
+    });
+
+    component = createComponent(<Accordion {...props} />);
+    testingLib = render(component);
+
+    const json = testingLib.toJSON();
+    expect(json).toBeTruthy();
+  });
+});

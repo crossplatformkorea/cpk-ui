@@ -211,4 +211,70 @@ describe('[RadioButton]', () => {
       expect(baseElement).toBeTruthy();
     });
   });
+
+  describe('sizes', () => {
+    it('should render with small size', async () => {
+      component = createComponent(
+        <RadioGroup<string>
+          data={data}
+          labels={data}
+          selectedValue={data[0]}
+          size="small"
+        />,
+      );
+
+      testingLib = render(component);
+
+      const baseElement = await waitFor(() => testingLib.toJSON());
+      expect(baseElement).toBeTruthy();
+    });
+
+    it('should render with medium size', async () => {
+      component = createComponent(
+        <RadioGroup<string>
+          data={data}
+          labels={data}
+          selectedValue={data[0]}
+          size="medium"
+        />,
+      );
+
+      testingLib = render(component);
+
+      const baseElement = await waitFor(() => testingLib.toJSON());
+      expect(baseElement).toBeTruthy();
+    });
+
+    it('should render with large size', async () => {
+      component = createComponent(
+        <RadioGroup<string>
+          data={data}
+          labels={data}
+          selectedValue={data[0]}
+          size="large"
+        />,
+      );
+
+      testingLib = render(component);
+
+      const baseElement = await waitFor(() => testingLib.toJSON());
+      expect(baseElement).toBeTruthy();
+    });
+
+    it('should render with custom numeric size', async () => {
+      component = createComponent(
+        <RadioGroup<string>
+          data={data}
+          labels={data}
+          selectedValue={data[0]}
+          size={24}
+        />,
+      );
+
+      testingLib = render(component);
+
+      const baseElement = await waitFor(() => testingLib.toJSON());
+      expect(baseElement).toBeTruthy();
+    });
+  });
 });

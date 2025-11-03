@@ -87,9 +87,6 @@ When using a custom number, dimensions are calculated as:
     isOn: {
       description: 'Whether the switch is in the on position',
     },
-    disabled: {
-      description: 'Disables switch interaction',
-    },
   },
   decorators: [withThemeProvider],
 } satisfies Meta<typeof SwitchToggle>;
