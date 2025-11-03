@@ -3,122 +3,70 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {withThemeProvider} from '../../../../.storybook/decorators';
 import {EditText} from './EditText';
 
+const EDITTEXT_DOCS = `
+A flexible text input component with various styling and validation options.
+
+## Features
+- **Flexible Sizing**: Preset sizes and custom numeric values
+- **Two Decoration Styles**: Underline or boxed input styles
+- **Layout Directions**: Row or column layout for label and input
+- **Validation Support**: Built-in error message display
+- **Character Counter**: Optional character counter with maxLength support
+- **Multiline Support**: Can be used as a textarea
+- **Secure Text Entry**: Password input support
+- **Status States**: Visual feedback for focused, hovered, error, and disabled states
+- **Custom Elements**: Support for left and right elements/icons
+
+## Decoration Options
+- \`underline\`: Bottom border style (default)
+- \`boxed\`: Full border box style
+
+## Direction Options
+- \`row\`: Label and input side by side
+- \`column\`: Label above input (default)
+
+## Size Options
+- \`small\`: 14px font size with proportional padding
+- \`medium\`: 16px font size with proportional padding (default)
+- \`large\`: 18px font size with proportional padding
+- Custom number: Custom font size in pixels with proportional padding
+
+## Usage
+\`\`\`tsx
+<EditText
+  label="Email"
+  placeholder="Enter your email"
+  value={email}
+  onChangeText={setEmail}
+  size="medium"
+  decoration="boxed"
+  direction="column"
+  required
+/>
+\`\`\`
+
+### With Validation
+\`\`\`tsx
+<EditText
+  label="Password"
+  placeholder="Enter password"
+  value={password}
+  onChangeText={setPassword}
+  secureTextEntry
+  error={passwordError}
+  maxLength={20}
+/>
+\`\`\`
+`;
+
 const meta = {
   title: 'EditText',
   component: (props) => <EditText {...props} />,
   parameters: {
-    notes: `
-A flexible text input component with various styling and validation options.
-
-## Features
-- **Flexible Sizing**: Preset sizes and custom numeric values
-- **Two Decoration Styles**: Underline or boxed input styles
-- **Layout Directions**: Row or column layout for label and input
-- **Validation Support**: Built-in error message display
-- **Character Counter**: Optional character counter with maxLength support
-- **Multiline Support**: Can be used as a textarea
-- **Secure Text Entry**: Password input support
-- **Status States**: Visual feedback for focused, hovered, error, and disabled states
-- **Custom Elements**: Support for left and right elements/icons
-
-## Decoration Options
-- \`underline\`: Bottom border style (default)
-- \`boxed\`: Full border box style
-
-## Direction Options
-- \`row\`: Label and input side by side
-- \`column\`: Label above input (default)
-
-## Size Options
-- \`small\`: 14px font size with proportional padding
-- \`medium\`: 16px font size with proportional padding (default)
-- \`large\`: 18px font size with proportional padding
-- Custom number: Custom font size in pixels with proportional padding
-
-## Usage
-\`\`\`tsx
-<EditText
-  label="Email"
-  placeholder="Enter your email"
-  value={email}
-  onChangeText={setEmail}
-  size="medium"
-  decoration="boxed"
-  direction="column"
-  required
-/>
-\`\`\`
-
-### With Validation
-\`\`\`tsx
-<EditText
-  label="Password"
-  placeholder="Enter password"
-  value={password}
-  onChangeText={setPassword}
-  secureTextEntry
-  error={passwordError}
-  maxLength={20}
-/>
-\`\`\`
-        `,
+    notes: EDITTEXT_DOCS,
     docs: {
       description: {
-        component: `
-A flexible text input component with various styling and validation options.
-
-## Features
-- **Flexible Sizing**: Preset sizes and custom numeric values
-- **Two Decoration Styles**: Underline or boxed input styles
-- **Layout Directions**: Row or column layout for label and input
-- **Validation Support**: Built-in error message display
-- **Character Counter**: Optional character counter with maxLength support
-- **Multiline Support**: Can be used as a textarea
-- **Secure Text Entry**: Password input support
-- **Status States**: Visual feedback for focused, hovered, error, and disabled states
-- **Custom Elements**: Support for left and right elements/icons
-
-## Decoration Options
-- \`underline\`: Bottom border style (default)
-- \`boxed\`: Full border box style
-
-## Direction Options
-- \`row\`: Label and input side by side
-- \`column\`: Label above input (default)
-
-## Size Options
-- \`small\`: 14px font size with proportional padding
-- \`medium\`: 16px font size with proportional padding (default)
-- \`large\`: 18px font size with proportional padding
-- Custom number: Custom font size in pixels with proportional padding
-
-## Usage
-\`\`\`tsx
-<EditText
-  label="Email"
-  placeholder="Enter your email"
-  value={email}
-  onChangeText={setEmail}
-  size="medium"
-  decoration="boxed"
-  direction="column"
-  required
-/>
-\`\`\`
-
-### With Validation
-\`\`\`tsx
-<EditText
-  label="Password"
-  placeholder="Enter password"
-  value={password}
-  onChangeText={setPassword}
-  secureTextEntry
-  error={passwordError}
-  maxLength={20}
-/>
-\`\`\`
-        `,
+        component: EDITTEXT_DOCS,
       },
     },
   },
