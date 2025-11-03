@@ -5,7 +5,7 @@ import type {
   StyleProp,
   ViewStyle,
 } from "react-native";
-import { ActivityIndicator, Image, View } from "react-native";
+import { ActivityIndicator, Image, Platform, View } from "react-native";
 import {styled} from "kstyled";
 import { useTheme } from "../../../providers/ThemeProvider";
 import type {BaseComponentProps} from "../../../types/common";
@@ -43,8 +43,13 @@ function LoadingIndicator({
   const { theme } = useTheme();
 
   // Convert size to ActivityIndicator compatible format
+  // Note: iOS only supports 'small' | 'large', Android also supports numbers
   const activityIndicatorSize: 'small' | 'large' | number = useMemo(() => {
-    if (typeof size === 'number') return size;
+    if (typeof size === 'number') {
+      // On iOS, convert numeric sizes to 'large' since numeric sizes aren't supported
+      if (Platform.OS === 'ios') return 'large';
+      return size;
+    }
     if (size === 'medium') return 'large';
     return size;
   }, [size]);

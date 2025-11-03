@@ -65,7 +65,6 @@ export const Basic: Story = {
   args: {
     isOn: false,
     size: 'medium',
-    theme: 'light',
   },
   argTypes: {
     theme: {

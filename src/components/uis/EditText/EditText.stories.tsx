@@ -166,7 +166,6 @@ export const Basic: Story = {
     decoration: 'boxed',
     placeholder: 'Write something...',
     editable: true,
-    theme: 'light',
   },
   argTypes: {
     theme: {

@@ -164,7 +164,6 @@ export const Basic: Story = {
     direction: 'right',
     checked: false,
     onPress: () => {},
-    theme: 'light',
   },
   argTypes: {
     theme: {
@@ -182,7 +181,6 @@ export const WithLeftText: Story = {
     direction: 'left',
     checked: false,
     onPress: () => {},
-    theme: 'light',
   },
   argTypes: {
     theme: {
@@ -208,7 +206,6 @@ export const WithCustomElement: Story = {
     direction: 'right',
     checked: true,
     onPress: () => {},
-    theme: 'light',
   },
   argTypes: {
     theme: {

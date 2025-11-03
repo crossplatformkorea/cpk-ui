@@ -111,8 +111,6 @@ export const AllTypography: Story = {
   ),
   args: {
     children: 'Hello world',
-    // @ts-expect-error - theme is for storybook control
-    theme: 'light',
   },
   argTypes: {
     theme: {

@@ -88,7 +88,6 @@ export const Basic: Story = {
   args: {
     name: 'MagnifyingGlass',
     size: 'medium',
-    theme: 'light',
   },
   argTypes: {
     theme: {
