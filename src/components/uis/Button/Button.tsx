@@ -26,7 +26,7 @@ export type ButtonColorType =
   | 'warning'
   | 'info'
   | 'light';
-export type ButtonSizeType = 'small' | 'medium' | 'large';
+export type ButtonSizeType = 'small' | 'medium' | 'large' | number;
 
 export type Props = {
   testID?: string;
@@ -104,13 +104,15 @@ const calculateStyles = ({
   const padding =
     type === 'text'
       ? '8px'
-      : size === 'large'
-        ? '16px 24px'
-        : size === 'medium'
-          ? '12px 24px'
-          : size === 'small'
-            ? '8px 16px'
-            : '12px 24px';
+      : typeof size === 'number'
+        ? `${size * 0.6}px ${size * 1.2}px`
+        : size === 'large'
+          ? '16px 24px'
+          : size === 'medium'
+            ? '12px 24px'
+            : size === 'small'
+              ? '8px 16px'
+              : '12px 24px';
 
   const borderWidth = type === 'outlined' ? 1 : 0;
   const backgroundColor =

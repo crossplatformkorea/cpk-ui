@@ -45,4 +45,66 @@ describe('[Fab]', () => {
 
     expect(json).toBeTruthy();
   });
+
+  describe('sizes', () => {
+    it('should render with small size', async () => {
+      const testingLib = render(
+        Component({
+          icons: ['AppleLogo', 'AndroidLogo'],
+          size: 'small',
+          isActive: true,
+          onPressItem: () => {},
+          onPressFab: () => {},
+        }),
+      );
+
+      const json = testingLib.toJSON();
+      expect(json).toBeTruthy();
+    });
+
+    it('should render with medium size', async () => {
+      const testingLib = render(
+        Component({
+          icons: ['AppleLogo', 'AndroidLogo'],
+          size: 'medium',
+          isActive: true,
+          onPressItem: () => {},
+          onPressFab: () => {},
+        }),
+      );
+
+      const json = testingLib.toJSON();
+      expect(json).toBeTruthy();
+    });
+
+    it('should render with large size', async () => {
+      const testingLib = render(
+        Component({
+          icons: ['AppleLogo', 'AndroidLogo'],
+          size: 'large',
+          isActive: true,
+          onPressItem: () => {},
+          onPressFab: () => {},
+        }),
+      );
+
+      const json = testingLib.toJSON();
+      expect(json).toBeTruthy();
+    });
+
+    it('should render with custom numeric size', async () => {
+      const testingLib = render(
+        Component({
+          icons: ['AppleLogo', 'AndroidLogo'],
+          size: 64,
+          isActive: true,
+          onPressItem: () => {},
+          onPressFab: () => {},
+        }),
+      );
+
+      const json = testingLib.toJSON();
+      expect(json).toBeTruthy();
+    });
+  });
 });

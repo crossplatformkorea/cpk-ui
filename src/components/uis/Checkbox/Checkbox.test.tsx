@@ -120,4 +120,54 @@ describe('[Checkbox]', () => {
       expect(checkbox).toBeTruthy();
     });
   });
+
+  describe('sizes', () => {
+    it('should render with small size', () => {
+      testingLib = render(
+        Component({
+          size: 'small',
+          checked: true,
+        }),
+      );
+
+      const checkbox = testingLib.getByTestId('cpk-ui-checkbox');
+      expect(checkbox).toBeTruthy();
+    });
+
+    it('should render with medium size', () => {
+      testingLib = render(
+        Component({
+          size: 'medium',
+          checked: true,
+        }),
+      );
+
+      const checkbox = testingLib.getByTestId('cpk-ui-checkbox');
+      expect(checkbox).toBeTruthy();
+    });
+
+    it('should render with large size', () => {
+      testingLib = render(
+        Component({
+          size: 'large',
+          checked: true,
+        }),
+      );
+
+      const checkbox = testingLib.getByTestId('cpk-ui-checkbox');
+      expect(checkbox).toBeTruthy();
+    });
+
+    it('should render with custom numeric size', () => {
+      testingLib = render(
+        Component({
+          size: 24,
+          checked: true,
+        }),
+      );
+
+      const checkbox = testingLib.getByTestId('cpk-ui-checkbox');
+      expect(checkbox).toBeTruthy();
+    });
+  });
 });

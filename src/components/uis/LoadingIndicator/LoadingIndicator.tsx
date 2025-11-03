@@ -5,7 +5,7 @@ import type {
   StyleProp,
   ViewStyle,
 } from "react-native";
-import { ActivityIndicator, Image, View } from "react-native";
+import { ActivityIndicator, Image, Platform, View } from "react-native";
 import {styled} from "kstyled";
 import { useTheme } from "../../../providers/ThemeProvider";
 import type {BaseComponentProps} from "../../../types/common";
@@ -15,11 +15,13 @@ type Styles = {
   image?: ImageStyle;
 };
 
+export type LoadingIndicatorSizeType = 'small' | 'medium' | 'large' | number;
+
 export interface LoadingIndicatorProps extends BaseComponentProps {
   style?: StyleProp<ViewStyle>;
   styles?: Styles;
   color?: string;
-  size?: ActivityIndicator["props"]["size"];
+  size?: LoadingIndicatorSizeType;
   imgSource?: string | ImageSourcePropType;
   customElement?: ReactElement | (() => ReactElement);
 }
@@ -40,10 +42,22 @@ function LoadingIndicator({
 }: LoadingIndicatorProps): ReactElement {
   const { theme } = useTheme();
 
+  // Convert size to ActivityIndicator compatible format
+  // Note: iOS only supports 'small' | 'large', Android also supports numbers
+  const activityIndicatorSize: 'small' | 'large' | number = useMemo(() => {
+    if (typeof size === 'number') {
+      // On iOS, convert numeric sizes to 'large' since numeric sizes aren't supported
+      if (Platform.OS === 'ios') return 'large';
+      return size;
+    }
+    if (size === 'medium') return 'large';
+    return size;
+  }, [size]);
+
   // Memoize image source processing
   const imageSource = useMemo((): ImageSourcePropType | undefined => {
     if (!imgSource) return undefined;
-    
+
     if (typeof imgSource === "string") {
       return { uri: imgSource };
     }
@@ -51,14 +65,21 @@ function LoadingIndicator({
   }, [imgSource]);
 
   // Memoize image style calculation
-  const imageStyle = useMemo(() => [
-    size === "large"
-      ? { width: 50, height: 50 }
-      : size === "small"
-      ? { width: 30, height: 30 }
-      : undefined,
-    styles?.image,
-  ], [size, styles?.image]);
+  const imageStyle = useMemo(() => {
+    if (typeof size === 'number') {
+      return [{ width: size, height: size }, styles?.image];
+    }
+    return [
+      size === "large"
+        ? { width: 50, height: 50 }
+        : size === "medium"
+        ? { width: 40, height: 40 }
+        : size === "small"
+        ? { width: 30, height: 30 }
+        : undefined,
+      styles?.image,
+    ];
+  }, [size, styles?.image]);
 
   // Memoize activity indicator color
   const activityIndicatorColor = useMemo(() => {
@@ -84,12 +105,12 @@ function LoadingIndicator({
     return (
       <ActivityIndicator
         color={activityIndicatorColor}
-        size={size}
+        size={activityIndicatorSize}
         style={styles?.activityIndicator}
         testID={`${testID}-activity-indicator`}
       />
     );
-  }, [customElement, imageSource, imageStyle, testID, activityIndicatorColor, size, styles?.activityIndicator]);
+  }, [customElement, imageSource, imageStyle, testID, activityIndicatorColor, activityIndicatorSize, styles?.activityIndicator]);
 
   return (
     <Container style={style} testID={testID}>

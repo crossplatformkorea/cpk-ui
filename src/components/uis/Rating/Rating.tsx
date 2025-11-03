@@ -21,11 +21,13 @@ type Styles = {
   starContainer: StyleProp<ViewStyle>;
 };
 
+export type RatingSizeType = 'small' | 'medium' | 'large' | number;
+
 export type RatingProps = {
   testID?: string;
   styles?: Styles;
   style?: StyleProp<ViewStyle>;
-  size?: number;
+  size?: RatingSizeType;
   iconType?: 'star' | 'dooboo';
   initialRating?: number;
   direction?: 'horizontal' | 'vertical';
@@ -40,7 +42,7 @@ export function Rating({
   style,
   styles,
   initialRating = 0,
-  size = 24,
+  size = 'medium',
   iconType = 'star',
   onRatingUpdate,
   direction = 'horizontal',
@@ -48,6 +50,13 @@ export function Rating({
   disabled = false,
   color,
 }: RatingProps): ReactElement {
+  const iconSize = typeof size === 'number'
+    ? size
+    : size === 'small'
+      ? 18
+      : size === 'large'
+        ? 32
+        : 24;
   const [rating, setRating] = useState(initialRating);
 
   const iconPrefix = useMemo(
@@ -112,20 +121,20 @@ export function Rating({
               <Icon
                 color={color}
                 name={`${iconPrefix}` as IconName}
-                size={size}
+                size={iconSize}
                 style={{position: 'absolute'}}
               />
               <Icon
                 color={color}
                 name={`${iconPrefix}HalfFill` as IconName}
-                size={size}
+                size={iconSize}
               />
             </View>
           ) : (
             <Icon
               color={color}
               name={iconName}
-              size={size}
+              size={iconSize}
               style={{position: 'absolute'}}
             />
           )}
@@ -136,8 +145,8 @@ export function Rating({
           >
             <View
               style={{
-                width: size / 2,
-                height: size,
+                width: iconSize / 2,
+                height: iconSize,
                 backgroundColor: 'transparent',
               }}
             />
@@ -149,8 +158,8 @@ export function Rating({
           >
             <View
               style={{
-                width: size / 2,
-                height: size,
+                width: iconSize / 2,
+                height: iconSize,
                 backgroundColor: 'transparent',
               }}
             />

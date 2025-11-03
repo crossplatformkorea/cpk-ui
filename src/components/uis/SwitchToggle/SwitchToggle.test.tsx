@@ -3,7 +3,7 @@ import {Text} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render, waitFor} from '@testing-library/react-native';
 import {createComponent} from '../../../../test/testUtils';
-import {SwitchToggle} from './SwitchToggle';
+import {SwitchToggle, type SwitchToggleSizeType} from './SwitchToggle';
 
 let testingLib: RenderAPI;
 
@@ -27,10 +27,11 @@ describe('[SwitchToggle]', () => {
     expect(handlePress).toBeCalled();
   });
 
-  const getSwitchToggle = ({isOn}: {isOn: boolean}): ReactElement =>
+  const getSwitchToggle = ({isOn, size}: {isOn: boolean; size?: SwitchToggleSizeType}): ReactElement =>
     createComponent(
       <SwitchToggle
         isOn={isOn}
+        size={size}
         offElement={<Text>off</Text>}
         onElement={<Text>on</Text>}
         onPress={handlePress}
@@ -61,6 +62,40 @@ describe('[SwitchToggle]', () => {
   context('when switch toggle is off', () => {
     it('renders as off state', () => {
       const component = createComponent(getSwitchToggle({isOn: false}));
+      testingLib = render(component);
+
+      const baseElement = testingLib.toJSON();
+      expect(baseElement).toBeTruthy();
+    });
+  });
+
+  describe('sizes', () => {
+    it('renders with small size', () => {
+      const component = createComponent(getSwitchToggle({size: 'small'}));
+      testingLib = render(component);
+
+      const baseElement = testingLib.toJSON();
+      expect(baseElement).toBeTruthy();
+    });
+
+    it('renders with medium size', () => {
+      const component = createComponent(getSwitchToggle({size: 'medium'}));
+      testingLib = render(component);
+
+      const baseElement = testingLib.toJSON();
+      expect(baseElement).toBeTruthy();
+    });
+
+    it('renders with large size', () => {
+      const component = createComponent(getSwitchToggle({size: 'large'}));
+      testingLib = render(component);
+
+      const baseElement = testingLib.toJSON();
+      expect(baseElement).toBeTruthy();
+    });
+
+    it('renders with custom numeric size', () => {
+      const component = createComponent(getSwitchToggle({size: 28}));
       testingLib = render(component);
 
       const baseElement = testingLib.toJSON();

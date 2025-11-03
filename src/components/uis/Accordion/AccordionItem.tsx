@@ -9,23 +9,62 @@ import {Typography} from '../Typography/Typography';
 
 import type {AccordionBaseProps} from './Accordion';
 
-const TitleTouch = styled(TouchableOpacity)`
-  height: 48px;
+import type {AccordionSizeType} from './Accordion';
+
+const TitleTouch = styled(TouchableOpacity)<{$size?: AccordionSizeType}>`
+  height: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 2.4;
+    return $size === 'small' ? 40 : $size === 'large' ? 56 : 48;
+  }};
   background-color: ${({theme}) => theme.bg.basic};
 
   flex-direction: row;
   align-items: center;
-  padding: 8px 12px;
+  padding-top: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.4;
+    return $size === 'small' ? 6 : $size === 'large' ? 10 : 8;
+  }};
+  padding-bottom: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.4;
+    return $size === 'small' ? 6 : $size === 'large' ? 10 : 8;
+  }};
+  padding-left: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.6;
+    return $size === 'small' ? 10 : $size === 'large' ? 14 : 12;
+  }};
+  padding-right: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.6;
+    return $size === 'small' ? 10 : $size === 'large' ? 14 : 12;
+  }};
 `;
 
-const StyledIcon = styled(Icon)`
+const StyledIcon = styled(Icon)<{$size?: AccordionSizeType}>`
   color: ${({theme}) => theme.text.basic};
   font-weight: bold;
+  font-size: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.7;
+    return $size === 'small' ? 12 : $size === 'large' ? 16 : 14;
+  }};
 `;
 
-const ItemTouch = styled(TouchableOpacity)`
+const ItemTouch = styled(TouchableOpacity)<{$size?: AccordionSizeType}>`
   background-color: ${({theme}) => theme.bg.paper};
-  padding: 8px 12px;
+  padding-top: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.4;
+    return $size === 'small' ? 6 : $size === 'large' ? 10 : 8;
+  }};
+  padding-bottom: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.4;
+    return $size === 'small' ? 6 : $size === 'large' ? 10 : 8;
+  }};
+  padding-left: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.6;
+    return $size === 'small' ? 10 : $size === 'large' ? 14 : 12;
+  }};
+  padding-right: ${({$size = 'medium'}) => {
+    if (typeof $size === 'number') return $size * 0.6;
+    return $size === 'small' ? 10 : $size === 'large' ? 14 : 12;
+  }};
 
   flex-direction: row;
   align-items: center;
@@ -44,17 +83,24 @@ type Props<T, K> = Omit<AccordionBaseProps<T, K>, 'data' | 'style'> & {
 export function AccordionItem<T, K>({
   testID,
   data: data,
+  size = 'medium',
   shouldAnimate = true,
   collapseOnStart = true,
   animDuration = 200,
   activeOpacity = 1,
-  toggleElement = <StyledIcon name="CaretDown" size={14} />,
+  toggleElement,
   toggleElementPosition,
   onPressItem,
   renderTitle,
   renderItem,
   styles,
 }: Props<T, K>): ReactElement {
+  // Calculate icon size based on accordion size
+  const iconSize = typeof size === 'number'
+    ? size * 0.7
+    : size === 'small' ? 12 : size === 'large' ? 16 : 14;
+
+  const defaultToggleElement = <StyledIcon name="CaretDown" $size={size} size={iconSize} />;
   const dropDownAnimValueRef = useRef(new Animated.Value(0));
   const rotateAnimValueRef = useRef(new Animated.Value(0));
   const fadeItemAnim = useRef(new Animated.Value(0)).current;
@@ -109,12 +155,17 @@ export function AccordionItem<T, K>({
     setItemHeight(e.nativeEvent.layout.height);
   }, []);
 
+  // Calculate margin based on size
+  const toggleMargin = typeof size === 'number'
+    ? size * 0.6
+    : size === 'small' ? 10 : size === 'large' ? 14 : 12;
+
   // Memoize toggle element container
   const toggleElContainer = useMemo(() => (
     <Animated.View
       style={[
         css`
-          margin-right: ${toggleElementPosition === 'left' ? '12px' : 0};
+          margin-right: ${toggleElementPosition === 'left' ? toggleMargin : 0}px;
         `,
         {
           transform: [
@@ -129,9 +180,9 @@ export function AccordionItem<T, K>({
         styles?.toggleElement,
       ]}
     >
-      {toggleElement}
+      {toggleElement || defaultToggleElement}
     </Animated.View>
-  ), [toggleElement, toggleElementPosition, styles?.toggleElement]);
+  ), [toggleElement, defaultToggleElement, toggleElementPosition, toggleMargin, styles?.toggleElement]);
 
   // Memoize container styles
   const containerStyles = useMemo(() => [
@@ -163,6 +214,15 @@ export function AccordionItem<T, K>({
     },
   ], [fadeItemAnim, itemHeight]);
 
+  // Calculate font sizes based on size prop
+  const titleFontSize = typeof size === 'number'
+    ? size
+    : size === 'small' ? 14 : size === 'large' ? 18 : 16;
+
+  const itemFontSize = typeof size === 'number'
+    ? size * 0.875
+    : size === 'small' ? 12 : size === 'large' ? 16 : 14;
+
   return (
     <Animated.View style={containerStyles}>
       {/* Invisible: Place it at the top for z-index */}
@@ -178,9 +238,10 @@ export function AccordionItem<T, K>({
             activeOpacity={activeOpacity}
             key={`body-${index}`}
             onPress={() => handleItemPress(body)}
+            $size={size}
           >
             {typeof body === 'string' && !renderItem ? (
-              <Typography.Body3 style={styles?.itemText}>
+              <Typography.Body3 style={[{fontSize: itemFontSize}, styles?.itemText]}>
                 {body}
               </Typography.Body3>
             ) : (
@@ -189,7 +250,7 @@ export function AccordionItem<T, K>({
           </ItemTouch>
         ))}
       </View>
-      
+
       {/* Item */}
       <Animated.View
         accessibilityState={{expanded: !collapsed}}
@@ -202,9 +263,10 @@ export function AccordionItem<T, K>({
             key={`body-${index}`}
             onPress={() => handleItemPress(body)}
             style={styles?.itemContainer}
+            $size={size}
           >
             {typeof body === 'string' && !renderItem ? (
-              <Typography.Body3 style={styles?.itemText}>
+              <Typography.Body3 style={[{fontSize: itemFontSize}, styles?.itemText]}>
                 {body}
               </Typography.Body3>
             ) : (
@@ -224,10 +286,11 @@ export function AccordionItem<T, K>({
         accessibilityHint={collapsed ? 'Double tap to expand' : 'Double tap to collapse'}
         style={titleContainerStyles}
         testID={`title-${testID}`}
+        $size={size}
       >
         {toggleElementPosition === 'left' ? toggleElContainer : null}
         {typeof data.title === 'string' && !renderTitle ? (
-          <Typography.Heading4 style={styles?.titleText}>
+          <Typography.Heading4 style={[{fontSize: titleFontSize}, styles?.titleText]}>
             {data.title}
           </Typography.Heading4>
         ) : (

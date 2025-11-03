@@ -69,4 +69,30 @@ describe('Rating', () => {
 
     expect(handleRatingUpdate).toHaveBeenCalledWith(1);
   });
+
+  describe('sizes', () => {
+    test('renders with small size', () => {
+      const testingLib = render(Component({size: 'small'}));
+      const json = testingLib.toJSON();
+      expect(json).toBeTruthy();
+    });
+
+    test('renders with medium size', () => {
+      const testingLib = render(Component({size: 'medium'}));
+      const json = testingLib.toJSON();
+      expect(json).toBeTruthy();
+    });
+
+    test('renders with large size', () => {
+      const testingLib = render(Component({size: 'large'}));
+      const json = testingLib.toJSON();
+      expect(json).toBeTruthy();
+    });
+
+    test('renders with custom numeric size', () => {
+      const testingLib = render(Component({size: 32}));
+      const json = testingLib.toJSON();
+      expect(json).toBeTruthy();
+    });
+  });
 });

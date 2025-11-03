@@ -21,27 +21,36 @@ const preview: Preview = {
       ],
     },
 
-    toolbar: {
-      theme: {
-        title: 'Theme',
+    previewTabs: {
+      'storybook/docs/panel': {
+        index: -1,
+        title: 'Notes',
+      },
+    },
+  },
+
+  initialGlobals: {
+    theme: 'light',
+  },
+
+  globalTypes: {
+    theme: {
+      name: 'Theme',
+      description: 'Global theme for components',
+      defaultValue: 'light',
+      toolbar: {
         icon: 'circlehollow',
-        items: ['light', 'dark'],
+        items: [
+          {value: 'light', title: 'Light'},
+          {value: 'dark', title: 'Dark'},
+        ],
+        showName: true,
         dynamicTitle: true,
       },
     },
   },
 
-  args: {
-    theme: 'light',
-  },
-
-  argTypes: {
-    theme: {
-      control: 'select',
-      options: ['light', 'dark'],
-      description: 'Theme mode',
-    },
-  },
+  tags: ['autodocs'],
 };
 
 export default preview;
