@@ -65,7 +65,7 @@ const createTextComponent = ({
     // Check if using custom font on Android for heading
     const isHeading = fontWeight === 'bold';
     const fontFamilies = getFontFamilies(isHeading);
-    const isCustomFont = Platform.OS === 'android' && fontFamilies.normal !== 'Pretendard';
+    const isCustomFont = Platform?.OS === 'android' && fontFamilies.normal !== 'Pretendard';
 
     // On Android, remove fontWeight when custom font is applied
     const effectiveFontWeight = isCustomFont ? undefined : fontWeight;
