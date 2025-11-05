@@ -11,12 +11,19 @@ type FontFamilyOptions = {
   bold?: string;
 };
 
+type FontFamilyConfig = {
+  heading?: FontFamilyOptions;
+  body?: FontFamilyOptions;
+};
+
 const createBaseText = (
   colorResolver: (theme: CpkTheme) => string,
   fallbackColor: string,
+  isHeading: boolean,
 ) => styled(Text)<{theme?: CpkTheme; $fontWeight?: 'normal' | 'bold' | 'thin'}>`
   font-family: ${({$fontWeight}) => {
-    const {normal, thin = normal, bold = normal} = getFontFamilies();
+    const fontFamilies = getFontFamilies(isHeading);
+    const {normal, thin = normal, bold = normal} = fontFamilies;
     switch ($fontWeight) {
       case 'bold':
         return bold;
@@ -77,140 +84,147 @@ const createTextComponent = ({
     );
   }) as unknown as TextComponentType;
 
-const StandardBaseText = createBaseText((theme) => theme.text.basic, 'gray');
-const InvertedBaseText = createBaseText(
+const StandardHeadingBaseText = createBaseText((theme) => theme.text.basic, 'gray', true);
+const StandardBodyBaseText = createBaseText((theme) => theme.text.basic, 'gray', false);
+const InvertedHeadingBaseText = createBaseText(
   (theme) => theme.text.contrast,
   light.text.contrast,
+  true,
+);
+const InvertedBodyBaseText = createBaseText(
+  (theme) => theme.text.contrast,
+  light.text.contrast,
+  false,
 );
 
 const Title = createTextComponent({
-  BaseText: StandardBaseText,
+  BaseText: StandardHeadingBaseText,
   fontSize: 36,
   lineHeight: 50.4,
   fontWeight: 'bold',
 });
 
 const Heading1 = createTextComponent({
-  BaseText: StandardBaseText,
+  BaseText: StandardHeadingBaseText,
   fontSize: 28,
   lineHeight: 39.2,
   fontWeight: 'bold',
 });
 
 const Heading2 = createTextComponent({
-  BaseText: StandardBaseText,
+  BaseText: StandardHeadingBaseText,
   fontSize: 26,
   lineHeight: 36.4,
   fontWeight: 'bold',
 });
 
 const Heading3 = createTextComponent({
-  BaseText: StandardBaseText,
+  BaseText: StandardHeadingBaseText,
   fontSize: 24,
   lineHeight: 33.6,
   fontWeight: 'bold',
 });
 
 const Heading4 = createTextComponent({
-  BaseText: StandardBaseText,
+  BaseText: StandardHeadingBaseText,
   fontSize: 22,
   lineHeight: 30.8,
   fontWeight: 'bold',
 });
 
 const Heading5 = createTextComponent({
-  BaseText: StandardBaseText,
+  BaseText: StandardHeadingBaseText,
   fontSize: 20,
   lineHeight: 28,
   fontWeight: 'bold',
 });
 
 const Body1 = createTextComponent({
-  BaseText: StandardBaseText,
+  BaseText: StandardBodyBaseText,
   fontSize: 18,
   lineHeight: 25.2,
 });
 
 const Body2 = createTextComponent({
-  BaseText: StandardBaseText,
+  BaseText: StandardBodyBaseText,
   fontSize: 16,
   lineHeight: 22.4,
 });
 
 const Body3 = createTextComponent({
-  BaseText: StandardBaseText,
+  BaseText: StandardBodyBaseText,
   fontSize: 14,
   lineHeight: 19.6,
 });
 
 const Body4 = createTextComponent({
-  BaseText: StandardBaseText,
+  BaseText: StandardBodyBaseText,
   fontSize: 12,
   lineHeight: 16.4,
 });
 
 const InvertedTitle = createTextComponent({
-  BaseText: InvertedBaseText,
+  BaseText: InvertedHeadingBaseText,
   fontSize: 36,
   lineHeight: 50.4,
   fontWeight: 'bold',
 });
 
 const InvertedHeading1 = createTextComponent({
-  BaseText: InvertedBaseText,
+  BaseText: InvertedHeadingBaseText,
   fontSize: 28,
   lineHeight: 39.2,
   fontWeight: 'bold',
 });
 
 const InvertedHeading2 = createTextComponent({
-  BaseText: InvertedBaseText,
+  BaseText: InvertedHeadingBaseText,
   fontSize: 26,
   lineHeight: 36.4,
   fontWeight: 'bold',
 });
 
 const InvertedHeading3 = createTextComponent({
-  BaseText: InvertedBaseText,
+  BaseText: InvertedHeadingBaseText,
   fontSize: 24,
   lineHeight: 33.6,
   fontWeight: 'bold',
 });
 
 const InvertedHeading4 = createTextComponent({
-  BaseText: InvertedBaseText,
+  BaseText: InvertedHeadingBaseText,
   fontSize: 22,
   lineHeight: 30.8,
   fontWeight: 'bold',
 });
 
 const InvertedHeading5 = createTextComponent({
-  BaseText: InvertedBaseText,
+  BaseText: InvertedHeadingBaseText,
   fontSize: 20,
   lineHeight: 28,
   fontWeight: 'bold',
 });
 
 const InvertedBody1 = createTextComponent({
-  BaseText: InvertedBaseText,
+  BaseText: InvertedBodyBaseText,
   fontSize: 18,
   lineHeight: 25.2,
 });
 
 const InvertedBody2 = createTextComponent({
-  BaseText: InvertedBaseText,
+  BaseText: InvertedBodyBaseText,
   fontSize: 16,
   lineHeight: 22.4,
 });
 
 const InvertedBody3 = createTextComponent({
-  BaseText: InvertedBaseText,
+  BaseText: InvertedBodyBaseText,
   fontSize: 14,
   lineHeight: 19.6,
 });
 
 const InvertedBody4 = createTextComponent({
-  BaseText: InvertedBaseText,
+  BaseText: InvertedBodyBaseText,
   fontSize: 12,
   lineHeight: 16.4,
 });
@@ -241,31 +255,54 @@ export const TypographyInverted = {
   Body4: InvertedBody4,
 };
 
-let currentFontFamilies = {
-  normal: 'Pretendard',
-  thin: 'Pretendard-Thin',
-  bold: 'Pretendard-Bold',
+let currentFontFamilies: FontFamilyConfig = {
+  heading: {
+    normal: 'Pretendard',
+    thin: 'Pretendard-Thin',
+    bold: 'Pretendard-Bold',
+  },
+  body: {
+    normal: 'Pretendard',
+    thin: 'Pretendard-Thin',
+    bold: 'Pretendard-Bold',
+  },
 };
 
-export const setFontFamily = (fontFamilies: {
-  normal: string;
-  thin?: string;
-  bold?: string;
-}): void => {
-  currentFontFamilies = {...currentFontFamilies, ...fontFamilies};
+export const setFontFamily = (fontFamilies: FontFamilyConfig): void => {
+  if (fontFamilies.heading) {
+    currentFontFamilies.heading = {
+      ...currentFontFamilies.heading,
+      ...fontFamilies.heading,
+    };
+  }
+
+  if (fontFamilies.body) {
+    currentFontFamilies.body = {
+      ...currentFontFamilies.body,
+      ...fontFamilies.body,
+    };
+  }
 
   // Memoize font family getter function
-  const getFontFamily = (fontWeight: string | undefined): string => {
+  const getFontFamily = (fontWeight: string | undefined, userFontFamily: string | undefined, isHeading: boolean): string => {
+    // If user explicitly set fontFamily, use it (override)
+    if (userFontFamily) {
+      return userFontFamily;
+    }
+
+    const fontFamilies = isHeading ? currentFontFamilies.heading! : currentFontFamilies.body!;
+    const {normal, thin = normal, bold = normal} = fontFamilies;
+
     switch (fontWeight) {
       case 'bold':
       case '700':
-        return currentFontFamilies.bold;
+        return bold;
       case '100':
       case '200':
       case '300':
-        return currentFontFamilies.thin;
+        return thin;
       default:
-        return currentFontFamilies.normal;
+        return normal;
     }
   };
 
@@ -277,11 +314,28 @@ export const setFontFamily = (fontFamilies: {
     Component.render = function (...args: any) {
       const origin = oldRender.call(this, ...args);
 
-      const fontWeight = origin.props.style?.fontWeight;
+      // Check if style is an array or object
+      let flatStyle: any = {};
+      if (Array.isArray(origin.props.style)) {
+        // Flatten array of styles
+        origin.props.style.forEach((s: any) => {
+          if (s) {
+            flatStyle = {...flatStyle, ...s};
+          }
+        });
+      } else if (origin.props.style) {
+        flatStyle = origin.props.style;
+      }
+
+      const fontWeight = flatStyle?.fontWeight;
+      const userFontFamily = flatStyle?.fontFamily;
+
+      // Determine if this is a heading component (heuristic: bold fontWeight or fontSize > 18)
+      const isHeading = fontWeight === 'bold' || fontWeight === '700' || (flatStyle?.fontSize && flatStyle.fontSize > 18);
 
       const updatedStyle = [
         {
-          fontFamily: getFontFamily(fontWeight),
+          fontFamily: getFontFamily(fontWeight, userFontFamily, isHeading),
           includeFontPadding: false,
         },
         origin.props.style,
@@ -298,4 +352,11 @@ export const setFontFamily = (fontFamilies: {
 };
 
 // Memoize font families getter
-export const getFontFamilies = () => currentFontFamilies;
+export const getFontFamilies = (isHeading: boolean): FontFamilyOptions => {
+  const fontFamilies = isHeading ? currentFontFamilies.heading : currentFontFamilies.body;
+  return fontFamilies || {
+    normal: 'Pretendard',
+    thin: 'Pretendard-Thin',
+    bold: 'Pretendard-Bold',
+  };
+};
