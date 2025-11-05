@@ -1,5 +1,5 @@
 import React, {ReactNode, useMemo} from 'react';
-import {StyleProp, Text, TextInput} from 'react-native';
+import {StyleProp, Text, TextInput, Platform} from 'react-native';
 import {CpkTheme, isEmptyObject} from '../../../utils/theme';
 import {light} from '../../../utils/colors';
 import {type TextStyle} from 'react-native';
@@ -62,21 +62,29 @@ const createTextComponent = ({
     style?: StyleProp<TextStyle>;
     children?: ReactNode;
   }) => {
+    // Check if using custom font on Android for heading
+    const isHeading = fontWeight === 'bold';
+    const fontFamilies = getFontFamilies(isHeading);
+    const isCustomFont = Platform.OS === 'android' && fontFamilies.normal !== 'Pretendard';
+
+    // On Android, remove fontWeight when custom font is applied
+    const effectiveFontWeight = isCustomFont ? undefined : fontWeight;
+
     // Memoize style calculation
     const textStyle = useMemo(() => [
       css`
         font-size: ${fontSize}px;
         line-height: ${lineHeight}px;
-        font-weight: ${fontWeight};
+        ${effectiveFontWeight ? `font-weight: ${effectiveFontWeight};` : ''}
       `,
       {includeFontPadding: false},
       style,
-    ], [style]);
+    ], [style, effectiveFontWeight]);
 
     return (
       <BaseText
         {...props}
-        $fontWeight={fontWeight}
+        $fontWeight={effectiveFontWeight}
         style={textStyle}
       >
         {children}
