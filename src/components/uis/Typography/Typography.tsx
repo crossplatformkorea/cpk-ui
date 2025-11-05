@@ -1,5 +1,5 @@
 import React, {ReactNode, useMemo} from 'react';
-import {StyleProp, Text, TextInput, Platform} from 'react-native';
+import {StyleProp, Text, TextInput, Platform, StyleSheet} from 'react-native';
 import {CpkTheme, isEmptyObject} from '../../../utils/theme';
 import {light} from '../../../utils/colors';
 import {type TextStyle} from 'react-native';
@@ -298,7 +298,12 @@ export const setFontFamily = (fontFamilies: FontFamilyConfig): void => {
       return userFontFamily;
     }
 
-    const fontFamilies = isHeading ? currentFontFamilies.heading! : currentFontFamilies.body!;
+    const fontFamilies = isHeading ? currentFontFamilies.heading : currentFontFamilies.body;
+    if (!fontFamilies) {
+      // Fallback to default Pretendard if not configured
+      return 'Pretendard';
+    }
+
     const {normal, thin = normal, bold = normal} = fontFamilies;
 
     switch (fontWeight) {
@@ -322,18 +327,8 @@ export const setFontFamily = (fontFamilies: FontFamilyConfig): void => {
     Component.render = function (...args: any) {
       const origin = oldRender.call(this, ...args);
 
-      // Check if style is an array or object
-      let flatStyle: any = {};
-      if (Array.isArray(origin.props.style)) {
-        // Flatten array of styles
-        origin.props.style.forEach((s: any) => {
-          if (s) {
-            flatStyle = {...flatStyle, ...s};
-          }
-        });
-      } else if (origin.props.style) {
-        flatStyle = origin.props.style;
-      }
+      // Flatten styles using React Native's StyleSheet.flatten
+      const flatStyle = StyleSheet.flatten(origin.props.style) ?? {};
 
       const fontWeight = flatStyle?.fontWeight;
       const userFontFamily = flatStyle?.fontFamily;
