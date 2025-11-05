@@ -48,11 +48,13 @@ const createTextComponent = ({
   fontSize,
   lineHeight,
   fontWeight,
+  isHeading,
 }: {
   BaseText: TextComponentType;
   fontSize: number;
   lineHeight: number;
   fontWeight?: 'normal' | 'bold' | 'thin';
+  isHeading: boolean;
 }) =>
   React.memo(({
     style,
@@ -62,8 +64,6 @@ const createTextComponent = ({
     style?: StyleProp<TextStyle>;
     children?: ReactNode;
   }) => {
-    // Check if using custom font on Android for heading
-    const isHeading = fontWeight === 'bold';
     const fontFamilies = getFontFamilies(isHeading);
     const isCustomFont = Platform?.OS === 'android' && fontFamilies.normal !== 'Pretendard';
 
@@ -110,6 +110,7 @@ const Title = createTextComponent({
   fontSize: 36,
   lineHeight: 50.4,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const Heading1 = createTextComponent({
@@ -117,6 +118,7 @@ const Heading1 = createTextComponent({
   fontSize: 28,
   lineHeight: 39.2,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const Heading2 = createTextComponent({
@@ -124,6 +126,7 @@ const Heading2 = createTextComponent({
   fontSize: 26,
   lineHeight: 36.4,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const Heading3 = createTextComponent({
@@ -131,6 +134,7 @@ const Heading3 = createTextComponent({
   fontSize: 24,
   lineHeight: 33.6,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const Heading4 = createTextComponent({
@@ -138,6 +142,7 @@ const Heading4 = createTextComponent({
   fontSize: 22,
   lineHeight: 30.8,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const Heading5 = createTextComponent({
@@ -145,30 +150,35 @@ const Heading5 = createTextComponent({
   fontSize: 20,
   lineHeight: 28,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const Body1 = createTextComponent({
   BaseText: StandardBodyBaseText,
   fontSize: 18,
   lineHeight: 25.2,
+  isHeading: false,
 });
 
 const Body2 = createTextComponent({
   BaseText: StandardBodyBaseText,
   fontSize: 16,
   lineHeight: 22.4,
+  isHeading: false,
 });
 
 const Body3 = createTextComponent({
   BaseText: StandardBodyBaseText,
   fontSize: 14,
   lineHeight: 19.6,
+  isHeading: false,
 });
 
 const Body4 = createTextComponent({
   BaseText: StandardBodyBaseText,
   fontSize: 12,
   lineHeight: 16.4,
+  isHeading: false,
 });
 
 const InvertedTitle = createTextComponent({
@@ -176,6 +186,7 @@ const InvertedTitle = createTextComponent({
   fontSize: 36,
   lineHeight: 50.4,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const InvertedHeading1 = createTextComponent({
@@ -183,6 +194,7 @@ const InvertedHeading1 = createTextComponent({
   fontSize: 28,
   lineHeight: 39.2,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const InvertedHeading2 = createTextComponent({
@@ -190,6 +202,7 @@ const InvertedHeading2 = createTextComponent({
   fontSize: 26,
   lineHeight: 36.4,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const InvertedHeading3 = createTextComponent({
@@ -197,6 +210,7 @@ const InvertedHeading3 = createTextComponent({
   fontSize: 24,
   lineHeight: 33.6,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const InvertedHeading4 = createTextComponent({
@@ -204,6 +218,7 @@ const InvertedHeading4 = createTextComponent({
   fontSize: 22,
   lineHeight: 30.8,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const InvertedHeading5 = createTextComponent({
@@ -211,30 +226,35 @@ const InvertedHeading5 = createTextComponent({
   fontSize: 20,
   lineHeight: 28,
   fontWeight: 'bold',
+  isHeading: true,
 });
 
 const InvertedBody1 = createTextComponent({
   BaseText: InvertedBodyBaseText,
   fontSize: 18,
   lineHeight: 25.2,
+  isHeading: false,
 });
 
 const InvertedBody2 = createTextComponent({
   BaseText: InvertedBodyBaseText,
   fontSize: 16,
   lineHeight: 22.4,
+  isHeading: false,
 });
 
 const InvertedBody3 = createTextComponent({
   BaseText: InvertedBodyBaseText,
   fontSize: 14,
   lineHeight: 19.6,
+  isHeading: false,
 });
 
 const InvertedBody4 = createTextComponent({
   BaseText: InvertedBodyBaseText,
   fontSize: 12,
   lineHeight: 16.4,
+  isHeading: false,
 });
 
 export const Typography = {
@@ -333,8 +353,9 @@ export const setFontFamily = (fontFamilies: FontFamilyConfig): void => {
       const fontWeight = flatStyle?.fontWeight;
       const userFontFamily = flatStyle?.fontFamily;
 
-      // Determine if this is a heading component (heuristic: bold fontWeight or fontSize > 18)
-      const isHeading = fontWeight === 'bold' || fontWeight === '700' || (flatStyle?.fontSize && flatStyle.fontSize > 18);
+      // Default to body fonts for direct Text/TextInput usage
+      // Heading fonts are applied via Typography components
+      const isHeading = false;
 
       const updatedStyle = [
         {
