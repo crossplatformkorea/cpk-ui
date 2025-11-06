@@ -33,22 +33,22 @@ An expandable/collapsible accordion component for organizing content hierarchica
 <Accordion data={data} defaultExpandedIndexes={[0, 2]} />
 
 // All items expanded
-<Accordion data={data} expandOnStart={true} />
+<Accordion data={data} expandAllOnStart={true} />
 \`\`\`
 
 ## Initial Expansion Props
 - **defaultExpandedIndexes**: Array of indexes to expand on start (e.g., \`[0, 2]\`)
-- **expandOnStart**: Boolean to expand all items on start
-- **collapseOnStart**: **@deprecated** Use \`expandOnStart\` instead
+- **expandAllOnStart**: Boolean to expand all items on start
+- **collapseOnStart**: **@deprecated** Use \`expandAllOnStart={false}\` instead
 
-**Priority order:** \`defaultExpandedIndexes\` > \`expandOnStart\` > \`collapseOnStart\` (deprecated) > default (all collapsed)
+**Priority order:** \`defaultExpandedIndexes\` > \`expandAllOnStart\` > \`collapseOnStart\` (deprecated) > default (all collapsed)
 
 ## Props
 - **size**: Accordion size ('small', 'medium', 'large', or number)
 - **data**: Array of accordion sections with title and items
 - **defaultExpandedIndexes**: Array of indexes to expand on start
-- **expandOnStart**: Whether all sections start expanded
-- **collapseOnStart**: **@deprecated** Whether sections start collapsed (use expandOnStart instead)
+- **expandAllOnStart**: Whether all sections start expanded
+- **collapseOnStart**: **@deprecated** Whether sections start collapsed (use expandAllOnStart instead)
 - **animDuration**: Animation duration in milliseconds
 - **shouldAnimate**: Enable/disable animations
 - **onPressItem**: Callback when an item is pressed
@@ -152,7 +152,7 @@ export const AllItemsExpanded: Story = {
   args: {
     size: 'medium',
     animDuration: 200,
-    expandOnStart: true,
+    expandAllOnStart: true,
     onPressItem: () => {},
     data: defaultData,
     shouldAnimate: true,

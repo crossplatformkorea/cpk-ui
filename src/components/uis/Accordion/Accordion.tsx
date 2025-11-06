@@ -27,11 +27,11 @@ export type AccordionBaseProps<T = string, K = string> = {
   styles?: Styles;
   size?: AccordionSizeType;
   shouldAnimate?: boolean;
-  /** @deprecated Use expandOnStart instead */
+  /** @deprecated Use expandAllOnStart instead */
   collapseOnStart?: boolean;
   /** If true, all items start expanded. Defaults to false (all items collapsed) */
-  expandOnStart?: boolean;
-  /** Array of indexes that should be expanded on start. Overrides expandOnStart */
+  expandAllOnStart?: boolean;
+  /** Array of indexes that should be expanded on start. Overrides expandAllOnStart */
   defaultExpandedIndexes?: number[];
   animDuration?: number;
   activeOpacity?: number;
@@ -50,7 +50,7 @@ function Accordion<T, K>({
   size = 'medium',
   data,
   collapseOnStart,
-  expandOnStart,
+  expandAllOnStart,
   defaultExpandedIndexes,
   ...rest
 }: AccordionProps<T, K>): ReactElement {
@@ -67,9 +67,9 @@ function Accordion<T, K>({
         ) {
           // If defaultExpandedIndexes is provided, use it
           shouldCollapse = !defaultExpandedIndexes.includes(titleKey);
-        } else if (expandOnStart !== undefined) {
-          // If expandOnStart is provided, use it
-          shouldCollapse = !expandOnStart;
+        } else if (expandAllOnStart !== undefined) {
+          // If expandAllOnStart is provided, use it
+          shouldCollapse = !expandAllOnStart;
         } else if (collapseOnStart !== undefined) {
           // Fallback to deprecated collapseOnStart for backward compatibility
           shouldCollapse = collapseOnStart;
@@ -85,7 +85,7 @@ function Accordion<T, K>({
             testID={`${titleKey}`}
             toggleElementPosition={toggleElementPosition}
             size={size}
-            expandOnStart={shouldCollapse}
+            collapseOnStart={shouldCollapse}
             {...rest}
           />
         );
@@ -95,7 +95,7 @@ function Accordion<T, K>({
       toggleElementPosition,
       size,
       collapseOnStart,
-      expandOnStart,
+      expandAllOnStart,
       defaultExpandedIndexes,
       rest,
     ],

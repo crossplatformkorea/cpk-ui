@@ -57,9 +57,9 @@ describe('[Accordion] render test', () => {
     expect(json).toBeTruthy();
   });
 
-  it('should render all expanded when expandOnStart is true', () => {
+  it('should render all expanded when expandAllOnStart is true', () => {
     props = createTestProps({
-      expandOnStart: true,
+      expandAllOnStart: true,
       data: data,
       renderTitle: (title) => <Text>{title}</Text>,
       renderItem: (item) => <Text>{item}</Text>,
@@ -105,10 +105,10 @@ describe('[Accordion] render test', () => {
     expect(json).toBeTruthy();
   });
 
-  it('should prioritize defaultExpandedIndexes over expandOnStart', () => {
+  it('should prioritize defaultExpandedIndexes over expandAllOnStart', () => {
     props = createTestProps({
       defaultExpandedIndexes: [0],
-      expandOnStart: true,
+      expandAllOnStart: true,
       data: data,
       renderTitle: (title) => <Text>{title}</Text>,
       renderItem: (item) => <Text>{item}</Text>,
@@ -122,9 +122,9 @@ describe('[Accordion] render test', () => {
     expect(json).toBeTruthy();
   });
 
-  it('should prioritize expandOnStart over collapseOnStart (deprecated)', () => {
+  it('should prioritize expandAllOnStart over collapseOnStart (deprecated)', () => {
     props = createTestProps({
-      expandOnStart: false,
+      expandAllOnStart: false,
       collapseOnStart: false,
       data: data,
       renderTitle: (title) => <Text>{title}</Text>,
