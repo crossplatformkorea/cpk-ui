@@ -27,7 +27,12 @@ export type AccordionBaseProps<T = string, K = string> = {
   styles?: Styles;
   size?: AccordionSizeType;
   shouldAnimate?: boolean;
+  /** @deprecated Use expandAllOnStart instead */
   collapseOnStart?: boolean;
+  /** If true, all items start expanded. Defaults to false (all items collapsed) */
+  expandAllOnStart?: boolean;
+  /** Array of indexes that should be expanded on start. Overrides expandAllOnStart */
+  defaultExpandedIndexes?: number[];
   animDuration?: number;
   activeOpacity?: number;
   toggleElementPosition?: 'left' | 'right';
@@ -44,28 +49,59 @@ function Accordion<T, K>({
   toggleElementPosition = 'right',
   size = 'medium',
   data,
+  collapseOnStart,
+  expandAllOnStart,
+  defaultExpandedIndexes,
   ...rest
 }: AccordionProps<T, K>): ReactElement {
   // Memoize accordion items rendering
-  const accordionItems = useMemo(() =>
-    data.map((datum, titleKey) => (
-      <AccordionItem
-        data={datum}
-        key={titleKey}
-        testID={`${titleKey}`}
-        toggleElementPosition={toggleElementPosition}
-        size={size}
-        {...rest}
-      />
-    )),
-    [data, toggleElementPosition, size, rest]
+  const accordionItems = useMemo(
+    () =>
+      data.map((datum, titleKey) => {
+        // Determine if this item should be collapsed on start
+        let shouldCollapse: boolean;
+
+        if (
+          defaultExpandedIndexes !== undefined &&
+          defaultExpandedIndexes.length > 0
+        ) {
+          // If defaultExpandedIndexes is provided, use it
+          shouldCollapse = !defaultExpandedIndexes.includes(titleKey);
+        } else if (expandAllOnStart !== undefined) {
+          // If expandAllOnStart is provided, use it
+          shouldCollapse = !expandAllOnStart;
+        } else if (collapseOnStart !== undefined) {
+          // Fallback to deprecated collapseOnStart for backward compatibility
+          shouldCollapse = collapseOnStart;
+        } else {
+          // Default: all items collapsed
+          shouldCollapse = true;
+        }
+
+        return (
+          <AccordionItem
+            data={datum}
+            key={titleKey}
+            testID={`${titleKey}`}
+            toggleElementPosition={toggleElementPosition}
+            size={size}
+            collapseOnStart={shouldCollapse}
+            {...rest}
+          />
+        );
+      }),
+    [
+      data,
+      toggleElementPosition,
+      size,
+      collapseOnStart,
+      expandAllOnStart,
+      defaultExpandedIndexes,
+      rest,
+    ],
   );
 
-  return (
-    <Container style={style}>
-      {accordionItems}
-    </Container>
-  );
+  return <Container style={style}>{accordionItems}</Container>;
 }
 
 // Export memoized component for better performance
