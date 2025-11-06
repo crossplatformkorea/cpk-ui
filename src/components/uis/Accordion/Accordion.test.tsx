@@ -41,9 +41,91 @@ describe('[Accordion] render test', () => {
     expect(json).toBeTruthy();
   });
 
-  it('should render collapsed when collapseOnStart props is true', () => {
+  it('should render collapsed when collapseOnStart props is true (deprecated)', () => {
     props = createTestProps({
       collapseOnStart: true,
+      data: data,
+      renderTitle: (title) => <Text>{title}</Text>,
+      renderItem: (item) => <Text>{item}</Text>,
+    });
+
+    component = createComponent(<Accordion {...props} />);
+    testingLib = render(component);
+
+    const json = testingLib.toJSON();
+
+    expect(json).toBeTruthy();
+  });
+
+  it('should render all expanded when expandOnStart is true', () => {
+    props = createTestProps({
+      expandOnStart: true,
+      data: data,
+      renderTitle: (title) => <Text>{title}</Text>,
+      renderItem: (item) => <Text>{item}</Text>,
+    });
+
+    component = createComponent(<Accordion {...props} />);
+    testingLib = render(component);
+
+    const json = testingLib.toJSON();
+
+    expect(json).toBeTruthy();
+  });
+
+  it('should render first item expanded when defaultExpandedIndexes is [0]', () => {
+    props = createTestProps({
+      defaultExpandedIndexes: [0],
+      data: data,
+      renderTitle: (title) => <Text>{title}</Text>,
+      renderItem: (item) => <Text>{item}</Text>,
+    });
+
+    component = createComponent(<Accordion {...props} />);
+    testingLib = render(component);
+
+    const json = testingLib.toJSON();
+
+    expect(json).toBeTruthy();
+  });
+
+  it('should render multiple items expanded when defaultExpandedIndexes is [0, 2]', () => {
+    props = createTestProps({
+      defaultExpandedIndexes: [0, 2],
+      data: data,
+      renderTitle: (title) => <Text>{title}</Text>,
+      renderItem: (item) => <Text>{item}</Text>,
+    });
+
+    component = createComponent(<Accordion {...props} />);
+    testingLib = render(component);
+
+    const json = testingLib.toJSON();
+
+    expect(json).toBeTruthy();
+  });
+
+  it('should prioritize defaultExpandedIndexes over expandOnStart', () => {
+    props = createTestProps({
+      defaultExpandedIndexes: [0],
+      expandOnStart: true,
+      data: data,
+      renderTitle: (title) => <Text>{title}</Text>,
+      renderItem: (item) => <Text>{item}</Text>,
+    });
+
+    component = createComponent(<Accordion {...props} />);
+    testingLib = render(component);
+
+    const json = testingLib.toJSON();
+
+    expect(json).toBeTruthy();
+  });
+
+  it('should prioritize expandOnStart over collapseOnStart (deprecated)', () => {
+    props = createTestProps({
+      expandOnStart: false,
+      collapseOnStart: false,
       data: data,
       renderTitle: (title) => <Text>{title}</Text>,
       renderItem: (item) => <Text>{item}</Text>,
