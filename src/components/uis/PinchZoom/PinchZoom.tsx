@@ -15,13 +15,30 @@ import type {
 import {Animated, PanResponder} from 'react-native';
 
 export type PinchZoomProps = PropsWithChildren<{
+  /**
+   * Custom view style.
+   * @warning Passing `transform` in style will disable pinch-zoom functionality.
+   * Use a wrapper View for custom transforms instead.
+   */
   style?: ViewStyle;
   children?: any;
+  /** Callback fired when zoom scale changes */
   onScaleChanged?(value: number): void;
+  /** Callback fired when content position changes */
   onTranslateChanged?(valueXY: {x: number; y: number}): void;
+  /** Callback fired after gesture animation completes (decay or snap-back) */
   onRelease?(): void;
+  /**
+   * Allow unrestricted overflow on specific axes.
+   * When true, allows overflow. When false/undefined, clamps to bounds.
+   */
   allowEmpty?: {x?: boolean; y?: boolean};
+  /**
+   * Auto-snap to bounds after release.
+   * @default true
+   */
   fixOverflowAfterRelease?: boolean;
+  /** Test ID for component testing */
   testID?: string;
 }>;
 
@@ -367,6 +384,14 @@ function PinchZoom(
       values.translate != null && translate.setValue(values.translate);
     },
   }));
+
+  // Warn if style.transform is provided, as it will disable pinch-zoom
+  if (__DEV__ && style?.transform) {
+    console.warn(
+      'PinchZoom: passing transform in style prop will disable pinch-zoom functionality. ' +
+        'Use a wrapper View for custom transforms instead.',
+    );
+  }
 
   return (
     <Animated.View

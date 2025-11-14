@@ -30,6 +30,7 @@ A powerful PinchZoom component that enables pinch-to-zoom and pan gestures for i
 - \`onRelease\`: Callback fired after gesture animation completes (decay or snap-back)
 - \`allowEmpty\`: When \`true\`, allows unrestricted overflow on specific axes (x/y). When \`false\` or undefined, clamps translation to content bounds
 - \`fixOverflowAfterRelease\`: Auto-snap to bounds after release (default: true). When \`false\`, \`onRelease\` fires immediately without snap animation
+- \`style\`: Custom view style. **Warning**: Passing \`transform\` in style will disable pinch-zoom. Use a wrapper View for custom transforms
 
 ## Usage
 \`\`\`tsx
