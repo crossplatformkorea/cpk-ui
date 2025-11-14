@@ -123,11 +123,13 @@ function PinchZoom(
         !isResponderActive.current
       ) {
         const overflowX =
+          !allowEmpty?.x &&
           Math.abs(x) > ((transformCache.scale - 1) * layout.current.width) / 2;
 
         const overflowY =
+          !allowEmpty?.y &&
           Math.abs(y) >
-          ((transformCache.scale - 1) * layout.current.height) / 2;
+            ((transformCache.scale - 1) * layout.current.height) / 2;
 
         if (overflowX || overflowY) {
           decayingTranslateAnimation.current?.stop();
@@ -293,12 +295,14 @@ function PinchZoom(
           }
 
           const overflowX =
+            !allowEmpty?.x &&
             Math.abs(transformCache.translateX) >
-            ((transformCache.scale - 1) * layout.current.width) / 2;
+              ((transformCache.scale - 1) * layout.current.width) / 2;
 
           const overflowY =
+            !allowEmpty?.y &&
             Math.abs(transformCache.translateY) >
-            ((transformCache.scale - 1) * layout.current.height) / 2;
+              ((transformCache.scale - 1) * layout.current.height) / 2;
 
           if (overflowX || overflowY) {
             if (!fixOverflowAfterRelease) {
