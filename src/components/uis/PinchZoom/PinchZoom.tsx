@@ -113,7 +113,7 @@ function PinchZoom(
   useEffect(() => {
     scale.addListener(({value}) => {
       transformCache.scale = value;
-      onScaleChanged && onScaleChanged(value);
+      onScaleChanged?.(value);
     });
 
     const id = translate.addListener(({x, y}) => {
@@ -152,7 +152,7 @@ function PinchZoom(
 
       transformCache.translateX = x;
       transformCache.translateY = y;
-      onTranslateChanged && onTranslateChanged({x, y});
+      onTranslateChanged?.({x, y});
     });
 
     return () => {
@@ -177,6 +177,7 @@ function PinchZoom(
         onMoveShouldSetPanResponder: () => true,
         onPanResponderGrant: ({nativeEvent}) => {
           isResponderActive.current = true;
+          movingVelocity.current = undefined;
 
           if (decayingTranslateAnimation.current) {
             decayingTranslateAnimation.current.stop();
@@ -246,17 +247,17 @@ function PinchZoom(
 
               translate.setValue({
                 x: allowEmpty?.x
-                  ? Math.min(
+                  ? newTranslateX
+                  : Math.min(
                       Math.abs(newTranslateX),
                       ((newScale - 1) * layout.current.width) / 2,
-                    ) * Math.sign(newTranslateX)
-                  : newTranslateX,
+                    ) * Math.sign(newTranslateX),
                 y: allowEmpty?.y
-                  ? Math.min(
+                  ? newTranslateY
+                  : Math.min(
                       Math.abs(newTranslateY),
                       ((newScale - 1) * layout.current.height) / 2,
-                    ) * Math.sign(newTranslateY)
-                  : newTranslateY,
+                    ) * Math.sign(newTranslateY),
               });
             } else {
               initialDistance.current = getDistanceFromTouches(touches);
@@ -301,7 +302,7 @@ function PinchZoom(
 
           if (overflowX || overflowY) {
             if (!fixOverflowAfterRelease) {
-              onRelease && onRelease();
+              onRelease?.();
 
               return;
             }
@@ -328,7 +329,9 @@ function PinchZoom(
               toValue,
               duration: 100,
               useNativeDriver: true,
-            }).start();
+            }).start(() => {
+              onRelease?.();
+            });
           } else {
             decayingTranslateAnimation.current = Animated.decay(translate, {
               velocity: movingVelocity.current ?? {x: 0, y: 0},
@@ -337,7 +340,7 @@ function PinchZoom(
 
             decayingTranslateAnimation.current.start(() => {
               decayingTranslateAnimation.current = undefined;
-              onRelease && onRelease();
+              onRelease?.();
             });
           }
         },

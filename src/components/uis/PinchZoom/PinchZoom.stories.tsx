@@ -27,9 +27,9 @@ A powerful PinchZoom component that enables pinch-to-zoom and pan gestures for i
 ## Props
 - \`onScaleChanged\`: Callback fired when zoom scale changes
 - \`onTranslateChanged\`: Callback fired when content position changes
-- \`onRelease\`: Callback fired when gesture is released
-- \`allowEmpty\`: Allow overflow on specific axes (x/y)
-- \`fixOverflowAfterRelease\`: Auto-snap to bounds after release (default: true)
+- \`onRelease\`: Callback fired after gesture animation completes (decay or snap-back)
+- \`allowEmpty\`: When \`true\`, allows unrestricted overflow on specific axes (x/y). When \`false\` or undefined, clamps translation to content bounds
+- \`fixOverflowAfterRelease\`: Auto-snap to bounds after release (default: true). When \`false\`, \`onRelease\` fires immediately without snap animation
 
 ## Usage
 \`\`\`tsx
