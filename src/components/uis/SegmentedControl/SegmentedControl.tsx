@@ -157,8 +157,10 @@ function SegmentedControlContainer({
 
   // Memoize segments rendering
   const segments = useMemo(
-    () =>
-      values.map((item: SegmentedControlItem, index: number) => {
+    () => {
+      const cornerRadius = Math.max(borderRadius - 1, 0);
+
+      return values.map((item: SegmentedControlItem, index: number) => {
         const isSelected = selectedValue === item.value;
         const isFirst = index === 0;
         const isLast = index === values.length - 1;
@@ -174,10 +176,10 @@ function SegmentedControlContainer({
               compositeStyles.segment,
               isSelected && compositeStyles.selectedSegment,
               {
-                borderTopLeftRadius: isFirst ? borderRadius - 1 : 0,
-                borderBottomLeftRadius: isFirst ? borderRadius - 1 : 0,
-                borderTopRightRadius: isLast ? borderRadius - 1 : 0,
-                borderBottomRightRadius: isLast ? borderRadius - 1 : 0,
+                borderTopLeftRadius: isFirst ? cornerRadius : 0,
+                borderBottomLeftRadius: isFirst ? cornerRadius : 0,
+                borderTopRightRadius: isLast ? cornerRadius : 0,
+                borderBottomRightRadius: isLast ? cornerRadius : 0,
                 borderRightWidth: isLast ? 0 : 1,
                 borderRightColor: theme.bg.disabled,
               },
@@ -197,7 +199,8 @@ function SegmentedControlContainer({
             )}
           </TouchableOpacity>
         );
-      }),
+      });
+    },
     [
       values,
       selectedValue,

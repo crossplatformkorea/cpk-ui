@@ -29,9 +29,12 @@ A iOS-style SegmentedControl component that allows users to select a single opti
 ## Usage
 \`\`\`tsx
 <SegmentedControl
-  data={['Day', 'Week', 'Month']}
-  labels={['Day', 'Week', 'Month']}
-  selectedValue="Day"
+  values={[
+    {value: 'day', text: 'Day'},
+    {value: 'week', text: 'Week'},
+    {value: 'month', text: 'Month'},
+  ]}
+  selectedValue="day"
   onValueChange={setSelectedValue}
   size="medium"
   color="primary"
@@ -59,9 +62,12 @@ A iOS-style SegmentedControl component that allows users to select a single opti
 ## Usage
 \`\`\`tsx
 <SegmentedControl
-  data={['Day', 'Week', 'Month']}
-  labels={['Day', 'Week', 'Month']}
-  selectedValue="Day"
+  values={[
+    {value: 'day', text: 'Day'},
+    {value: 'week', text: 'Week'},
+    {value: 'month', text: 'Month'},
+  ]}
+  selectedValue="day"
   onValueChange={setSelectedValue}
   size="medium"
   color="primary"
