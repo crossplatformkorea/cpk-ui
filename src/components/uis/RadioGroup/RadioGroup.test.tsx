@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {type ReactElement} from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {act, fireEvent, render, waitFor} from '@testing-library/react-native';
 
@@ -133,12 +133,14 @@ describe('[RadioButton]', () => {
     testingLib = render(component);
 
     const circleRadio = testingLib.getByTestId('circle-radio-0');
-
     // Get initial styles before layout
-    const initialStyle = circleRadio.props.style;
-    const initialMargin = Array.isArray(initialStyle)
-      ? initialStyle.find((s: any) => s && s.margin !== undefined)?.margin
-      : initialStyle?.margin;
+    const initialStyle = StyleSheet.flatten(circleRadio.props.style) ?? {};
+    const initialMargin =
+      initialStyle.margin ??
+      initialStyle.marginTop ??
+      initialStyle.marginRight ??
+      initialStyle.marginBottom ??
+      initialStyle.marginLeft;
 
     // Initially margin should be 0 since innerLayout is not set
     expect(initialMargin).toBe(0);
@@ -156,13 +158,18 @@ describe('[RadioButton]', () => {
 
     // After layout, the styles should reflect the innerLayout values
     // margin should be 2 and borderRadius should be width/2 = 20
-    const updatedStyle = testingLib.getByTestId('circle-radio-0').props.style;
-    const styleWithLayout = Array.isArray(updatedStyle)
-      ? updatedStyle.find((s: any) => s && s.margin !== undefined)
-      : updatedStyle;
+    const updatedStyle =
+      StyleSheet.flatten(testingLib.getByTestId('circle-radio-0').props.style) ??
+      {};
+    const updatedMargin =
+      updatedStyle.margin ??
+      updatedStyle.marginTop ??
+      updatedStyle.marginRight ??
+      updatedStyle.marginBottom ??
+      updatedStyle.marginLeft;
 
-    expect(styleWithLayout.margin).toBe(2);
-    expect(styleWithLayout.borderRadius).toBe(20); // 40 / 2
+    expect(updatedMargin).toBe(2);
+    expect(updatedStyle.borderRadius).toBe(20); // 40 / 2
   });
 
   describe('colors', () => {
