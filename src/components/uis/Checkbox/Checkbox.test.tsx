@@ -1,5 +1,5 @@
 import React, {type ReactElement} from 'react';
-import {View} from 'react-native';
+import {Text, View} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {render} from '@testing-library/react-native';
 
@@ -168,6 +168,100 @@ describe('[Checkbox]', () => {
 
       const checkbox = testingLib.getByTestId('cpk-ui-checkbox');
       expect(checkbox).toBeTruthy();
+    });
+  });
+
+  describe('accessibility', () => {
+    it('should have accessibilityRole="checkbox"', () => {
+      testingLib = render(
+        Component({
+          text: 'Accept terms',
+        }),
+      );
+
+      const json = testingLib.toJSON();
+      expect(json).toBeTruthy();
+      // The root element should have accessibilityRole
+      expect((json as any).props.accessibilityRole).toBe('checkbox');
+    });
+
+    it('should use text as default accessibilityLabel', () => {
+      testingLib = render(
+        Component({
+          text: 'Accept terms',
+        }),
+      );
+
+      const json = testingLib.toJSON();
+      expect((json as any).props.accessibilityLabel).toBe('Accept terms');
+    });
+
+    it('should use custom accessibilityLabel when provided', () => {
+      testingLib = render(
+        Component({
+          text: 'Accept',
+          accessibilityLabel: 'Accept terms and conditions',
+        }),
+      );
+
+      const json = testingLib.toJSON();
+      expect((json as any).props.accessibilityLabel).toBe('Accept terms and conditions');
+    });
+
+    it('should have accessibilityState with checked=true when checked', () => {
+      testingLib = render(
+        Component({
+          text: 'Accept terms',
+          checked: true,
+        }),
+      );
+
+      const json = testingLib.toJSON();
+      expect((json as any).props.accessibilityState).toEqual({
+        checked: true,
+        disabled: false,
+      });
+    });
+
+    it('should have accessibilityState with checked=false when unchecked', () => {
+      testingLib = render(
+        Component({
+          text: 'Accept terms',
+          checked: false,
+        }),
+      );
+
+      const json = testingLib.toJSON();
+      expect((json as any).props.accessibilityState).toEqual({
+        checked: false,
+        disabled: false,
+      });
+    });
+
+    it('should have accessibilityState with disabled=true when disabled', () => {
+      testingLib = render(
+        Component({
+          text: 'Accept terms',
+          disabled: true,
+        }),
+      );
+
+      const json = testingLib.toJSON();
+      expect((json as any).props.accessibilityState).toEqual({
+        checked: false,
+        disabled: true,
+      });
+    });
+
+    it('should have undefined accessibilityLabel when text is ReactElement', () => {
+      testingLib = render(
+        Component({
+          text: <Text>Custom text</Text>,
+        }),
+      );
+
+      const json = testingLib.toJSON();
+      expect((json as any).props.accessibilityLabel).toBeUndefined();
     });
   });
 });

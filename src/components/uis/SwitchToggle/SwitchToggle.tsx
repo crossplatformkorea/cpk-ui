@@ -31,6 +31,7 @@ type Props = {
   onElement?: any;
   offElement?: any;
   onPress?: () => void;
+  accessibilityLabel?: string;
 };
 
 // Using AnimatedView created above - functionally identical to styled(Animated.View)
@@ -88,6 +89,7 @@ export function SwitchToggle({
   size = 'medium',
   offElement,
   onPress,
+  accessibilityLabel,
 }: Props): ReactElement {
   const {theme} = useTheme();
 
@@ -287,7 +289,9 @@ export function SwitchToggle({
 
   return (
     <TouchableOpacity
+      accessibilityLabel={accessibilityLabel}
       accessibilityRole="switch"
+      accessibilityState={{checked: isOn}}
       activeOpacity={0.8}
       onPress={onPress}
       style={style}

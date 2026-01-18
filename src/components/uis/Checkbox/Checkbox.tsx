@@ -38,6 +38,7 @@ export interface CheckboxProps {
   checked?: boolean;
   text?: string | ReactElement;
   direction?: 'left' | 'right';
+  accessibilityLabel?: string;
 }
 
 const Container = styled(TouchableOpacity)`
@@ -77,6 +78,7 @@ export function Checkbox({
   disabled = false,
   checked = false,
   onPress,
+  accessibilityLabel,
 }: CheckboxProps): ReactElement {
   const checkboxSize = typeof size === 'number'
     ? size
@@ -188,6 +190,9 @@ export function Checkbox({
 
   return (
     <Container
+      accessibilityLabel={accessibilityLabel ?? (typeof text === 'string' ? text : undefined)}
+      accessibilityRole="checkbox"
+      accessibilityState={{checked, disabled}}
       activeOpacity={0.9}
       disabled={disabled}
       onPress={onPress}

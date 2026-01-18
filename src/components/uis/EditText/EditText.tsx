@@ -86,6 +86,7 @@ export type EditTextProps = {
   numberOfLines?: TextInputProps['numberOfLines'];
   maxLength?: TextInputProps['maxLength'];
   hideCounter?: boolean;
+  accessibilityLabel?: string;
 
   textInputProps?: Omit<
     TextInputProps,
@@ -149,6 +150,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       decoration = 'underline',
       colors = {},
       required = false,
+      accessibilityLabel,
     }: EditTextProps,
     ref,
   ): ReactElement => {
@@ -410,6 +412,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
                 })
               : startElement}
             <TextInput
+              accessibilityLabel={accessibilityLabel ?? (typeof label === 'string' ? label : placeholder)}
               autoCapitalize={autoCapitalize}
               autoComplete={autoComplete}
               editable={editable}

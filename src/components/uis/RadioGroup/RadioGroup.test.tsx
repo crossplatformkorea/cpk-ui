@@ -284,4 +284,71 @@ describe('[RadioButton]', () => {
       expect(baseElement).toBeTruthy();
     });
   });
+
+  describe('accessibility', () => {
+    it('should have accessibilityRole="radio" on RadioButton', async () => {
+      component = createComponent(
+        <RadioButton label="Option 1" testID="radio-a11y" />,
+      );
+
+      testingLib = render(component);
+
+      const radioButton = testingLib.getByTestId('radio-a11y');
+      expect(radioButton.props.accessibilityRole).toBe('radio');
+    });
+
+    it('should use label as default accessibilityLabel', async () => {
+      component = createComponent(
+        <RadioButton label="Option 1" testID="radio-a11y" />,
+      );
+
+      testingLib = render(component);
+
+      const radioButton = testingLib.getByTestId('radio-a11y');
+      expect(radioButton.props.accessibilityLabel).toBe('Option 1');
+    });
+
+    it('should use custom accessibilityLabel when provided', async () => {
+      component = createComponent(
+        <RadioButton
+          label="Option 1"
+          testID="radio-a11y"
+          accessibilityLabel="Select option one"
+        />,
+      );
+
+      testingLib = render(component);
+
+      const radioButton = testingLib.getByTestId('radio-a11y');
+      expect(radioButton.props.accessibilityLabel).toBe('Select option one');
+    });
+
+    it('should have accessibilityState with selected=true when selected', async () => {
+      component = createComponent(
+        <RadioButton label="Option 1" testID="radio-a11y" selected={true} />,
+      );
+
+      testingLib = render(component);
+
+      const radioButton = testingLib.getByTestId('radio-a11y');
+      expect(radioButton.props.accessibilityState).toEqual({
+        selected: true,
+        disabled: false,
+      });
+    });
+
+    it('should have accessibilityState with disabled=true when disabled', async () => {
+      component = createComponent(
+        <RadioButton label="Option 1" testID="radio-a11y" disabled={true} />,
+      );
+
+      testingLib = render(component);
+
+      const radioButton = testingLib.getByTestId('radio-a11y');
+      expect(radioButton.props.accessibilityState).toEqual({
+        selected: undefined,
+        disabled: true,
+      });
+    });
+  });
 });

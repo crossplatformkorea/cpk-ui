@@ -102,4 +102,48 @@ describe('[SwitchToggle]', () => {
       expect(baseElement).toBeTruthy();
     });
   });
+
+  describe('accessibility', () => {
+    it('should have accessibilityRole="switch"', () => {
+      testingLib = render(
+        createComponent(<SwitchToggle isOn={false} onPress={handlePress} />),
+      );
+
+      const switchElement = testingLib.getByRole('switch');
+      expect(switchElement).toBeTruthy();
+    });
+
+    it('should have accessibilityState with checked=true when isOn', () => {
+      testingLib = render(
+        createComponent(<SwitchToggle isOn={true} onPress={handlePress} />),
+      );
+
+      const json = testingLib.toJSON();
+      expect((json as any).props.accessibilityState).toEqual({checked: true});
+    });
+
+    it('should have accessibilityState with checked=false when not isOn', () => {
+      testingLib = render(
+        createComponent(<SwitchToggle isOn={false} onPress={handlePress} />),
+      );
+
+      const json = testingLib.toJSON();
+      expect((json as any).props.accessibilityState).toEqual({checked: false});
+    });
+
+    it('should use custom accessibilityLabel when provided', () => {
+      testingLib = render(
+        createComponent(
+          <SwitchToggle
+            isOn={false}
+            onPress={handlePress}
+            accessibilityLabel="Toggle dark mode"
+          />,
+        ),
+      );
+
+      const json = testingLib.toJSON();
+      expect((json as any).props.accessibilityLabel).toBe('Toggle dark mode');
+    });
+  });
 });
