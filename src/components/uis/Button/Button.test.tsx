@@ -545,6 +545,80 @@ describe('[Button]', () => {
     });
   });
 
+  describe('[Button] accessibility', () => {
+    it('should have accessibilityRole="button"', () => {
+      testingLib = render(
+        Component({
+          props: {
+            testID: 'a11y-button',
+            text: 'Click me',
+          },
+        }),
+      );
+
+      const button = testingLib.getByTestId('a11y-button');
+      expect(button.props.accessibilityRole).toBe('button');
+    });
+
+    it('should use text as default accessibilityLabel', () => {
+      testingLib = render(
+        Component({
+          props: {
+            testID: 'a11y-button',
+            text: 'Submit',
+          },
+        }),
+      );
+
+      const button = testingLib.getByTestId('a11y-button');
+      expect(button.props.accessibilityLabel).toBe('Submit');
+    });
+
+    it('should use custom accessibilityLabel when provided', () => {
+      testingLib = render(
+        Component({
+          props: {
+            testID: 'a11y-button',
+            text: 'Submit',
+            accessibilityLabel: 'Submit form',
+          },
+        }),
+      );
+
+      const button = testingLib.getByTestId('a11y-button');
+      expect(button.props.accessibilityLabel).toBe('Submit form');
+    });
+
+    it('should have undefined accessibilityLabel when text is ReactElement', () => {
+      testingLib = render(
+        Component({
+          props: {
+            testID: 'a11y-button',
+            text: <Text>Custom</Text>,
+          },
+        }),
+      );
+
+      const button = testingLib.getByTestId('a11y-button');
+      expect(button.props.accessibilityLabel).toBeUndefined();
+    });
+
+    it('should allow custom accessibilityLabel with ReactElement text', () => {
+      testingLib = render(
+        Component({
+          props: {
+            testID: 'a11y-button',
+            text: <Text>Custom</Text>,
+            accessibilityLabel: 'Custom button',
+          },
+        }),
+      );
+
+      const button = testingLib.getByTestId('a11y-button');
+      expect(button.props.accessibilityLabel).toBe('Custom button');
+    });
+  });
+
   describe('[Button] custom theme', () => {
     it('should render with custom primary color from theme', () => {
       const customTheme = {

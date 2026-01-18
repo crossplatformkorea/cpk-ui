@@ -162,4 +162,43 @@ describe('[IconButton]', () => {
 
     expect(json).toBeTruthy();
   });
+
+  describe('accessibility', () => {
+    it('should have accessibilityRole="button"', () => {
+      testingLib = render(
+        Component({
+          testID: 'a11y-icon-button',
+          icon: 'Plus',
+        }),
+      );
+
+      const button = testingLib.getByTestId('a11y-icon-button');
+      expect(button.props.accessibilityRole).toBe('button');
+    });
+
+    it('should use icon name as default accessibilityLabel', () => {
+      testingLib = render(
+        Component({
+          testID: 'a11y-icon-button',
+          icon: 'Plus',
+        }),
+      );
+
+      const button = testingLib.getByTestId('a11y-icon-button');
+      expect(button.props.accessibilityLabel).toBe('Plus');
+    });
+
+    it('should use custom accessibilityLabel when provided', () => {
+      testingLib = render(
+        Component({
+          testID: 'a11y-icon-button',
+          icon: 'Plus',
+          accessibilityLabel: 'Add new item',
+        }),
+      );
+
+      const button = testingLib.getByTestId('a11y-icon-button');
+      expect(button.props.accessibilityLabel).toBe('Add new item');
+    });
+  });
 });

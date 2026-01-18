@@ -169,6 +169,9 @@ function SegmentedControlContainer({
           <TouchableOpacity
             key={`segment-${index}`}
             testID={`segment-${index}`}
+            accessibilityLabel={typeof item.text === 'string' ? item.text : undefined}
+            accessibilityRole="button"
+            accessibilityState={{selected: isSelected}}
             activeOpacity={0.7}
             disabled={disabled}
             onPress={() => handlePress(item.value)}

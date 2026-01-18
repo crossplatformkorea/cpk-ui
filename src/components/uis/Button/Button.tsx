@@ -51,6 +51,7 @@ export type Props = {
   >;
   hitSlop?: null | Insets | number | undefined;
   hapticFeedback?: Haptics.ImpactFeedbackStyle;
+  accessibilityLabel?: string;
 };
 
 type Styles = {
@@ -241,6 +242,7 @@ export function Button({
   loadingColor,
   hitSlop = {top: 8, bottom: 8, left: 8, right: 8},
   hapticFeedback,
+  accessibilityLabel,
 }: Props): ReactElement {
   const ref = useRef<React.ElementRef<typeof TouchableHighlight>>(null);
   const hovered = useHover(ref);
@@ -410,6 +412,8 @@ export function Button({
 
   return (
     <TouchableHighlight
+      accessibilityLabel={accessibilityLabel ?? (typeof text === 'string' ? text : undefined)}
+      accessibilityRole="button"
       activeOpacity={activeOpacity}
       delayPressIn={30}
       disabled={innerDisabled || loading || !onPress}

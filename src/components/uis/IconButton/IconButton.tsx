@@ -99,6 +99,7 @@ export type IconButtonProps = {
   activeOpacity?: number;
   touchableHighlightProps?: Omit<TouchableHighlightProps, 'onPress' | 'style'>;
   hapticFeedback?: Haptics.ImpactFeedbackStyle;
+  accessibilityLabel?: string;
 };
 
 export function IconButton({
@@ -117,6 +118,7 @@ export function IconButton({
   activeOpacity = 0.95,
   touchableHighlightProps,
   hapticFeedback,
+  accessibilityLabel,
 }: IconButtonProps): ReactElement {
   const ref = useRef<React.ElementRef<typeof TouchableHighlight>>(null);
   const hovered = useHover(ref);
@@ -245,6 +247,8 @@ export function IconButton({
   return (
     <View style={containerStyles}>
       <TouchableHighlight
+        accessibilityLabel={accessibilityLabel ?? icon}
+        accessibilityRole="button"
         activeOpacity={activeOpacity}
         delayPressIn={50}
         disabled={disabled || loading}

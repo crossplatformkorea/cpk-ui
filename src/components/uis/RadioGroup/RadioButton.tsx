@@ -38,6 +38,7 @@ export type RadioButtonProps = {
   selected?: boolean;
   endElement?: ReactElement;
   startElement?: ReactElement;
+  accessibilityLabel?: string;
 };
 
 const Container = styled.TouchableOpacity`
@@ -60,6 +61,7 @@ export default function RadioButton({
   onPress,
   label,
   labelPosition = 'right',
+  accessibilityLabel,
 }: RadioButtonProps): ReactElement {
   const [innerLayout, setInnerLayout] = useState<LayoutRectangle>();
   const fadeAnim = useRef(new Animated.Value(selected ? 1 : 0)).current;
@@ -131,6 +133,9 @@ export default function RadioButton({
 
   return (
     <Container
+      accessibilityLabel={accessibilityLabel ?? label}
+      accessibilityRole="radio"
+      accessibilityState={{selected, disabled}}
       activeOpacity={0.9}
       disabled={disabled}
       onPress={onPress}
