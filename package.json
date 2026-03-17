@@ -24,6 +24,8 @@
     "tsc": "tsc",
     "start:reset": "watchman watch-del-all && lsof -t -i :8081 | xargs kill && expo start -c",
     "jest": "jest --runInBand",
+    "check-peer-deps": "node scripts/check-peer-deps.js",
+    "e2e-smoke": "node scripts/e2e-smoke.js",
     "test:all": "bun run lint && bun run tsc && bun run test",
     "prebuild": "find ./lib -mindepth 1 ! -name 'package.json' -exec rm -rf {} +",
     "build": "tsc --project tsconfigBuild.json && cpx './src/**/*.{ts,tsx}' ./lib/src/",

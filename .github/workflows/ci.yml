@@ -27,6 +27,9 @@ jobs:
       - name: Install modules
         run: bun install
 
+      - name: Check peer dependencies
+        run: bun run check-peer-deps
+
       - name: Check linting
         run: bun run lint
 
@@ -40,6 +43,9 @@ jobs:
         run: |
           export NODE_OPTIONS="--max-old-space-size=8192"
           bunx jest --coverage --forceExit --silent -u
+
+      - name: E2E smoke test
+        run: bun run e2e-smoke
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
