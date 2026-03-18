@@ -37,20 +37,42 @@ module.exports = {
       os: false,
     };
 
-    // Ensure babel-loader processes our src files BEFORE TypeScript
     const path = require('path');
-    const srcPath = path.resolve(__dirname, '../src');
 
-    // Find the babel-loader rule
-    const babelRule = config.module.rules.find(rule =>
-      rule.test && rule.test.toString().includes('jsx')
-    );
+    // Alias react-dom to shim that polyfills findDOMNode (removed in React 19,
+    // still needed by react-native-web@0.21.x)
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'react-dom$': path.resolve(__dirname, 'react-dom-shim.js'),
+    };
 
-    if (babelRule && babelRule.use) {
-      // Make sure our src directory is explicitly included
-      babelRule.include = [srcPath];
-      console.log('[Storybook] Configured babel-loader to process:', srcPath);
-    }
+    // Expo/RN packages that contain class properties syntax and need babel transpilation
+    const transpileModules = [
+      '@expo/vector-icons',
+      'expo-asset',
+      'expo-modules-core',
+      'expo-font',
+    ];
+
+    config.module.rules.push({
+      test: /\.(js|jsx|ts|tsx)$/,
+      include: transpileModules.map(mod =>
+        path.resolve(__dirname, '../node_modules', mod),
+      ),
+      use: {
+        loader: require.resolve('babel-loader'),
+        options: {
+          presets: [
+            ['@babel/preset-env', {modules: false}],
+            '@babel/preset-typescript',
+          ],
+          plugins: [
+            '@babel/plugin-transform-class-properties',
+            'babel-plugin-react-native-web',
+          ],
+        },
+      },
+    });
 
     return config;
   },
