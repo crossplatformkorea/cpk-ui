@@ -28,20 +28,20 @@ module.exports = [
 
   {
     ignores: [
-      'lib/**/*', 
-      'doc-build/**/*', 
+      'lib/**/*',
+      'doc-build/**/*',
       'storybook-static/**/*',
       'node_modules/**/*',
       '.expo/**/*',
       'web-build/**/*',
       'dist/**/*',
-      'build/**/*'
+      'build/**/*',
     ],
   },
 
   // JavaScript 설정
   {
-    files: ['*.js', '*.jsx', '.storybook/**/*.js'],
+    files: ['*.js', '*.jsx', 'scripts/**/*.js', '.storybook/**/*.js'],
     languageOptions: {
       sourceType: 'commonjs',
       globals: commonGlobals,
@@ -52,6 +52,13 @@ module.exports = [
     },
     rules: {
       ...commonRules,
+    },
+  },
+
+  {
+    files: ['scripts/**/*.js'],
+    rules: {
+      'no-console': 'off',
     },
   },
 

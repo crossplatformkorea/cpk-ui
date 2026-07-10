@@ -9,23 +9,23 @@
  * Usage: node scripts/check-peer-deps.js
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const ROOT = path.resolve(__dirname, "..");
-const NODE_MODULES = path.join(ROOT, "node_modules");
+const ROOT = path.resolve(__dirname, '..');
+const NODE_MODULES = path.join(ROOT, 'node_modules');
 
 // Packages whose peer dep warnings are known-safe and can be ignored.
 // These are packages that haven't updated their peerDependencies yet
 // but are confirmed to work at runtime.
 const IGNORE_PACKAGES = [
-  "@storybook/*",
-  "@testing-library/react-hooks", // deprecated, use @testing-library/react instead
+  '@storybook/*',
+  '@testing-library/react-hooks', // deprecated, use @testing-library/react instead
 ];
 
 function readJson(filePath) {
   try {
-    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch {
     return null;
   }
@@ -33,7 +33,7 @@ function readJson(filePath) {
 
 function getInstalledVersion(packageName) {
   const pkgJson = readJson(
-    path.join(NODE_MODULES, packageName, "package.json"),
+    path.join(NODE_MODULES, packageName, 'package.json'),
   );
   return pkgJson?.version || null;
 }
@@ -45,12 +45,12 @@ function satisfies(version, range) {
   if (!version || !range) return false;
 
   range = range.trim();
-  if (range === "*" || range === "") return true;
+  if (range === '*' || range === '') return true;
 
   const parseVersion = (v) => {
-    const clean = v.replace(/^[~^>=<\s]+/, "").replace(/-.*$/, "");
-    const parts = clean.split(".").map((p) => {
-      if (p === "x" || p === "*") return 0;
+    const clean = v.replace(/^[~^>=<\s]+/, '').replace(/-.*$/, '');
+    const parts = clean.split('.').map((p) => {
+      if (p === 'x' || p === '*') return 0;
       const n = parseInt(p);
       return isNaN(n) ? 0 : n;
     });
@@ -68,13 +68,13 @@ function satisfies(version, range) {
   };
 
   // Handle || (union ranges)
-  if (range.includes("||")) {
-    return range.split("||").some((r) => satisfies(version, r.trim()));
+  if (range.includes('||')) {
+    return range.split('||').some((r) => satisfies(version, r.trim()));
   }
 
   // Handle space-separated intersection (e.g. ">=16.0.0 <19.0.0")
   // But first, check if there is a single operator with spaces (e.g. ">= 16.8.0")
-  const normalized = range.replace(/(>=|<=|>|<|~|\^)\s+/g, "$1");
+  const normalized = range.replace(/(>=|<=|>|<|~|\^)\s+/g, '$1');
   const spaceTokens = normalized.trim().split(/\s+/);
   if (spaceTokens.length >= 2) {
     return spaceTokens.every((p) => satisfies(version, p));
@@ -84,23 +84,23 @@ function satisfies(version, range) {
   const installed = parseVersion(version);
   const required = parseVersion(singleRange);
 
-  if (singleRange.startsWith(">=")) {
+  if (singleRange.startsWith('>=')) {
     return compare(installed, required) >= 0;
   }
 
-  if (singleRange.startsWith(">") && !singleRange.startsWith(">=")) {
+  if (singleRange.startsWith('>') && !singleRange.startsWith('>=')) {
     return compare(installed, required) > 0;
   }
 
-  if (singleRange.startsWith("<=")) {
+  if (singleRange.startsWith('<=')) {
     return compare(installed, required) <= 0;
   }
 
-  if (singleRange.startsWith("<") && !singleRange.startsWith("<=")) {
+  if (singleRange.startsWith('<') && !singleRange.startsWith('<=')) {
     return compare(installed, required) < 0;
   }
 
-  if (singleRange.startsWith("~")) {
+  if (singleRange.startsWith('~')) {
     // ~: major.minor must match, patch >= required
     return (
       installed.major === required.major &&
@@ -109,12 +109,11 @@ function satisfies(version, range) {
     );
   }
 
-  if (singleRange.startsWith("^")) {
+  if (singleRange.startsWith('^')) {
     // ^: compatible with version
     if (required.major > 0) {
       return (
-        installed.major === required.major &&
-        compare(installed, required) >= 0
+        installed.major === required.major && compare(installed, required) >= 0
       );
     }
     // ^0.x.y: minor must match
@@ -138,7 +137,7 @@ function satisfies(version, range) {
 }
 
 function getDirectDeps() {
-  const rootPkg = readJson(path.join(ROOT, "package.json"));
+  const rootPkg = readJson(path.join(ROOT, 'package.json'));
   return {
     ...rootPkg.dependencies,
     ...rootPkg.devDependencies,
@@ -154,7 +153,7 @@ function scanPeerDeps() {
 
   const isIgnored = (name) =>
     IGNORE_PACKAGES.some((pattern) => {
-      if (pattern.endsWith("/*")) {
+      if (pattern.endsWith('/*')) {
         return name.startsWith(pattern.slice(0, -1));
       }
       return name === pattern;
@@ -163,9 +162,7 @@ function scanPeerDeps() {
   for (const pkgName of packagesToCheck) {
     if (isIgnored(pkgName)) continue;
 
-    const pkgJson = readJson(
-      path.join(NODE_MODULES, pkgName, "package.json"),
-    );
+    const pkgJson = readJson(path.join(NODE_MODULES, pkgName, 'package.json'));
     if (!pkgJson?.peerDependencies) continue;
 
     for (const [peerName, peerRange] of Object.entries(
@@ -181,7 +178,7 @@ function scanPeerDeps() {
           package: pkgName,
           peer: peerName,
           required: peerRange,
-          installed: "NOT INSTALLED",
+          installed: 'NOT INSTALLED',
           optional: isOptional,
         });
         continue;
@@ -199,16 +196,18 @@ function scanPeerDeps() {
     }
   }
 
-  return { errors, warnings };
+  return {errors, warnings};
 }
 
 // --- Main ---
-console.log("Checking peer dependencies...\n");
+console.log('Checking peer dependencies...\n');
 
-const { errors, warnings } = scanPeerDeps();
+const {errors, warnings} = scanPeerDeps();
 
 if (warnings.length > 0) {
-  console.log(`\x1b[33m⚠  ${warnings.length} missing peer dependencies:\x1b[0m\n`);
+  console.log(
+    `\x1b[33m⚠  ${warnings.length} missing peer dependencies:\x1b[0m\n`,
+  );
   for (const w of warnings) {
     console.log(
       `  \x1b[33m${w.package}\x1b[0m requires \x1b[36m${w.peer}@${w.required}\x1b[0m → not installed`,
@@ -222,7 +221,7 @@ if (errors.length > 0) {
     `\x1b[31m✗  ${errors.length} incompatible peer dependencies:\x1b[0m\n`,
   );
   for (const e of errors) {
-    const label = e.optional ? " (optional)" : "";
+    const label = e.optional ? ' (optional)' : '';
     console.log(
       `  \x1b[31m${e.package}\x1b[0m requires \x1b[36m${e.peer}@${e.required}\x1b[0m → installed \x1b[31m${e.installed}\x1b[0m${label}`,
     );
@@ -243,6 +242,6 @@ if (criticalErrors.length > 0) {
   );
   process.exit(0);
 } else {
-  console.log("\x1b[32m✓ All peer dependencies are satisfied.\x1b[0m");
+  console.log('\x1b[32m✓ All peer dependencies are satisfied.\x1b[0m');
   process.exit(0);
 }

@@ -6,26 +6,31 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: 20.x
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.3.1
-
-      - name: Install Expo CLI
-        run: bun add -g expo-cli
+          bun-version: 1.3.13
 
       - name: Install modules
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Check peer dependencies
         run: bun run check-peer-deps
@@ -40,14 +45,14 @@ jobs:
         run: bun run build
 
       - name: Test
-        run: |
-          export NODE_OPTIONS="--max-old-space-size=8192"
-          bunx jest --coverage --forceExit --silent -u
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: bunx jest --coverage --forceExit --silent --ci
 
       - name: E2E smoke test
         run: bun run e2e-smoke
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
