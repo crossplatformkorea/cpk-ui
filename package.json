@@ -7,7 +7,7 @@
   "scripts": {
     "predeploy": "bun run build",
     "postinstall": "node bin/greeting.js",
-    "publish:dry": "bun run build && npm publish --dry-run --access public ./lib",
+    "pack:dry": "bun run build && npm pack --dry-run ./lib",
     "lint": "eslint .",
     "lint:ci": "commitlint --from HEAD~0 --to HEAD --verbose",
     "start": "expo start",

@@ -86,9 +86,13 @@ jobs:
           npm install --global npm@11.18.0
           npm --version
 
+      - name: Validate CI publish guard
+        working-directory: lib
+        run: node ../scripts/assert-ci-publish.js
+
       - name: Validate package tarball
         working-directory: lib
-        run: npm publish --dry-run --access public --tag "${{ inputs.tag }}"
+        run: npm pack --dry-run
 
       - name: Publish package
         if: ${{ !inputs.dry_run }}
