@@ -6,15 +6,27 @@
   "module": "index",
   "source": "index",
   "types": "index.d.ts",
+  "files": [
+    "components",
+    "hooks",
+    "providers",
+    "types",
+    "utils",
+    "index.js",
+    "index.d.ts",
+    "index.d.ts.map",
+    "react-native.config.cjs",
+    "README.md"
+  ],
   "author": "hyochan",
   "license": "MIT",
   "scripts": {
-    "pack": "yarn pack",
-    "publish:next": "npm publish <package>.tgz --tag next"
+    "pack": "npm pack --dry-run",
+    "prepublishOnly": "node ../scripts/assert-ci-publish.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/crossplatformkorea/cpk-ui"
+    "url": "git+https://github.com/crossplatformkorea/cpk-ui.git"
   },
   "bugs": {
     "url": "https://github.com/crossplatformkorea/cpk-ui/issues"

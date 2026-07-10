@@ -1,27 +1,36 @@
 name: Storybook on merge
+
 on:
   push:
     branches:
       - main
+
+concurrency:
+  group: storybook-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    timeout-minutes: 20
 
-      - uses: actions/setup-node@v4
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
         with:
           node-version: 20.x
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.3.1
+          bun-version: 1.3.13
 
-      - name: Install packages and build storybook
-        run: |
-          bun install
-          bun run storybook:build
+      - name: Install packages
+        run: bun install --frozen-lockfile
+
+      - name: Build Storybook
+        run: bun run storybook:build
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
