@@ -57,6 +57,19 @@ describe('[Card]', () => {
     expect(mockOnPress).toHaveBeenCalledTimes(1);
   });
 
+  it('exposes an accessible button when pressable', () => {
+    testingLib = render(
+      Component({
+        props: {
+          accessibilityLabel: 'Open details',
+          onPress: jest.fn(),
+        },
+      }),
+    );
+
+    expect(testingLib.getByRole('button', {name: 'Open details'})).toBeTruthy();
+  });
+
   it('should apply custom testID', () => {
     const customTestID = 'custom-card';
     testingLib = render(Component({props: {testID: customTestID}}));

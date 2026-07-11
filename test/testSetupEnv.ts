@@ -1,12 +1,12 @@
-import "@testing-library/jest-native/extend-expect";
-import "jest-plugin-context/setup";
-import "givens/setup";
+import '@testing-library/jest-native/extend-expect';
+import 'jest-plugin-context/setup';
+import 'givens/setup';
 
-jest.mock("react-native-reanimated", () =>
-  require("react-native-reanimated/mock")
+jest.mock('react-native-reanimated', () =>
+  require('react-native-reanimated/mock'),
 );
 
-jest.mock("expo-font", () => {
+jest.mock('expo-font', () => {
   return {
     loadAsync: jest.fn().mockResolvedValue(true),
     isLoaded: jest.fn().mockReturnValue(true),
@@ -14,7 +14,11 @@ jest.mock("expo-font", () => {
   };
 });
 
-process.on("unhandledRejection", (err) => {
+jest.mock('expo-haptics', () => ({
+  impactAsync: jest.fn().mockResolvedValue(undefined),
+}));
+
+process.on('unhandledRejection', (err) => {
   // eslint-disable-next-line jest/no-jasmine-globals
   fail(err);
 });

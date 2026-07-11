@@ -193,6 +193,8 @@ export function Checkbox({
       accessibilityLabel={accessibilityLabel ?? (typeof text === 'string' ? text : undefined)}
       accessibilityRole="checkbox"
       accessibilityState={{checked, disabled}}
+      aria-checked={checked}
+      aria-disabled={disabled}
       activeOpacity={0.9}
       disabled={disabled}
       onPress={onPress}

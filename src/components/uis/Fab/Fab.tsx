@@ -1,12 +1,15 @@
-import React, {useLayoutEffect, useMemo, useRef, useCallback, type ReactElement} from 'react';
+import React, {
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useCallback,
+  type ReactElement,
+} from 'react';
 import type {LayoutChangeEvent, StyleProp, ViewStyle} from 'react-native';
 import {Animated, Easing, Platform, View} from 'react-native';
-import {IconName} from '../Icon/Icon';
-import {ButtonSizeType} from '../Button/Button';
+import type {IconName} from '../Icon/Icon';
+import type {ButtonSizeType} from '../Button/Button';
 import {IconButton} from '../IconButton/IconButton';
-import {useOptimizedStyles} from '../../../hooks/useOptimizedStyles';
-import {safePlatformSelect} from '../../../utils/platform';
-import {getButtonAccessibilityProps} from '../../../utils/accessibility';
 
 type Styles = {
   Fab?: StyleProp<ViewStyle>;
@@ -53,11 +56,14 @@ function FloatingActionButtons({
   const fabHeight = useRef(0);
 
   // Memoize animation configuration
-  const animationConfig = useMemo(() => ({
-    duration: animationDuration,
-    easing: Easing.linear,
-    useNativeDriver: true,
-  }), [animationDuration]);
+  const animationConfig = useMemo(
+    () => ({
+      duration: animationDuration,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }),
+    [animationDuration],
+  );
 
   useLayoutEffect(() => {
     const config = {
@@ -89,9 +95,12 @@ function FloatingActionButtons({
   }, []);
 
   // Memoize item press handler
-  const handleItemPress = useCallback((icon: IconName) => {
-    onPressItem?.(icon);
-  }, [onPressItem]);
+  const handleItemPress = useCallback(
+    (icon: IconName) => {
+      onPressItem?.(icon);
+    },
+    [onPressItem],
+  );
 
   // Memoize main FAB press handler
   const handleFabPress = useCallback(() => {
@@ -99,55 +108,90 @@ function FloatingActionButtons({
   }, [onPressFab]);
 
   // Memoize container styles
-  const containerStyles = useMemo(() => [
-    {
-      position: 'absolute' as const,
-      right: 10,
-      bottom: 10,
-      zIndex: 999,
-    },
-    style,
-  ], [style]);
+  const containerStyles = useMemo(
+    () => [
+      {
+        position: 'absolute' as const,
+        right: 10,
+        bottom: 10,
+        zIndex: 999,
+      },
+      style,
+    ],
+    [style],
+  );
 
   // Memoize spin interpolation
-  const spinInterpolation = useMemo(() => 
-    spinValue.current.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['0deg', '45deg'],
-    }),
-  []);
+  const spinInterpolation = useMemo(
+    () =>
+      spinValue.current.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '45deg'],
+      }),
+    [],
+  );
 
   // Memoize main FAB styles
-  const mainFabStyles = useMemo(() => [
-    {
-      transform: [{ rotate: spinInterpolation }],
-    },
-    Fab,
-  ], [spinInterpolation, Fab]);
+  const mainFabStyles = useMemo(
+    () => [
+      {
+        transform: [{rotate: spinInterpolation}],
+      },
+      Fab,
+    ],
+    [spinInterpolation, Fab],
+  );
 
   // Memoize icon items rendering
-  const iconItems = useMemo(() => 
-    icons.map((icon, idx) => (
-      <Animated.View
-        key={`${icon}-${idx}`}
-        style={[
-          {
-            position: 'absolute' as const,
-            transform: [{translateY: offsets[idx]}],
-          },
-          FabItem,
-        ]}
-      >
-        <IconButton
-          icon={icon}
-          onPress={() => handleItemPress(icon)}
-          size={buttonSize}
-          testID={icon}
-          {...iconButtonProps}
-        />
-      </Animated.View>
-    )),
-    [icons, offsets, FabItem, handleItemPress, buttonSize, iconButtonProps],
+  const iconItems = useMemo(
+    () =>
+      icons.map((icon, idx) => (
+        <Animated.View
+          accessibilityElementsHidden={!isActive}
+          aria-hidden={!isActive}
+          importantForAccessibility={isActive ? 'auto' : 'no-hide-descendants'}
+          key={`${icon}-${idx}`}
+          style={[
+            {
+              pointerEvents: isActive ? 'auto' : 'none',
+              position: 'absolute' as const,
+              transform: [{translateY: offsets[idx]}],
+            },
+            FabItem,
+          ]}
+          testID={`fab-item-${icon}`}
+        >
+          <IconButton
+            {...iconButtonProps}
+            disabled={!isActive || iconButtonProps?.disabled}
+            icon={icon}
+            onPress={() => handleItemPress(icon)}
+            size={buttonSize}
+            testID={icon}
+          />
+        </Animated.View>
+      )),
+    [
+      icons,
+      offsets,
+      FabItem,
+      handleItemPress,
+      buttonSize,
+      iconButtonProps,
+      isActive,
+    ],
+  );
+
+  const mainTouchableProps = useMemo(
+    () => ({
+      ...iconButtonProps?.touchableHighlightProps,
+      accessibilityState: {
+        ...iconButtonProps?.touchableHighlightProps?.accessibilityState,
+        expanded: isActive,
+      },
+      'aria-expanded': isActive,
+    }),
+    [iconButtonProps?.touchableHighlightProps, isActive],
   );
 
   return (
@@ -155,10 +199,16 @@ function FloatingActionButtons({
       {iconItems}
       <Animated.View onLayout={onLayout} style={mainFabStyles}>
         <IconButton
+          {...iconButtonProps}
+          accessibilityLabel={
+            iconButtonProps?.accessibilityLabel ??
+            (isActive ? 'Close actions' : 'Open actions')
+          }
           icon={fabIcon}
           onPress={handleFabPress}
           size={buttonSize}
-          {...iconButtonProps}
+          testID={iconButtonProps?.testID ?? 'fab-toggle'}
+          touchableHighlightProps={mainTouchableProps}
         />
       </Animated.View>
     </View>

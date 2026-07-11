@@ -135,7 +135,9 @@ export default function RadioButton({
     <Container
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityRole="radio"
-      accessibilityState={{selected, disabled}}
+      accessibilityState={{checked: !!selected, disabled}}
+      aria-checked={!!selected}
+      aria-disabled={disabled}
       activeOpacity={0.9}
       disabled={disabled}
       onPress={onPress}

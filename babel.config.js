@@ -2,9 +2,8 @@ module.exports = (api) => {
   api.cache(true);
 
   const isStorybook =
-    process.env.NODE_ENV === 'production' &&
-    (process.env.STORYBOOK === '1' ||
-      process.argv.some((arg) => arg.includes('storybook')));
+    process.env.STORYBOOK === '1' ||
+    process.argv.some((arg) => arg.includes('storybook'));
 
   if (isStorybook) {
     // Simplified config for Storybook to avoid conflicts
@@ -14,7 +13,7 @@ module.exports = (api) => {
         '@babel/preset-typescript',
         ['@babel/preset-react', {runtime: 'automatic'}],
       ],
-      plugins: ['babel-plugin-kstyled'],
+      plugins: [['babel-plugin-kstyled', {strict: true}]],
     };
   }
 
@@ -28,6 +27,9 @@ module.exports = (api) => {
       ],
       '@babel/preset-typescript',
     ],
-    plugins: ['babel-plugin-kstyled', 'react-native-reanimated/plugin'],
+    plugins: [
+      ['babel-plugin-kstyled', {strict: true}],
+      'react-native-reanimated/plugin',
+    ],
   };
 };

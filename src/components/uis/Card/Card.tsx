@@ -17,6 +17,7 @@ type Styles = {
 
 export type CardProps = {
   testID?: string;
+  accessibilityLabel?: string;
   children?: React.ReactNode;
   elevation?: number;
   borderRadius?: number;
@@ -30,6 +31,7 @@ export type CardProps = {
 
 export default function Card({
   testID = 'card-container',
+  accessibilityLabel,
   children,
   elevation = 2,
   borderRadius = 8,
@@ -42,49 +44,62 @@ export default function Card({
 }: CardProps): JSX.Element {
   const {theme} = useTheme();
 
-  const shadowStyle = React.useMemo(() => ({
-    elevation: elevation,
-    shadowOffset: {
-      width: 0,
-      height: elevation / 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: elevation,
-    shadowColor: theme.text.basic,
-  }), [elevation, theme.text.basic]);
+  const shadowStyle = React.useMemo(
+    () => ({
+      elevation: elevation,
+      shadowOffset: {
+        width: 0,
+        height: elevation / 2,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: elevation,
+      shadowColor: theme.text.basic,
+    }),
+    [elevation, theme.text.basic],
+  );
 
-  const containerStyle = React.useMemo(() => [
-    {
-      backgroundColor: backgroundColor || theme.bg.paper,
-      borderRadius: borderRadius,
-      padding: padding,
-      margin: margin,
-    },
-    shadowStyle,
-    style,
-    styles?.container,
-  ], [backgroundColor, theme.bg.paper, borderRadius, padding, margin, shadowStyle, style, styles?.container]);
+  const containerStyle = React.useMemo(
+    () => [
+      {
+        backgroundColor: backgroundColor || theme.bg.paper,
+        borderRadius: borderRadius,
+        padding: padding,
+        margin: margin,
+      },
+      shadowStyle,
+      style,
+      styles?.container,
+    ],
+    [
+      backgroundColor,
+      theme.bg.paper,
+      borderRadius,
+      padding,
+      margin,
+      shadowStyle,
+      style,
+      styles?.container,
+    ],
+  );
 
   if (onPress) {
     return (
       <TouchableContainer
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole="button"
         testID={testID}
         style={containerStyle}
         onPress={onPress}
         activeOpacity={0.8}
       >
-        <View style={styles?.content}>
-          {children}
-        </View>
+        <View style={styles?.content}>{children}</View>
       </TouchableContainer>
     );
   }
 
   return (
     <Container testID={testID} style={containerStyle}>
-      <View style={styles?.content}>
-        {children}
-      </View>
+      <View style={styles?.content}>{children}</View>
     </Container>
   );
 }

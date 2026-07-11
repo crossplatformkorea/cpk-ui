@@ -10,11 +10,7 @@ import {ThemeType} from '../../../providers/ThemeProvider';
 
 let testingLib: RenderAPI;
 
-const TestComponent = ({
-  themeType,
-}: {
-  themeType?: ThemeType;
-}): ReactElement => {
+const TestComponent = ({themeType}: {themeType?: ThemeType}): ReactElement => {
   const snackbarRef = useRef<SnackbarContext>(null);
 
   return createComponent(<Snackbar ref={snackbarRef} />, themeType);
@@ -159,6 +155,15 @@ describe('[Snackbar]', () => {
 
       await waitFor(() => {
         expect(testingLib.getByText('Snackbar message content')).toBeTruthy();
+        expect(
+          testingLib.getByTestId('snackbar-container').props,
+        ).toMatchObject({
+          accessibilityLabel: 'Snackbar message content',
+          accessibilityRole: 'alert',
+        });
+        expect(
+          testingLib.getByRole('button', {name: 'Dismiss notification'}),
+        ).toBeTruthy();
       });
     });
 

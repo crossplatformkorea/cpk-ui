@@ -1,0 +1,66 @@
+import {Meta} from '@storybook/blocks';
+
+<Meta title="Overview/Introduction" />
+
+<div className="cpk-docs-hero">
+  <p className="cpk-docs-kicker">
+    {'Cross Platform Korea · 0.7.0 release workbench'}
+  </p>
+  <h1>cpk-ui</h1>
+  <p className="cpk-docs-lead">
+    {
+      'React Native components with one API across iOS, Android, and web. This workbench documents behavior, visual states, accessibility, and platform constraints against the local package build.'
+    }
+  </p>
+  <div className="cpk-platforms">
+    <span>React Native</span>
+    <span>Expo</span>
+    <span>Web</span>
+    <span>TypeScript</span>
+  </div>
+</div>
+
+## Working principles
+
+<div className="cpk-docs-grid">
+  <div>
+    <h3>Native behavior</h3>
+    <p>
+      {'Press, focus, motion, and accessibility remain platform appropriate.'}
+    </p>
+  </div>
+  <div>
+    <h3>Predictable styling</h3>
+    <p>
+      {'Theme tokens and kstyled keep component output explicit and typed.'}
+    </p>
+  </div>
+  <div>
+    <h3>Regression visibility</h3>
+    <p>
+      {
+        'Every public component has stories, tests, and responsive web coverage.'
+      }
+    </p>
+  </div>
+</div>
+
+## Install
+
+```bash
+bun add cpk-ui@0.7.0 kstyled@0.4.1
+bun add --dev babel-plugin-kstyled@0.4.1
+```
+
+## Provider setup
+
+```tsx
+import {CpkProvider} from 'cpk-ui';
+
+export function App() {
+  return <CpkProvider>{/* application */}</CpkProvider>;
+}
+```
+
+Use the theme toolbar to inspect light and dark behavior. Use the viewport
+toolbar for compact mobile, mobile, tablet, and desktop layouts.

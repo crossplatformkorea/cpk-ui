@@ -1,5 +1,5 @@
 import React, {type ReactElement} from 'react';
-import {Text} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
 
@@ -187,7 +187,9 @@ describe('[Accordion] event test', () => {
 
   it('should trigger onLayout event when itemBody rendered', () => {
     const {getByTestId} = testingLib;
-    const itemTitle = getByTestId('body-0');
+    const itemTitle = getByTestId('measure-body-0', {
+      includeHiddenElements: true,
+    });
 
     fireEvent(itemTitle, 'layout', {
       nativeEvent: {
@@ -197,15 +199,34 @@ describe('[Accordion] event test', () => {
       },
     });
 
-    expect(itemTitle.props.style.height).toBeDefined();
+    const body = getByTestId('body-0', {includeHiddenElements: true});
+    expect(StyleSheet.flatten(body.props.style).height).toBeDefined();
   });
 
   it('should trigger press event when clicking title', () => {
+    expect(
+      testingLib.getByTestId('body-0', {includeHiddenElements: true}).props
+        .accessibilityElementsHidden,
+    ).toBe(true);
+    expect(
+      testingLib.getByTestId('body-0', {includeHiddenElements: true}).props[
+        'aria-hidden'
+      ],
+    ).toBe(true);
+    expect(
+      testingLib.getByTestId('measure-body-0', {includeHiddenElements: true})
+        .props.importantForAccessibility,
+    ).toBe('no-hide-descendants');
+
     fireEvent.press(testingLib.getByTestId('title-0'));
 
     expect(
       testingLib.getByTestId('body-0').props.accessibilityState.expanded,
     ).toBeTruthy();
+    expect(
+      testingLib.getByTestId('body-0').props.accessibilityElementsHidden,
+    ).toBe(false);
+    expect(testingLib.getByTestId('body-0').props['aria-hidden']).toBe(false);
   });
 });
 

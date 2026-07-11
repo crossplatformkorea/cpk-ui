@@ -35,6 +35,12 @@ jobs:
       - name: Check peer dependencies
         run: bun run check-peer-deps
 
+      - name: Check component regression coverage
+        run: bun run components:check
+
+      - name: Check Storybook coverage
+        run: bun run storybook:check
+
       - name: Check linting
         run: bun run lint
 

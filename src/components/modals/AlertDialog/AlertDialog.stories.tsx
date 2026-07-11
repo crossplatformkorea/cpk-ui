@@ -1,198 +1,112 @@
 import React, {type ReactElement} from 'react';
-import type {ComponentProps} from 'react';
-import {SafeAreaView} from 'react-native';
-import {styled, css} from 'kstyled';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {withThemeProvider} from '../../../../.storybook/decorators';
+import {
+  StoryCanvas,
+  StoryHeader,
+  StoryRow,
+  StorySection,
+} from '../../../../.storybook/story-ui';
 import {useCPK} from '../../../providers';
-import {Typography} from '../../uis/Typography/Typography';
 import {Button} from '../../uis/Button/Button';
-import AlertDialog, {type AlertDialogSizeType} from './AlertDialog';
-
-const Container = styled(SafeAreaView)`
-  flex-direction: column;
-  padding: 48px 24px;
-  align-self: stretch;
-  justify-content: center;
-  align-items: center;
-`;
+import type {AlertDialogSizeType} from './AlertDialog';
 
 type AlertDialogBasicStoryProps = {
+  pattern: 'confirmation' | 'destructive';
   size: AlertDialogSizeType;
 };
 
-function AlertDialogBasicStory({size}: AlertDialogBasicStoryProps): ReactElement {
+function AlertDialogBasicStory({
+  pattern,
+  size,
+}: AlertDialogBasicStoryProps): ReactElement {
   const {alertDialog} = useCPK();
+  const openConfirmation = () =>
+    alertDialog.open({
+      title: 'Publish this release?',
+      body: 'The release will become available to everyone using the latest tag.',
+      size,
+      actions: [
+        <Button
+          color="light"
+          key="cancel"
+          onPress={() => alertDialog.close()}
+          text="Cancel"
+        />,
+        <Button
+          key="publish"
+          onPress={() => alertDialog.close()}
+          text="Publish release"
+        />,
+      ],
+    });
+  const openDestructive = () =>
+    alertDialog.open({
+      title: 'Delete this project?',
+      body: 'This removes the project and its release history. This action cannot be undone.',
+      showCloseButton: false,
+      size,
+      actions: [
+        <Button
+          color="light"
+          key="cancel"
+          onPress={() => alertDialog.close()}
+          text="Keep project"
+        />,
+        <Button
+          color="danger"
+          key="delete"
+          onPress={() => alertDialog.close()}
+          text="Delete project"
+        />,
+      ],
+    });
 
   return (
-    <Container>
-      <Typography.Title>AlertDialog</Typography.Title>
-      <Button
-        color="primary"
-        onPress={() =>
-          alertDialog.open({
-            title: 'Hello there!',
-            body: 'This is an alert dialog.',
-            size,
-          })
-        }
-        style={{marginTop: 60, width: 200}}
-        text="Dialog"
+    <StoryCanvas>
+      <StoryHeader
+        description="Open each pattern to inspect focus, backdrop, actions, and dismissal behavior."
+        title="Dialog patterns"
       />
-      <Button
-        color="primary"
-        onPress={() =>
-          alertDialog.open({
-            title: 'Hello there!',
-            body: 'This is an alert dialog.',
-            size,
-            actions: [
-              <Button
-                color="light"
-                key="button-cancel"
-                onPress={() => alertDialog.close()}
-                text="Cancel"
-              />,
-              <Button
-                key="button-ok"
-                onPress={() => alertDialog.close()}
-                text="OK"
-              />,
-            ],
-          })
-        }
-        style={{marginTop: 20, width: 200}}
-        text="With actions"
-      />
-    </Container>
+      <StorySection label="Decision">
+        <StoryRow>
+          {pattern === 'confirmation' ? (
+            <Button onPress={openConfirmation} text="Review publication" />
+          ) : (
+            <Button
+              color="danger"
+              onPress={openDestructive}
+              text="Delete project"
+            />
+          )}
+        </StoryRow>
+      </StorySection>
+    </StoryCanvas>
   );
 }
 
 const meta = {
-  title: 'AlertDialog',
+  title: 'Feedback/AlertDialog',
   component: AlertDialogBasicStory,
   parameters: {
-    notes: `
-A modal dialog component for displaying important information or requiring user confirmation.
-
-## Features
-- **Flexible Sizing**: Preset sizes (small, medium, large) and custom numeric values
-- **Customizable Actions**: Support for multiple action buttons
-- **Backdrop Control**: Configurable backdrop opacity and outside click behavior
-- **Close Button**: Optional close button in the header
-- **Custom Content**: Support for custom title and body elements
-- **Accessibility**: Built-in accessibility support with proper roles and labels
-
-## Size Options
-- \`small\`: 14px title, 12px body, 16px icon
-- \`medium\`: 16px title, 14px body, 18px icon (default)
-- \`large\`: 18px title, 16px body, 20px icon
-- Custom number: Custom font size in pixels with proportional spacing
-
-## Usage
-\`\`\`tsx
-const {alertDialog} = useCPK();
-
-alertDialog.open({
-  title: 'Confirm Action',
-  body: 'Are you sure you want to proceed?',
-  size: 'medium',
-  actions: [
-    <Button text="Cancel" onPress={() => alertDialog.close()} />,
-    <Button text="Confirm" onPress={handleConfirm} />
-  ]
-});
-\`\`\`
-
-### Basic Dialog
-\`\`\`tsx
-alertDialog.open({
-  title: 'Hello',
-  body: 'This is a basic alert dialog.',
-  size: 'medium',
-});
-\`\`\`
-
-### With Custom Actions
-\`\`\`tsx
-alertDialog.open({
-  title: 'Delete Item',
-  body: 'This action cannot be undone.',
-  size: 'large',
-  actions: [
-    <Button color="light" text="Cancel" onPress={() => alertDialog.close()} />,
-    <Button color="danger" text="Delete" onPress={handleDelete} />
-  ],
-  showCloseButton: false
-});
-\`\`\`
-        `,
     docs: {
       description: {
-        component: `
-A modal dialog component for displaying important information or requiring user confirmation.
-
-## Features
-- **Flexible Sizing**: Preset sizes (small, medium, large) and custom numeric values
-- **Customizable Actions**: Support for multiple action buttons
-- **Backdrop Control**: Configurable backdrop opacity and outside click behavior
-- **Close Button**: Optional close button in the header
-- **Custom Content**: Support for custom title and body elements
-- **Accessibility**: Built-in accessibility support with proper roles and labels
-
-## Size Options
-- \`small\`: 14px title, 12px body, 16px icon
-- \`medium\`: 16px title, 14px body, 18px icon (default)
-- \`large\`: 18px title, 16px body, 20px icon
-- Custom number: Custom font size in pixels with proportional spacing
-
-## Usage
-\`\`\`tsx
-const {alertDialog} = useCPK();
-
-alertDialog.open({
-  title: 'Confirm Action',
-  body: 'Are you sure you want to proceed?',
-  size: 'medium',
-  actions: [
-    <Button text="Cancel" onPress={() => alertDialog.close()} />,
-    <Button text="Confirm" onPress={handleConfirm} />
-  ]
-});
-\`\`\`
-
-### Basic Dialog
-\`\`\`tsx
-alertDialog.open({
-  title: 'Hello',
-  body: 'This is a basic alert dialog.',
-  size: 'medium',
-});
-\`\`\`
-
-### With Custom Actions
-\`\`\`tsx
-alertDialog.open({
-  title: 'Delete Item',
-  body: 'This action cannot be undone.',
-  size: 'large',
-  actions: [
-    <Button color="light" text="Cancel" onPress={() => alertDialog.close()} />,
-    <Button color="danger" text="Delete" onPress={handleDelete} />
-  ],
-  showCloseButton: false
-});
-\`\`\`
-        `,
+        component:
+          'A blocking decision surface opened through useCPK(). Keep the title specific, explain the consequence in the body, and reserve danger styling for irreversible actions.',
       },
     },
   },
   argTypes: {
+    pattern: {
+      control: 'radio',
+      options: ['confirmation', 'destructive'],
+    },
     size: {
       control: 'radio',
       options: ['small', 'medium', 'large', 14, 16, 18, 20],
-      description: 'Dialog size: "small" (14px title), "medium" (16px title), "large" (18px title), or custom number in pixels',
+      description:
+        'Dialog size: "small" (14px title), "medium" (16px title), "large" (18px title), or custom number in pixels',
     },
   },
   decorators: [withThemeProvider],
@@ -202,15 +116,16 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Basic: Story = {
+export const Confirmation: Story = {
   args: {
+    pattern: 'confirmation',
     size: 'medium',
   },
-  argTypes: {
-    // @ts-expect-error - theme is for storybook control
-    theme: {
-      control: 'select',
-      options: ['light', 'dark'],
-    },
+};
+
+export const DestructiveDecision: Story = {
+  args: {
+    pattern: 'destructive',
+    size: 'medium',
   },
 };

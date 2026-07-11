@@ -1,5 +1,6 @@
 import React, {type MutableRefObject, useRef, type ReactElement} from 'react';
 import {View} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {css} from 'kstyled';
 import {useFonts} from 'expo-font';
 
@@ -30,11 +31,7 @@ export type CpkContext = {
 
 const [useCtx, Provider] = createCtx<CpkContext>();
 
-function AppProvider({
-  children,
-}: {
-  children: ReactElement;
-}): ReactElement {
+function AppProvider({children}: {children: ReactElement}): ReactElement {
   const [assetLoaded] = useFonts({
     cpk: require('../components/uis/Icon/cpk.ttf'),
     'Pretendard-Bold': require('../components/uis/Icon/Pretendard-Bold.otf'),
@@ -122,7 +119,9 @@ function CpkWithThemeProvider(props: CpkProviderProps): ReactElement {
 
   return (
     <ThemeProvider {...themeConfig}>
-      <AppProvider {...props} />
+      <SafeAreaProvider>
+        <AppProvider {...props} />
+      </SafeAreaProvider>
     </ThemeProvider>
   );
 }

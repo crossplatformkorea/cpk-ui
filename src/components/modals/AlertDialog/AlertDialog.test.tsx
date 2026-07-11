@@ -10,11 +10,7 @@ import {ThemeType} from '../../../providers/ThemeProvider';
 
 let testingLib: RenderAPI;
 
-const TestComponent = ({
-  themeType,
-}: {
-  themeType?: ThemeType;
-}): ReactElement => {
+const TestComponent = ({themeType}: {themeType?: ThemeType}): ReactElement => {
   const alertDialogRef = useRef<AlertDialogContext>(null);
 
   return createComponent(<AlertDialog ref={alertDialogRef} />, themeType);
@@ -160,6 +156,9 @@ describe('[AlertDialog]', () => {
       await waitFor(() => {
         expect(testingLib.getByText('Alert Title')).toBeTruthy();
         expect(testingLib.getByText('Alert Body Content')).toBeTruthy();
+        expect(
+          testingLib.getByRole('button', {name: 'Close dialog'}),
+        ).toBeTruthy();
       });
     });
 

@@ -1,6 +1,18 @@
 export default {
   expo: {
-    plugins: [['expo-font', {fonts: ['main/uis/Icon/*']}]],
+    plugins: [
+      [
+        'expo-font',
+        {
+          fonts: [
+            './src/components/uis/Icon/cpk.ttf',
+            './src/components/uis/Icon/Pretendard-Bold.otf',
+            './src/components/uis/Icon/Pretendard-Regular.otf',
+            './src/components/uis/Icon/Pretendard-Thin.otf',
+          ],
+        },
+      ],
+    ],
     experiments: {
       baseUrl: '/cpk-ui',
     },
@@ -13,7 +25,7 @@ export default {
     userInterfaceStyle: 'automatic',
     assetBundlePatterns: ['**/*'],
     splash: {
-      resizeMode: 'cover',
+      resizeMode: 'contain',
       image: './assets/splash.png',
       backgroundColor: '#ffffff',
     },

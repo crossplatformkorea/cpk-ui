@@ -50,18 +50,19 @@ export function Rating({
   disabled = false,
   color,
 }: RatingProps): ReactElement {
-  const iconSize = typeof size === 'number'
-    ? size
-    : size === 'small'
-      ? 18
-      : size === 'large'
-        ? 32
-        : 24;
+  const iconSize =
+    typeof size === 'number'
+      ? size
+      : size === 'small'
+        ? 18
+        : size === 'large'
+          ? 32
+          : 24;
   const [rating, setRating] = useState(initialRating);
 
   const iconPrefix = useMemo(
     () => (iconType === 'star' ? 'Star' : 'QuestBox'),
-    [iconType]
+    [iconType],
   );
 
   const containerStyles = useMemo(
@@ -71,51 +72,36 @@ export function Rating({
       `,
       style,
     ],
-    [direction, style]
+    [direction, style],
   );
 
   const starContainerStyles = useMemo(
     () => [
       css`
-        width: ${size}px;
+        width: ${iconSize}px;
       `,
       styles?.starContainer,
     ],
-    [size, styles?.starContainer]
+    [iconSize, styles?.starContainer],
   );
 
   const handlePress = useCallback(
-    (newRating: number, halfPressed?: boolean) => {
-      const convertedRating = newRating + (!halfPressed ? 0.5 : 0);
-
-      setRating(convertedRating);
-
-      if (onRatingUpdate) {
-        onRatingUpdate(convertedRating);
-      }
+    (newRating: number) => {
+      setRating(newRating);
+      onRatingUpdate?.(newRating);
     },
-    [onRatingUpdate]
+    [onRatingUpdate],
   );
 
   const renderStarIcon = useCallback(
-    ({
-      key,
-      position,
-    }: {
-      key: string;
-      position: number;
-    }): ReactElement => {
+    ({key, position}: {key: string; position: number}): ReactElement => {
       const filled = rating >= position + (allowHalfRating ? 0.5 : 0);
       const iconName: IconName = filled ? `${iconPrefix}Fill` : `${iconPrefix}`;
       const halfFilled =
         rating >= position && rating < position + (allowHalfRating ? 0.5 : 0);
 
       return (
-        <StarContainer
-          key={key}
-          style={starContainerStyles}
-          testID={testID}
-        >
+        <StarContainer key={key} style={starContainerStyles} testID={testID}>
           {halfFilled && allowHalfRating ? (
             <View style={{position: 'absolute'}}>
               <Icon
@@ -138,32 +124,65 @@ export function Rating({
               style={{position: 'absolute'}}
             />
           )}
-          <Pressable
-            accessibilityRole="button"
-            disabled={disabled}
-            onPress={() => handlePress(position, true)}
-          >
-            <View
-              style={{
-                width: iconSize / 2,
-                height: iconSize,
-                backgroundColor: 'transparent',
-              }}
-            />
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            disabled={disabled}
-            onPress={() => handlePress(position)}
-          >
-            <View
-              style={{
-                width: iconSize / 2,
-                height: iconSize,
-                backgroundColor: 'transparent',
-              }}
-            />
-          </Pressable>
+          {allowHalfRating ? (
+            <>
+              <Pressable
+                accessibilityLabel={`Rate ${position} out of 5`}
+                accessibilityRole="button"
+                accessibilityState={{disabled, selected: rating === position}}
+                aria-disabled={disabled}
+                aria-pressed={rating === position}
+                disabled={disabled}
+                onPress={() => handlePress(position)}
+              >
+                <View
+                  style={{
+                    width: iconSize / 2,
+                    height: iconSize,
+                    backgroundColor: 'transparent',
+                  }}
+                />
+              </Pressable>
+              <Pressable
+                accessibilityLabel={`Rate ${position + 0.5} out of 5`}
+                accessibilityRole="button"
+                accessibilityState={{
+                  disabled,
+                  selected: rating === position + 0.5,
+                }}
+                aria-disabled={disabled}
+                aria-pressed={rating === position + 0.5}
+                disabled={disabled}
+                onPress={() => handlePress(position + 0.5)}
+              >
+                <View
+                  style={{
+                    width: iconSize / 2,
+                    height: iconSize,
+                    backgroundColor: 'transparent',
+                  }}
+                />
+              </Pressable>
+            </>
+          ) : (
+            <Pressable
+              accessibilityLabel={`Rate ${position} out of 5`}
+              accessibilityRole="button"
+              accessibilityState={{disabled, selected: rating === position}}
+              aria-disabled={disabled}
+              aria-pressed={rating === position}
+              disabled={disabled}
+              onPress={() => handlePress(position)}
+            >
+              <View
+                style={{
+                  width: iconSize,
+                  height: iconSize,
+                  backgroundColor: 'transparent',
+                }}
+              />
+            </Pressable>
+          )}
         </StarContainer>
       );
     },
@@ -174,10 +193,10 @@ export function Rating({
       starContainerStyles,
       testID,
       color,
-      size,
+      iconSize,
       disabled,
       handlePress,
-    ]
+    ],
   );
 
   const stars = useMemo(
@@ -187,14 +206,10 @@ export function Rating({
 
         return renderStarIcon({key: `${_}-${index}`, position});
       }),
-    [allowHalfRating, renderStarIcon]
+    [allowHalfRating, renderStarIcon],
   );
 
-  return (
-    <Container style={containerStyles}>
-      {stars}
-    </Container>
-  );
+  return <Container style={containerStyles}>{stars}</Container>;
 }
 
 export default React.memo(Rating) as typeof Rating;

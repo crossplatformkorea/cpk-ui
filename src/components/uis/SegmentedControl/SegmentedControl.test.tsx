@@ -90,6 +90,25 @@ describe('[SegmentedControl] render', () => {
 
     expect(props.onValueChange).not.toHaveBeenCalled();
   });
+
+  it('exposes pressed and disabled states to web accessibility APIs', () => {
+    testingLib = render(
+      createComponent(
+        <SegmentedControl
+          disabled
+          selectedValue="day"
+          values={values}
+        />,
+      ),
+    );
+
+    expect(testingLib.getByTestId('segment-0').props.accessibilityState).toEqual(
+      expect.objectContaining({disabled: true, selected: true}),
+    );
+    expect(testingLib.getByTestId('segment-1').props.accessibilityState).toEqual(
+      expect.objectContaining({disabled: true, selected: false}),
+    );
+  });
 });
 
 describe('[SegmentedControl] colors', () => {

@@ -2,38 +2,46 @@ import React, {useMemo, type ReactElement} from 'react';
 import type {PressableProps, StyleProp, ViewStyle} from 'react-native';
 import {Pressable} from 'react-native';
 import {css} from 'kstyled';
-import {useCPK} from '../../../providers';
+import {useTheme} from '../../../providers/ThemeProvider';
 
 const DEFAULT_HIT_SLOP = {top: 4, bottom: 4, left: 6, right: 6};
 
 function CustomPressable(
   props: PressableProps & {style?: StyleProp<ViewStyle>},
 ): ReactElement {
-  const {children, style, hitSlop, ...restProps} = props;
-  const {theme} = useCPK();
+  const {
+    accessibilityRole = 'button',
+    children,
+    style,
+    hitSlop,
+    ...restProps
+  } = props;
+  const {theme} = useTheme();
 
-  const effectiveHitSlop = useMemo(() => 
-    hitSlop || DEFAULT_HIT_SLOP, 
-    [hitSlop]
+  const effectiveHitSlop = useMemo(
+    () => hitSlop || DEFAULT_HIT_SLOP,
+    [hitSlop],
   );
 
   const styleFunction = useMemo(
-    () => ({pressed}: {pressed: boolean}) => {
-      if (pressed) {
-        return [
-          css`
-            background-color: ${theme.role.underlay};
-          `,
-          style,
-        ];
-      }
-      return style;
-    },
-    [theme.role.underlay, style]
+    () =>
+      ({pressed}: {pressed: boolean}) => {
+        if (pressed) {
+          return [
+            css`
+              background-color: ${theme.role.underlay};
+            `,
+            style,
+          ];
+        }
+        return style;
+      },
+    [theme.role.underlay, style],
   );
 
   return (
     <Pressable
+      accessibilityRole={accessibilityRole}
       hitSlop={effectiveHitSlop}
       style={styleFunction}
       {...restProps}

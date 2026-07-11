@@ -1,9 +1,7 @@
 import React, {type FC} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
 import {styled} from 'kstyled';
-import {createIconSetFromIcoMoon} from '@expo/vector-icons';
-
-import collectingFontIconSelection from './selection.json';
+import createIconSet from '@expo/vector-icons/createIconSet';
 
 export const iconList = [
   'AddressBook',
@@ -3791,9 +3789,17 @@ export type IconProps = {
   style?: StyleProp<ViewStyle>;
 };
 
+const glyphMap = iconList.reduce<Record<IconName, number>>(
+  (map, name, index) => {
+    map[name] = 59648 + index;
+    return map;
+  },
+  {} as Record<IconName, number>,
+);
+
 // Create the base icon component once at module level
-const BaseIconComponent: FC<IconProps> = createIconSetFromIcoMoon(
-  collectingFontIconSelection,
+const BaseIconComponent: FC<IconProps> = createIconSet(
+  glyphMap,
   'cpk',
   require('./cpk.ttf'),
 ) as any;
@@ -3804,13 +3810,14 @@ const StyledIcon = styled(BaseIconComponent)<IconProps>`
 
 // Wrapper component to handle size presets
 export const Icon: FC<IconProps> = ({size = 'medium', ...props}) => {
-  const iconSize = typeof size === 'number'
-    ? size
-    : size === 'small'
-      ? 18
-      : size === 'large'
-        ? 32
-        : 24;
+  const iconSize =
+    typeof size === 'number'
+      ? size
+      : size === 'small'
+        ? 18
+        : size === 'large'
+          ? 32
+          : 24;
 
   return <StyledIcon {...props} size={iconSize} />;
 };

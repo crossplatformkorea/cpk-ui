@@ -18,6 +18,7 @@ type Styles = {
 export type LoadingIndicatorSizeType = 'small' | 'medium' | 'large' | number;
 
 export interface LoadingIndicatorProps extends BaseComponentProps {
+  accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
   styles?: Styles;
   color?: string;
@@ -32,6 +33,7 @@ const Container = styled(View)`
 `;
 
 function LoadingIndicator({
+  accessibilityLabel = "Loading",
   customElement,
   style,
   styles,
@@ -95,6 +97,7 @@ function LoadingIndicator({
     if (imageSource) {
       return (
         <Image
+          accessibilityLabel={accessibilityLabel}
           source={imageSource}
           style={imageStyle}
           testID={`${testID}-image`}
@@ -104,13 +107,14 @@ function LoadingIndicator({
 
     return (
       <ActivityIndicator
+        accessibilityLabel={accessibilityLabel}
         color={activityIndicatorColor}
         size={activityIndicatorSize}
         style={styles?.activityIndicator}
         testID={`${testID}-activity-indicator`}
       />
     );
-  }, [customElement, imageSource, imageStyle, testID, activityIndicatorColor, activityIndicatorSize, styles?.activityIndicator]);
+  }, [accessibilityLabel, customElement, imageSource, imageStyle, testID, activityIndicatorColor, activityIndicatorSize, styles?.activityIndicator]);
 
   return (
     <Container style={style} testID={testID}>

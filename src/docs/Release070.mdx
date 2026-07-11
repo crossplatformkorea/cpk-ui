@@ -1,0 +1,62 @@
+import {Meta} from '@storybook/blocks';
+
+<Meta title="Overview/Release 0.7.0" />
+
+<div className="cpk-docs-hero">
+  <p className="cpk-docs-kicker">{'Stable release · July 11, 2026'}</p>
+  <h1>cpk-ui 0.7.0</h1>
+  <p className="cpk-docs-lead">
+    {
+      'A stricter styling contract, production-shaped component states, and one review surface across native and web.'
+    }
+  </p>
+</div>
+
+## Install
+
+```bash
+bun add cpk-ui@0.7.0 kstyled@0.4.1
+bun add --dev babel-plugin-kstyled@0.4.1
+```
+
+## Release contract
+
+<div className="cpk-docs-grid">
+  <div>
+    <h3>21 public components</h3>
+    <p>{'Every exported component is represented by tests and stories.'}</p>
+  </div>
+  <div>
+    <h3>Strict styling</h3>
+    <p>
+      {
+        'kstyled 0.4 compiler failures stop the build instead of hiding fallback work.'
+      }
+    </p>
+  </div>
+  <div>
+    <h3>Responsive review</h3>
+    <p>
+      {
+        'Compact mobile, mobile, tablet, and desktop states share one workbench.'
+      }
+    </p>
+  </div>
+</div>
+
+## Upgrade checklist
+
+1. Upgrade `cpk-ui`, `kstyled`, and `babel-plugin-kstyled` together.
+2. Enable `{strict: true}` for the kstyled Babel plugin.
+3. Validate custom themes in light and dark modes.
+4. Recheck controlled inputs, modal refs, and press handlers.
+5. Run representative screens on iOS, Android, and web.
+
+## Verification
+
+- 21 Jest suites and 252 tests
+- 21/21 public component coverage
+- 56 component stories plus the color foundation story
+- Desktop, tablet, mobile, and compact mobile web checks
+- 56 native stories on both iOS and Android
+- Package build, E2E smoke, Storybook build, and npm tarball validation

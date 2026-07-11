@@ -2,6 +2,7 @@ import type {Config} from '@jest/types';
 import expoPreset from 'jest-expo/jest-preset';
 
 process.env.TZ = 'Asia/Seoul';
+process.env.EXPO_OS = 'ios';
 
 export default async (): Promise<Config.InitialOptions> => {
   return {

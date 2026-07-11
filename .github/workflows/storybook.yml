@@ -29,6 +29,9 @@ jobs:
       - name: Install packages
         run: bun install --frozen-lockfile
 
+      - name: Check Storybook coverage
+        run: bun run storybook:check
+
       - name: Build Storybook
         run: bun run storybook:build
 

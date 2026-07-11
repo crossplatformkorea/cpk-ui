@@ -14,21 +14,15 @@ import type {
   TextStyle,
   ViewStyle,
 } from 'react-native';
-import {
-  Platform,
-  Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import {useHover} from 'react-native-web-hooks';
+import {Text, TextInput, TouchableWithoutFeedback, View} from 'react-native';
 import {css} from 'kstyled';
 
 import {Icon} from '../Icon/Icon';
 import {cloneElemWithDefaultColors} from '../../../utils/guards';
 import {useTheme} from '../../../providers/ThemeProvider';
 import {Typography} from '../Typography/Typography';
-import {isWeb, safePlatformSelect} from '../../../utils/platform';
+import {isWeb} from '../../../utils/platform';
+import {useHoverState} from '../../../hooks/useHoverState';
 
 export type EditTextStyles = {
   container?: StyleProp<ViewStyle>;
@@ -205,16 +199,18 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
           };
       }
     }, [size]);
-    const webRef = useRef<View>(null);
     const [focused, setFocused] = useState(false);
     const defaultInputRef = useRef(null);
     const inputRef = (ref as MutableRefObject<TextInput>) || defaultInputRef;
-    const hovered = useHover(webRef);
+    const {hovered, hoverProps} = useHoverState();
 
     // Memoize default container style
-    const defaultContainerStyle = useMemo(() => css`
-      flex-direction: ${direction};
-    `, [direction]);
+    const defaultContainerStyle = useMemo(
+      () => css`
+        flex-direction: ${direction};
+      `,
+      [direction],
+    );
 
     // Memoize default color calculation
     const defaultColor = useMemo(() => {
@@ -270,7 +266,9 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
           <View
             style={[
               css`
-                margin-bottom: ${decoration === 'boxed' ? sizeConfig.labelMargin : 0}px;
+                margin-bottom: ${decoration === 'boxed'
+                  ? sizeConfig.labelMargin
+                  : 0}px;
 
                 flex-direction: row;
                 align-items: center;
@@ -391,7 +389,9 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
                   align-self: stretch;
                 `,
             css`
-              padding: ${decoration === 'boxed' ? `${sizeConfig.padding * 0.4}px 0` : `${sizeConfig.padding * 0.2}px 0`};
+              padding: ${decoration === 'boxed'
+                ? `${sizeConfig.padding * 0.4}px 0`
+                : `${sizeConfig.padding * 0.2}px 0`};
 
               flex-direction: row;
               align-items: center;
@@ -412,7 +412,10 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
                 })
               : startElement}
             <TextInput
-              accessibilityLabel={accessibilityLabel ?? (typeof label === 'string' ? label : placeholder)}
+              accessibilityLabel={
+                accessibilityLabel ??
+                (typeof label === 'string' ? label : placeholder)
+              }
               autoCapitalize={autoCapitalize}
               autoComplete={autoComplete}
               editable={editable}
@@ -456,7 +459,8 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
                     `,
                 css`
                   color: ${defaultColor};
-                  padding: ${sizeConfig.padding}px 0 ${sizeConfig.padding * 1.2}px 0;
+                  padding: ${sizeConfig.padding}px 0
+                    ${sizeConfig.padding * 1.2}px 0;
                 `,
                 styles?.input,
               ]}
@@ -558,7 +562,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
 
     return (
       <View
-        ref={safePlatformSelect({web: webRef, default: undefined})}
+        {...hoverProps}
         style={[
           css`
             width: 100%;

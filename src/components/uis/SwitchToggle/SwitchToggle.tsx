@@ -292,6 +292,7 @@ export function SwitchToggle({
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="switch"
       accessibilityState={{checked: isOn}}
+      aria-checked={isOn}
       activeOpacity={0.8}
       onPress={onPress}
       style={style}

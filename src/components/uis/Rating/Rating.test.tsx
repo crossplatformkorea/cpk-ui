@@ -70,29 +70,51 @@ describe('Rating', () => {
     expect(handleRatingUpdate).toHaveBeenCalledWith(1);
   });
 
+  test('uses one whole-star target when half ratings are disabled', () => {
+    const handleRatingUpdate = jest.fn();
+    const {getAllByRole} = render(
+      Component({
+        allowHalfRating: false,
+        onRatingUpdate: handleRatingUpdate,
+      }),
+    );
+    const ratingButtons = getAllByRole('button');
+
+    expect(ratingButtons).toHaveLength(5);
+    fireEvent.press(ratingButtons[4]);
+    expect(handleRatingUpdate).toHaveBeenCalledWith(5);
+  });
+
+  test('labels each rating target for assistive technology', () => {
+    const {getByRole} = render(Component());
+
+    expect(getByRole('button', {name: 'Rate 0.5 out of 5'})).toBeTruthy();
+    expect(getByRole('button', {name: 'Rate 5 out of 5'})).toBeTruthy();
+  });
+
+  test('exposes the selected target as a pressed button', () => {
+    const {getByRole} = render(Component({initialRating: 3.5}));
+
+    expect(
+      getByRole('button', {name: 'Rate 3.5 out of 5'}).props['aria-pressed'],
+    ).toBe(true);
+    expect(
+      getByRole('button', {name: 'Rate 4 out of 5'}).props['aria-pressed'],
+    ).toBe(false);
+  });
+
   describe('sizes', () => {
-    test('renders with small size', () => {
-      const testingLib = render(Component({size: 'small'}));
-      const json = testingLib.toJSON();
-      expect(json).toBeTruthy();
-    });
+    test.each([
+      ['small', 18],
+      ['medium', 24],
+      ['large', 32],
+      [40, 40],
+    ] as const)('resolves %s to a %ipx hit target', (size, expectedWidth) => {
+      const {getAllByTestId} = render(Component({size, testID: 'sized-star'}));
 
-    test('renders with medium size', () => {
-      const testingLib = render(Component({size: 'medium'}));
-      const json = testingLib.toJSON();
-      expect(json).toBeTruthy();
-    });
-
-    test('renders with large size', () => {
-      const testingLib = render(Component({size: 'large'}));
-      const json = testingLib.toJSON();
-      expect(json).toBeTruthy();
-    });
-
-    test('renders with custom numeric size', () => {
-      const testingLib = render(Component({size: 32}));
-      const json = testingLib.toJSON();
-      expect(json).toBeTruthy();
+      expect(getAllByTestId('sized-star')[0]).toHaveStyle({
+        width: expectedWidth,
+      });
     });
   });
 });

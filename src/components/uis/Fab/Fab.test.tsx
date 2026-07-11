@@ -8,6 +8,63 @@ import {Fab} from './Fab';
 const Component = (props): ReactElement => createComponent(<Fab {...props} />);
 
 describe('[Fab]', () => {
+  it('hides collapsed actions from interaction and accessibility', () => {
+    const {getByTestId} = render(
+      Component({
+        icons: ['AppleLogo', 'AndroidLogo'],
+        isActive: false,
+        onPressFab: () => {},
+      }),
+    );
+
+    const hiddenItem = getByTestId('fab-item-AppleLogo', {
+      includeHiddenElements: true,
+    });
+
+    expect(hiddenItem).toHaveStyle({
+      pointerEvents: 'none',
+    });
+    expect(hiddenItem.props.accessibilityElementsHidden).toBe(true);
+    expect(hiddenItem.props['aria-hidden']).toBe(true);
+    expect(
+      getByTestId('AppleLogo', {includeHiddenElements: true}).props
+        .accessibilityState.disabled,
+    ).toBe(true);
+    expect(getByTestId('fab-toggle').props.accessibilityLabel).toBe(
+      'Open actions',
+    );
+    expect(getByTestId('fab-toggle').props.accessibilityState.expanded).toBe(
+      false,
+    );
+  });
+
+  it('exposes expanded actions and state', () => {
+    const {getByTestId} = render(
+      Component({
+        icons: ['AppleLogo'],
+        isActive: true,
+        onPressFab: () => {},
+      }),
+    );
+
+    expect(getByTestId('fab-item-AppleLogo')).toHaveStyle({
+      pointerEvents: 'auto',
+    });
+    expect(
+      getByTestId('fab-item-AppleLogo').props.accessibilityElementsHidden,
+    ).toBe(false);
+    expect(getByTestId('fab-item-AppleLogo').props['aria-hidden']).toBe(false);
+    expect(getByTestId('AppleLogo').props.accessibilityState.disabled).toBe(
+      false,
+    );
+    expect(getByTestId('fab-toggle').props.accessibilityLabel).toBe(
+      'Close actions',
+    );
+    expect(getByTestId('fab-toggle').props.accessibilityState.expanded).toBe(
+      true,
+    );
+  });
+
   it('should render', async () => {
     let count = 0;
     let items: IconName[] = ['AndroidLogo', 'AppleLogo'];

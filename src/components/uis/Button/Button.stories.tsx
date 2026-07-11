@@ -2,10 +2,17 @@ import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {withThemeProvider} from '../../../../.storybook/decorators';
+import {
+  StoryCanvas,
+  StoryRow,
+  StorySection,
+  StoryStack,
+} from '../../../../.storybook/story-ui';
 
 import type {ButtonColorType, ButtonSizeType, ButtonType} from './Button';
 import {Button} from './Button';
-import {ThemeParam} from '../../../utils/theme';
+import type {ThemeParam} from '../../../utils/theme';
+import {Icon} from '../Icon/Icon';
 
 const buttonTypes: ButtonType[] = ['outlined', 'solid', 'text'];
 const buttonSizes: ButtonSizeType[] = ['large', 'medium', 'small'];
@@ -20,85 +27,32 @@ const buttonColors: ButtonColorType[] = [
   'secondary',
 ];
 
+const customButtonTheme: ThemeParam = {
+  light: {
+    button: {
+      primary: {bg: '#0057B8', text: '#FFFFFF'},
+    },
+  },
+  dark: {
+    button: {
+      primary: {bg: '#68A7FF', text: '#08162B'},
+    },
+  },
+};
+
 const meta = {
-  title: 'Button',
+  title: 'Actions/Button',
   component: Button,
   parameters: {
-    notes: `
-A versatile Button component with multiple variants, sizes, and customization options.
-
-## Features
-- **Three Button Types**: Solid, outlined, and text buttons
-- **Flexible Sizing**: Preset sizes and custom numeric values
-- **Color Variants**: Multiple color options for different contexts
-- **Loading State**: Built-in loading indicator
-- **Icon Support**: Add icons before or after button text
-- **Haptic Feedback**: Optional haptic feedback on press (mobile)
-- **Hover Effects**: Automatic hover effects on web
-
-## Size Options
-- \`small\`: 8px vertical, 16px horizontal padding
-- \`medium\`: 12px vertical, 24px horizontal padding (default)
-- \`large\`: 16px vertical, 24px horizontal padding
-- Custom number: Calculated as \`size * 0.6\` vertical, \`size * 1.2\` horizontal padding
-
-## Button Types
-- \`solid\`: Filled background with contrast text
-- \`outlined\`: Transparent background with colored border
-- \`text\`: Minimal styling, no border or background
-
-## Usage
-\`\`\`tsx
-<Button
-  text="Click me"
-  type="solid"
-  color="primary"
-  size="medium"
-  onPress={() => console.log('Pressed')}
-/>
-\`\`\`
-        `,
     docs: {
       description: {
-        component: `
-A versatile Button component with multiple variants, sizes, and customization options.
-
-## Features
-- **Three Button Types**: Solid, outlined, and text buttons
-- **Flexible Sizing**: Preset sizes and custom numeric values
-- **Color Variants**: Multiple color options for different contexts
-- **Loading State**: Built-in loading indicator
-- **Icon Support**: Add icons before or after button text
-- **Haptic Feedback**: Optional haptic feedback on press (mobile)
-- **Hover Effects**: Automatic hover effects on web
-
-## Size Options
-- \`small\`: 8px vertical, 16px horizontal padding
-- \`medium\`: 12px vertical, 24px horizontal padding (default)
-- \`large\`: 16px vertical, 24px horizontal padding
-- Custom number: Calculated as \`size * 0.6\` vertical, \`size * 1.2\` horizontal padding
-
-## Button Types
-- \`solid\`: Filled background with contrast text
-- \`outlined\`: Transparent background with colored border
-- \`text\`: Minimal styling, no border or background
-
-## Usage
-\`\`\`tsx
-<Button
-  text="Click me"
-  type="solid"
-  color="primary"
-  size="medium"
-  onPress={() => console.log('Pressed')}
-/>
-\`\`\`
-        `,
+        component:
+          'The primary command component. Choose solid for the main action, outlined for a secondary action, and text for low-emphasis commands. Loading preserves the button footprint; disabled removes interaction.',
       },
     },
   },
   args: {
-    text: 'Hello world',
+    text: 'Create release',
     type: 'solid',
     color: 'primary',
     size: 'medium',
@@ -118,7 +72,8 @@ A versatile Button component with multiple variants, sizes, and customization op
     size: {
       control: 'radio',
       options: ['small', 'medium', 'large', 16, 20, 24, 32],
-      description: 'Button size: "small" (8/16px), "medium" (12/24px), "large" (16/24px), or custom number for calculated padding',
+      description:
+        'Button size: "small" (8/16px), "medium" (12/24px), "large" (16/24px), or custom number for calculated padding',
     },
   },
   decorators: [
@@ -126,8 +81,7 @@ A versatile Button component with multiple variants, sizes, and customization op
       withThemeProvider(
         Story,
         context,
-        // @ts-ignore
-        context.args.theme,
+        context.parameters.customTheme as ThemeParam | undefined,
       ),
   ],
 } satisfies Meta<typeof Button>;
@@ -138,7 +92,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
   args: {
-    text: 'Basic Button',
+    text: 'Create release',
     type: 'solid',
     color: 'primary',
     size: 'medium',
@@ -148,7 +102,7 @@ export const Basic: Story = {
 
 export const Secondary: Story = {
   args: {
-    text: 'Secondary Button',
+    text: 'View documentation',
     type: 'outlined',
     color: 'secondary',
     size: 'large',
@@ -158,7 +112,7 @@ export const Secondary: Story = {
 
 export const Danger: Story = {
   args: {
-    text: 'Danger Button',
+    text: 'Delete release',
     type: 'solid',
     color: 'danger',
     size: 'small',
@@ -166,53 +120,70 @@ export const Danger: Story = {
   },
 };
 
-const disableAllExcept = (allowedField: string) => {
-  const argTypes = {
-    text: {table: {disable: true}},
-    type: {table: {disable: true}},
-    color: {table: {disable: true}},
-    size: {table: {disable: true}},
-    onPress: {table: {disable: true}},
-    testID: {table: {disable: true}},
-    disabled: {table: {disable: true}},
-    loadingElement: {table: {disable: true}},
-    borderRadius: {table: {disable: true}},
-    startElement: {table: {disable: true}},
-    endElement: {table: {disable: true}},
-    activeOpacity: {table: {disable: true}},
-    touchableHighlightProps: {table: {disable: true}},
-    hitSlop: {table: {disable: true}},
-    theme: {control: 'object'},
-  };
-
-  if (argTypes[allowedField]) {
-    argTypes[allowedField] = {table: {disable: false}};
-  }
-
-  return argTypes;
+export const CustomTheme: Story = {
+  args: {
+    text: 'Brand action',
+  },
+  parameters: {
+    customTheme: customButtonTheme,
+    controls: {include: ['text']},
+  },
 };
 
-export const CustomColor: Story = {
-  args: {
-    // @ts-ignore
-    theme: {
-      light: {
-        button: {
-          primary: {
-            bg: 'red',
-            text: 'white',
-          },
-        },
-      },
-      dark: {
-        button: {
-          primary: {
-            bg: 'pink',
-            text: 'red',
-          },
-        },
-      },
-    } as ThemeParam,
-  },
-  argTypes: disableAllExcept('theme'),
+export const VisualMatrix: Story = {
+  render: () => (
+    <StoryCanvas>
+      <StorySection label="Variants">
+        <StoryStack>
+          {buttonTypes.map((type) => (
+            <StoryRow key={type}>
+              {buttonSizes.map((size) => (
+                <Button
+                  key={size}
+                  onPress={action(`${type}-${size}`)}
+                  size={size}
+                  style={{minWidth: 132}}
+                  text={`${type} ${size}`}
+                  type={type}
+                />
+              ))}
+            </StoryRow>
+          ))}
+        </StoryStack>
+      </StorySection>
+      <StorySection label="Colors">
+        <StoryRow>
+          {buttonColors.map((color) => (
+            <Button
+              color={color}
+              key={color}
+              onPress={action(color)}
+              text={color}
+            />
+          ))}
+        </StoryRow>
+      </StorySection>
+      <StorySection label="Content and states">
+        <StoryRow>
+          <Button
+            onPress={action('leading-icon')}
+            startElement={<Icon name="Plus" />}
+            text="Create"
+          />
+          <Button
+            endElement={<Icon name="ArrowRight" />}
+            onPress={action('trailing-icon')}
+            text="Continue"
+          />
+          <Button loading onPress={action('loading')} text="Saving" />
+          <Button disabled onPress={action('disabled')} text="Disabled" />
+          <Button
+            onPress={action('custom-size')}
+            size={20}
+            text="Custom size"
+          />
+        </StoryRow>
+      </StorySection>
+    </StoryCanvas>
+  ),
 };

@@ -102,8 +102,6 @@ export function ThemeProvider({
   customTheme = {},
   responsiveDesignMode = 'mobile-first',
 }: ThemeProps): ReactElement {
-  console.log('🎨 ThemeProvider rendered with initialThemeType:', initialThemeType);
-
   const isPortrait = useMediaQuery({orientation: 'portrait'});
 
   const isMobile = useMediaQuery(

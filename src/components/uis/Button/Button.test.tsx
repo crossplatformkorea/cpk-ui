@@ -1,3 +1,12 @@
+jest.mock('react-native/Libraries/Utilities/Platform', () => {
+  const platform = {
+    OS: 'web',
+    select: (options: Record<string, unknown>) => options.web ?? options.default,
+  };
+
+  return {...platform, default: platform};
+});
+
 import '@testing-library/jest-native/extend-expect';
 
 import React, {type ReactElement} from 'react';
@@ -14,10 +23,6 @@ import {ThemeType, ThemeProvider} from '../../../providers/ThemeProvider';
 import {dark, light} from '../../../utils/colors';
 
 let testingLib: RenderAPI;
-
-jest.mock('react-native-web-hooks', () => ({
-  useHover: () => true,
-}));
 
 const Component = ({
   props,
@@ -37,11 +42,22 @@ describe('[Button]', () => {
   });
 
   describe('Index', () => {
+    it('does not mount a spinner while idle', () => {
+      testingLib = render(Component({}));
+
+      expect(
+        testingLib.queryByTestId('undefined-activity-indicator'),
+      ).toBeNull();
+    });
+
     it('should render loading status', () => {
       testingLib = render(Component({props: {loading: true}}));
 
       expect(LoadingIndicator).toBeDefined();
       expect(testingLib.getByTestId('loading-view')).toBeTruthy();
+      expect(
+        testingLib.getByTestId('undefined-activity-indicator'),
+      ).toBeTruthy();
     });
 
     it('should render default disabled style when disabled', () => {
@@ -49,6 +65,30 @@ describe('[Button]', () => {
 
       const loadingView = testingLib.getByTestId('button-container');
       expect(loadingView).toHaveStyle({borderTopColor: light.text.disabled});
+    });
+
+    it('expands the default dynamic padding for React Native', () => {
+      testingLib = render(Component({}));
+
+      expect(testingLib.getByTestId('button-container')).toHaveStyle({
+        paddingTop: 12,
+        paddingRight: 24,
+        paddingBottom: 12,
+        paddingLeft: 24,
+      });
+    });
+
+    it('applies and removes hover styles from pointer events', () => {
+      testingLib = render(Component({props: {testID: 'hover-button'}}));
+
+      const button = testingLib.getByTestId('hover-button');
+      const container = testingLib.getByTestId('button-container');
+
+      fireEvent(button, 'pointerEnter');
+      expect(container).toHaveStyle({shadowOpacity: 0.24});
+
+      fireEvent(button, 'pointerLeave');
+      expect(container).not.toHaveStyle({shadowOpacity: 0.24});
     });
   });
 
@@ -295,7 +335,6 @@ describe('[Button]', () => {
       );
 
       const button = testingLib.getByTestId('button-container');
-
 
       expect(button).toHaveStyle({
         backgroundColor: light.bg.basic,
@@ -616,6 +655,23 @@ describe('[Button]', () => {
 
       const button = testingLib.getByTestId('a11y-button');
       expect(button.props.accessibilityLabel).toBe('Custom button');
+    });
+
+    it('should expose busy and disabled states while loading', () => {
+      testingLib = render(
+        Component({
+          props: {
+            loading: true,
+            testID: 'a11y-button',
+            text: 'Submit',
+          },
+        }),
+      );
+
+      const button = testingLib.getByTestId('a11y-button');
+      expect(button.props.accessibilityState).toEqual(
+        expect.objectContaining({busy: true, disabled: true}),
+      );
     });
   });
 

@@ -172,6 +172,8 @@ function SegmentedControlContainer({
             accessibilityLabel={typeof item.text === 'string' ? item.text : undefined}
             accessibilityRole="button"
             accessibilityState={{selected: isSelected}}
+            aria-disabled={disabled}
+            aria-pressed={isSelected}
             activeOpacity={0.7}
             disabled={disabled}
             onPress={() => handlePress(item.value)}

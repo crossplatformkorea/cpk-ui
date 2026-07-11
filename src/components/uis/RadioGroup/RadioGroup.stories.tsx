@@ -6,69 +6,13 @@ import {RadioButtonType, RadioGroup} from './RadioGroup';
 import type {RadioButtonSizeType} from './RadioButton';
 
 const meta = {
-  title: 'RadioGroup',
-  component: (props) => <RadioGroup {...props} />,
+  title: 'Inputs/RadioGroup',
+  component: RadioGroup,
   parameters: {
-    notes: `
-A flexible RadioGroup component that allows users to select a single option from a set of choices.
-
-## Features
-- **Flexible Sizing**: Supports preset sizes (small, medium, large) and custom numeric values
-- **Color Variants**: Multiple color options for different contexts
-- **Disabled State**: Can disable the entire radio group
-- **Optional Title**: Display an optional title above the radio group
-- **Label Positioning**: Position labels on the left or right of radio buttons
-
-## Size Options
-- \`small\`: 16px radio button
-- \`medium\`: 20px radio button (default)
-- \`large\`: 24px radio button
-- Custom number: Any pixel value (e.g., \`size={28}\`)
-
-## Usage
-\`\`\`tsx
-<RadioGroup
-  data={['Option 1', 'Option 2', 'Option 3']}
-  labels={['Option 1', 'Option 2', 'Option 3']}
-  selectedValue="Option 1"
-  selectValue={setSelectedValue}
-  size="medium"
-  type="primary"
-  title="Choose an option"
-/>
-\`\`\`
-        `,
     docs: {
       description: {
-        component: `
-A flexible RadioGroup component that allows users to select a single option from a set of choices.
-
-## Features
-- **Flexible Sizing**: Supports preset sizes (small, medium, large) and custom numeric values
-- **Color Variants**: Multiple color options for different contexts
-- **Disabled State**: Can disable the entire radio group
-- **Optional Title**: Display an optional title above the radio group
-- **Label Positioning**: Position labels on the left or right of radio buttons
-
-## Size Options
-- \`small\`: 16px radio button
-- \`medium\`: 20px radio button (default)
-- \`large\`: 24px radio button
-- Custom number: Any pixel value (e.g., \`size={28}\`)
-
-## Usage
-\`\`\`tsx
-<RadioGroup
-  data={['Option 1', 'Option 2', 'Option 3']}
-  labels={['Option 1', 'Option 2', 'Option 3']}
-  selectedValue="Option 1"
-  selectValue={setSelectedValue}
-  size="medium"
-  type="primary"
-  title="Choose an option"
-/>
-\`\`\`
-        `,
+        component:
+          'A single-choice field for mutually exclusive options. Keep every option visible, use a group title when the choice needs context, and control the selected value from the parent form.',
       },
     },
   },
@@ -89,7 +33,8 @@ A flexible RadioGroup component that allows users to select a single option from
     size: {
       control: 'radio',
       options: ['small', 'medium', 'large', 16, 20, 24, 32],
-      description: 'Size can be "small" (16px), "medium" (20px), "large" (24px) or a custom number in pixels',
+      description:
+        'Size can be "small" (16px), "medium" (20px), "large" (24px) or a custom number in pixels',
     },
     disabled: {
       control: 'boolean',
@@ -128,21 +73,14 @@ export const Basic: Story = {
     );
   },
   args: {
-    theme: 'light',
-    data: ['Person', 'Animal', 'Bird', 'Other'],
-    labels: ['Person', 'Animal', 'Bird', 'Other'],
-    selectedValue: 'Person',
-    title: 'RadioGroup',
+    data: ['development', 'staging', 'production'],
+    labels: ['Development', 'Staging', 'Production'],
+    selectedValue: 'staging',
+    title: 'Deployment target',
     labelPosition: 'right',
     type: 'primary',
     size: 'medium',
     disabled: false,
-  },
-  argTypes: {
-    theme: {
-      control: 'select',
-      options: ['light', 'dark'],
-    },
   },
 };
 
@@ -165,21 +103,16 @@ export const CustomSize: Story = {
     );
   },
   args: {
-    theme: 'light',
-    data: ['Person', 'Animal', 'Bird', 'Other'],
-    labels: ['Person', 'Animal', 'Bird', 'Other'],
-    selectedValue: 'Person',
-    title: 'RadioGroup with Custom Size',
+    data: ['development', 'staging', 'production'],
+    labels: ['Development', 'Staging', 'Production'],
+    selectedValue: 'production',
+    title: 'Large touch targets',
     labelPosition: 'right',
     type: 'primary',
     size: 28,
     disabled: false,
   },
   argTypes: {
-    theme: {
-      control: 'select',
-      options: ['light', 'dark'],
-    },
     size: {
       control: {type: 'number', min: 12, max: 48, step: 2},
       description: 'Custom size in pixels',

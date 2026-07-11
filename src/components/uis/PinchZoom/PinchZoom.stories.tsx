@@ -1,69 +1,39 @@
+import React from 'react';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+  type ImageSourcePropType,
+} from 'react-native';
 import {action} from '@storybook/addon-actions';
 import type {Meta, StoryObj} from '@storybook/react';
-import React from 'react';
-import {Image, Text, View} from 'react-native';
-import {css} from 'kstyled';
 
 import {withThemeProvider} from '../../../../.storybook/decorators';
+import {
+  StoryCanvas,
+  StoryHeader,
+  StorySection,
+} from '../../../../.storybook/story-ui';
 import {PinchZoom} from './PinchZoom';
 
 const meta = {
-  title: 'PinchZoom',
+  title: 'Media/PinchZoom',
   component: PinchZoom,
   parameters: {
     docs: {
       description: {
-        component: `
-A powerful PinchZoom component that enables pinch-to-zoom and pan gestures for images and content.
-
-## Features
-- **Pinch to Zoom**: Two-finger pinch gesture for zooming in/out
-- **Pan Gesture**: Single-finger drag to move zoomed content
-- **Momentum Scrolling**: Smooth deceleration after pan gesture release
-- **Boundary Detection**: Prevents excessive panning beyond content bounds
-- **Customizable Constraints**: Control overflow behavior on X and Y axes
-- **Programmatic Control**: Imperative API to set scale and translation values
-
-## Props
-- \`onScaleChanged\`: Callback fired when zoom scale changes
-- \`onTranslateChanged\`: Callback fired when content position changes
-- \`onRelease\`: Callback fired after gesture animation completes (decay or snap-back)
-- \`allowEmpty\`: When \`true\`, allows unrestricted overflow on specific axes (x/y). When \`false\` or undefined, clamps translation to content bounds
-- \`fixOverflowAfterRelease\`: Auto-snap to bounds after release (default: true). When \`false\`, \`onRelease\` fires immediately without snap animation
-- \`style\`: Custom view style. **Warning**: Passing \`transform\` in style will disable pinch-zoom. Use a wrapper View for custom transforms
-
-## Usage
-\`\`\`tsx
-<PinchZoom
-  onScaleChanged={(scale) => console.log('Scale:', scale)}
-  onTranslateChanged={({x, y}) => console.log('Position:', x, y)}
-  onRelease={() => console.log('Released')}
->
-  <Image
-    source={{uri: 'https://example.com/image.jpg'}}
-    style={{width: 300, height: 300}}
-  />
-</PinchZoom>
-\`\`\`
-
-## Imperative API
-\`\`\`tsx
-const pinchZoomRef = useRef<PinchZoomRef>(null);
-
-// Set zoom and position programmatically
-pinchZoomRef.current?.setValues({
-  scale: 2,
-  translate: {x: 50, y: 50}
-});
-\`\`\`
-        `,
+        component:
+          'Adds pinch, pan, momentum, and boundary correction to visual content. Wrap transformed content outside PinchZoom rather than passing a transform style, which would conflict with the gesture transform.',
       },
     },
   },
   argTypes: {
     fixOverflowAfterRelease: {
       control: 'boolean',
-      description: 'Automatically snap content back to bounds after gesture release',
+      description:
+        'Automatically snap content back to bounds after gesture release',
       defaultValue: true,
     },
   },
@@ -74,193 +44,217 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const WithImage: Story = {
-  args: {
-    onScaleChanged: action('onScaleChanged'),
-    onTranslateChanged: action('onTranslateChanged'),
-    onRelease: action('onRelease'),
-    fixOverflowAfterRelease: true,
-  },
-  render: (args) => (
-    <View
-      style={css`
-        flex: 1;
-        justify-content: center;
-        align-items: center;
-        background-color: #f5f5f5;
-      `}
-    >
-      <PinchZoom {...args}>
+const interactionArgs = {
+  onScaleChanged: action('onScaleChanged'),
+  onTranslateChanged: action('onTranslateChanged'),
+  onRelease: action('onRelease'),
+};
+
+function useStageWidth(maxWidth: number) {
+  const {width} = useWindowDimensions();
+  return Math.min(maxWidth, Math.max(248, width - (width < 600 ? 64 : 180)));
+}
+
+function MediaPreview({
+  accessibilityLabel,
+  aspectRatio,
+  source,
+  ...pinchZoomProps
+}: {
+  accessibilityLabel: string;
+  aspectRatio: number;
+  source: ImageSourcePropType;
+} & React.ComponentProps<typeof PinchZoom>) {
+  const width = useStageWidth(680);
+  const height = Math.round(width / aspectRatio);
+
+  return (
+    <View style={[styles.mediaFrame, {height, width}]}>
+      <PinchZoom {...pinchZoomProps}>
         <Image
-          source={{
-            uri: 'https://picsum.photos/300/300',
-          }}
-          style={css`
-            width: 300px;
-            height: 300px;
-            border-radius: 8px;
-          `}
+          accessibilityLabel={accessibilityLabel}
+          accessible
+          resizeMode="cover"
+          source={source}
+          style={{height, width}}
         />
       </PinchZoom>
     </View>
+  );
+}
+
+function ArtifactPreview({
+  framed = false,
+  ...pinchZoomProps
+}: {framed?: boolean} & React.ComponentProps<typeof PinchZoom>) {
+  const size = Math.min(useStageWidth(360), 360);
+
+  return (
+    <View style={[styles.artifactFrame, {height: size, width: size}]}>
+      <PinchZoom
+        {...pinchZoomProps}
+        style={framed ? styles.customPinchFrame : undefined}
+      >
+        <View style={[styles.artifact, {height: size, width: size}]}>
+          <View style={styles.artifactMeta}>
+            <Text style={styles.artifactEyebrow}>RELEASE ARTIFACT</Text>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>READY</Text>
+            </View>
+          </View>
+          <View style={styles.artifactBody}>
+            <Text style={styles.artifactTitle}>cpk-ui</Text>
+            <Text style={styles.artifactVersion}>0.7.0-rc.1</Text>
+          </View>
+          <Text style={styles.artifactFooter}>iOS · Android · Web</Text>
+        </View>
+      </PinchZoom>
+    </View>
+  );
+}
+
+export const WithImage: Story = {
+  args: {
+    ...interactionArgs,
+    fixOverflowAfterRelease: true,
+  },
+  render: (args) => (
+    <StoryCanvas>
+      <StoryHeader
+        description="A clipped media stage keeps transformed content inside a predictable inspection area."
+        title="Cross-platform preview"
+      />
+      <StorySection label="Application output">
+        <MediaPreview
+          {...args}
+          accessibilityLabel="cpk-ui running across web, iOS, and Android"
+          aspectRatio={16 / 9}
+          source={require('../../../../.gh-assets/all-platforms.png')}
+        />
+      </StorySection>
+    </StoryCanvas>
   ),
 };
 
 export const WithColorBox: Story = {
   args: {
-    onScaleChanged: action('onScaleChanged'),
-    onTranslateChanged: action('onTranslateChanged'),
-    onRelease: action('onRelease'),
+    ...interactionArgs,
     fixOverflowAfterRelease: true,
   },
   render: (args) => (
-    <View
-      style={css`
-        flex: 1;
-        justify-content: center;
-        align-items: center;
-        background-color: #f5f5f5;
-      `}
-    >
-      <PinchZoom {...args}>
-        <View
-          style={css`
-            width: 250px;
-            height: 250px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
-            justify-content: center;
-            align-items: center;
-            shadow-color: #000;
-            shadow-offset: 0px 4px;
-            shadow-opacity: 0.3;
-            shadow-radius: 8px;
-            elevation: 5;
-          `}
-        >
-          <Text
-            style={css`
-              color: white;
-              font-size: 24px;
-              font-weight: bold;
-            `}
-          >
-            Pinch to Zoom
-          </Text>
-          <Text
-            style={css`
-              color: rgba(255, 255, 255, 0.9);
-              font-size: 14px;
-              margin-top: 8px;
-            `}
-          >
-            Try pinching and dragging!
-          </Text>
-        </View>
-      </PinchZoom>
-    </View>
+    <StoryCanvas>
+      <StoryHeader
+        description="Any React Native view can become transformable content without changing its internal layout."
+        title="Release artifact"
+      />
+      <StorySection label="Generated package">
+        <ArtifactPreview {...args} />
+      </StorySection>
+    </StoryCanvas>
   ),
 };
 
 export const WithoutBoundarySnap: Story = {
   args: {
-    onScaleChanged: action('onScaleChanged'),
-    onTranslateChanged: action('onTranslateChanged'),
-    onRelease: action('onRelease'),
+    ...interactionArgs,
     fixOverflowAfterRelease: false,
   },
   render: (args) => (
-    <View
-      style={css`
-        flex: 1;
-        justify-content: center;
-        align-items: center;
-        background-color: #f5f5f5;
-      `}
-    >
-      <PinchZoom {...args}>
-        <Image
-          source={{
-            uri: 'https://picsum.photos/300/400',
-          }}
-          style={css`
-            width: 300px;
-            height: 400px;
-            border-radius: 8px;
-          `}
+    <StoryCanvas>
+      <StoryHeader
+        description="Boundary correction can be disabled when the surrounding viewer owns its own positioning rules."
+        title="Free translation"
+      />
+      <StorySection label="Storybook integration">
+        <MediaPreview
+          {...args}
+          accessibilityLabel="Expo application with the Storybook interface"
+          aspectRatio={15 / 11}
+          source={require('../../../../.gh-assets/expo-with-storybook-cli.png')}
         />
-      </PinchZoom>
-      <Text
-        style={css`
-          position: absolute;
-          bottom: 40px;
-          color: #666;
-          font-size: 12px;
-        `}
-      >
-        fixOverflowAfterRelease = false
-      </Text>
-    </View>
+      </StorySection>
+    </StoryCanvas>
   ),
 };
 
 export const WithCustomStyle: Story = {
   args: {
-    onScaleChanged: action('onScaleChanged'),
-    onTranslateChanged: action('onTranslateChanged'),
-    onRelease: action('onRelease'),
+    ...interactionArgs,
     fixOverflowAfterRelease: true,
   },
   render: (args) => (
-    <View
-      style={css`
-        flex: 1;
-        justify-content: center;
-        align-items: center;
-        background-color: #1a1a1a;
-      `}
-    >
-      <PinchZoom
-        {...args}
-        style={css`
-          border-width: 3px;
-          border-color: #667eea;
-          border-radius: 12px;
-          overflow: hidden;
-        `}
-      >
-        <View
-          style={css`
-            width: 280px;
-            height: 280px;
-            background-color: #2d2d2d;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-          `}
-        >
-          <Text
-            style={css`
-              color: #667eea;
-              font-size: 20px;
-              font-weight: bold;
-              text-align: center;
-            `}
-          >
-            Custom Styled
-          </Text>
-          <Text
-            style={css`
-              color: #999;
-              font-size: 14px;
-              text-align: center;
-              margin-top: 12px;
-            `}
-          >
-            This PinchZoom has custom border and background styles
-          </Text>
-        </View>
-      </PinchZoom>
-    </View>
+    <StoryCanvas>
+      <StoryHeader
+        description="Container styling can establish a selected or focused state without supplying a transform."
+        title="Styled viewport"
+      />
+      <StorySection label="Focused artifact">
+        <ArtifactPreview {...args} framed />
+      </StorySection>
+    </StoryCanvas>
   ),
 };
+
+const styles = StyleSheet.create({
+  mediaFrame: {
+    backgroundColor: '#EEF1F5',
+    borderColor: '#CFD6E0',
+    borderRadius: 6,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+  },
+  artifactFrame: {
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  customPinchFrame: {
+    borderColor: '#3D8BFF',
+    borderRadius: 6,
+    borderWidth: 3,
+    overflow: 'hidden',
+  },
+  artifact: {
+    backgroundColor: '#17191D',
+    justifyContent: 'space-between',
+    padding: 24,
+  },
+  artifactMeta: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  artifactEyebrow: {
+    color: '#9DA7B5',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  statusBadge: {
+    backgroundColor: '#153D2C',
+    borderColor: '#267A54',
+    borderRadius: 4,
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  statusText: {
+    color: '#76D6A7',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  artifactBody: {
+    gap: 6,
+  },
+  artifactTitle: {
+    color: '#FFFFFF',
+    fontSize: 34,
+    fontWeight: '700',
+  },
+  artifactVersion: {
+    color: '#B7C0CC',
+    fontSize: 17,
+  },
+  artifactFooter: {
+    color: '#7F8A99',
+    fontSize: 12,
+  },
+});

@@ -1,21 +1,22 @@
 // Mock Platform API before any imports
-jest.mock('react-native/Libraries/Utilities/Platform', () => ({
-  OS: 'web',
-  select: (obj) => obj.web || obj.default,
-}));
+jest.mock('react-native/Libraries/Utilities/Platform', () => {
+  const platform = {
+    OS: 'web',
+    select: (obj) => obj.web || obj.default,
+  };
 
-// Mock @expo/vector-icons
-jest.mock('@expo/vector-icons', () => ({
-  AntDesign: 'AntDesign',
-  createIconSetFromIcoMoon: () => 'Icon',
-  // Add any other exports from @expo/vector-icons that you're using
+  return {...platform, default: platform};
+});
+
+jest.mock('@expo/vector-icons/createIconSetFromIcoMoon', () => ({
+  __esModule: true,
+  default: () => 'Icon',
 }));
 
 import '@testing-library/jest-native/extend-expect';
 
 import React, {type ReactElement} from 'react';
 import {Text} from 'react-native';
-import RNWebHooks from 'react-native-web-hooks';
 import type {RenderAPI} from '@testing-library/react-native';
 import {act, fireEvent, render} from '@testing-library/react-native';
 
@@ -23,10 +24,6 @@ import {createComponent} from '../../../../test/testUtils';
 import type {EditTextProps} from './EditText';
 import {EditText} from './EditText';
 import {light} from '../../../utils/colors';
-
-jest.mock('react-native-web-hooks', () => ({
-  useHover: () => false,
-}));
 
 let testingLib: RenderAPI;
 
@@ -41,10 +38,6 @@ describe('[EditText]', () => {
   });
 
   describe('hovered', () => {
-    beforeAll(() => {
-      jest.spyOn(RNWebHooks, 'useHover').mockImplementation(() => true);
-    });
-
     describe('label', () => {
       it('renders label text', async () => {
         testingLib = render(Component({label: 'label text'}));
@@ -66,6 +59,8 @@ describe('[EditText]', () => {
             },
           }),
         );
+
+        fireEvent(testingLib.getByTestId('edit-text'), 'pointerEnter');
 
         const label = testingLib.getByText('label text');
 
@@ -99,10 +94,6 @@ describe('[EditText]', () => {
       });
 
       describe('unhovered', () => {
-        beforeAll(() => {
-          jest.spyOn(RNWebHooks, 'useHover').mockImplementation(() => false);
-        });
-
         it('should contain `focusColor` when focused', async () => {
           testingLib = render(
             Component({

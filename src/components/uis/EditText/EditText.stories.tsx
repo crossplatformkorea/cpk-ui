@@ -1,69 +1,38 @@
-import type {ComponentProps} from 'react';
+import React, {useEffect, useState} from 'react';
 import type {Meta, StoryObj} from '@storybook/react';
 import {withThemeProvider} from '../../../../.storybook/decorators';
+import {
+  StoryCanvas,
+  StorySection,
+  StoryStack,
+} from '../../../../.storybook/story-ui';
+import type {EditTextProps} from './EditText';
 import {EditText} from './EditText';
 
-const EDITTEXT_DOCS = `
-A flexible text input component with various styling and validation options.
+function InteractiveEditText(props: EditTextProps) {
+  const [value, setValue] = useState(props.value ?? '');
 
-## Features
-- **Flexible Sizing**: Preset sizes and custom numeric values
-- **Two Decoration Styles**: Underline or boxed input styles
-- **Layout Directions**: Row or column layout for label and input
-- **Validation Support**: Built-in error message display
-- **Character Counter**: Optional character counter with maxLength support
-- **Multiline Support**: Can be used as a textarea
-- **Secure Text Entry**: Password input support
-- **Status States**: Visual feedback for focused, hovered, error, and disabled states
-- **Custom Elements**: Support for left and right elements/icons
+  useEffect(() => setValue(props.value ?? ''), [props.value]);
 
-## Decoration Options
-- \`underline\`: Bottom border style (default)
-- \`boxed\`: Full border box style
+  return (
+    <EditText
+      {...props}
+      onChangeText={(nextValue) => {
+        setValue(nextValue);
+        props.onChangeText?.(nextValue);
+      }}
+      value={value}
+    />
+  );
+}
 
-## Direction Options
-- \`row\`: Label and input side by side
-- \`column\`: Label above input (default)
-
-## Size Options
-- \`small\`: 14px font size with proportional padding
-- \`medium\`: 16px font size with proportional padding (default)
-- \`large\`: 18px font size with proportional padding
-- Custom number: Custom font size in pixels with proportional padding
-
-## Usage
-\`\`\`tsx
-<EditText
-  label="Email"
-  placeholder="Enter your email"
-  value={email}
-  onChangeText={setEmail}
-  size="medium"
-  decoration="boxed"
-  direction="column"
-  required
-/>
-\`\`\`
-
-### With Validation
-\`\`\`tsx
-<EditText
-  label="Password"
-  placeholder="Enter password"
-  value={password}
-  onChangeText={setPassword}
-  secureTextEntry
-  error={passwordError}
-  maxLength={20}
-/>
-\`\`\`
-`;
+const EDITTEXT_DOCS =
+  'A labeled text field for single-line, password, and multiline input. Keep validation messages specific, reserve the required marker for fields that block submission, and use a controlled value in product forms.';
 
 const meta = {
-  title: 'EditText',
-  component: (props) => <EditText {...props} />,
+  title: 'Inputs/EditText',
+  component: EditText,
   parameters: {
-    notes: EDITTEXT_DOCS,
     docs: {
       description: {
         component: EDITTEXT_DOCS,
@@ -74,7 +43,8 @@ const meta = {
     size: {
       control: 'radio',
       options: ['small', 'medium', 'large', 14, 16, 18, 20],
-      description: 'Input size: "small" (14px), "medium" (16px), "large" (18px), or custom number in pixels',
+      description:
+        'Input size: "small" (14px), "medium" (16px), "large" (18px), or custom number in pixels',
     },
     required: {type: 'boolean', description: 'Shows required indicator'},
     label: {type: 'string', description: 'Label text for the input'},
@@ -84,8 +54,14 @@ const meta = {
     placeholder: {type: 'string', description: 'Placeholder text'},
     placeholderColor: {type: 'string', description: 'Custom placeholder color'},
     editable: {type: 'boolean', description: 'Controls if input is editable'},
-    secureTextEntry: {type: 'boolean', description: 'Hides text for password input'},
-    numberOfLines: {type: 'number', description: 'Number of lines for multiline input'},
+    secureTextEntry: {
+      type: 'boolean',
+      description: 'Hides text for password input',
+    },
+    numberOfLines: {
+      type: 'number',
+      description: 'Number of lines for multiline input',
+    },
     maxLength: {type: 'number', description: 'Maximum character length'},
     hideCounter: {type: 'boolean', description: 'Hides character counter'},
     direction: {
@@ -107,18 +83,65 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
+  render: (args) => <InteractiveEditText {...args} />,
   args: {
     size: 'medium',
     onChangeText: () => {},
     direction: 'column',
     decoration: 'boxed',
-    placeholder: 'Write something...',
+    placeholder: 'Enter a release name',
     editable: true,
   },
-  argTypes: {
-    theme: {
-      control: 'select',
-      options: ['light', 'dark'],
-    },
-  },
+};
+
+export const StateMatrix: Story = {
+  render: () => (
+    <StoryCanvas>
+      <StorySection label="Validation and availability">
+        <StoryStack style={{maxWidth: 520}}>
+          <InteractiveEditText
+            decoration="boxed"
+            label="Project name"
+            placeholder="cpk-ui"
+            required
+          />
+          <EditText
+            decoration="boxed"
+            error="Use at least 8 characters"
+            label="Access key"
+            value="short"
+          />
+          <EditText
+            decoration="boxed"
+            editable={false}
+            label="Workspace"
+            value="crossplatformkorea"
+          />
+        </StoryStack>
+      </StorySection>
+      <StorySection label="Decorations and content">
+        <StoryStack style={{maxWidth: 520}}>
+          <InteractiveEditText
+            label="Package scope"
+            placeholder="@crossplatformkorea"
+          />
+          <InteractiveEditText
+            decoration="boxed"
+            label="Password"
+            secureTextEntry
+            value="release-candidate"
+          />
+          <InteractiveEditText
+            decoration="boxed"
+            hideCounter={false}
+            label="Release notes"
+            maxLength={120}
+            multiline
+            numberOfLines={3}
+            placeholder="Summarize the changes"
+          />
+        </StoryStack>
+      </StorySection>
+    </StoryCanvas>
+  ),
 };

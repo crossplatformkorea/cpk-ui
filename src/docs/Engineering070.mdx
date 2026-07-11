@@ -1,0 +1,42 @@
+import {Meta} from '@storybook/blocks';
+
+<Meta title="Overview/Engineering Notes" />
+
+<div className="cpk-docs-hero">
+  <p className="cpk-docs-kicker">{'Engineering notes · cpk-ui 0.7'}</p>
+  <h1>Make behavior visible</h1>
+  <p className="cpk-docs-lead">
+    {
+      'Examples, tests, package output, and platform rendering are treated as one component contract.'
+    }
+  </p>
+</div>
+
+## Keep the native contract
+
+cpk-ui retains kstyled because a cross-platform component still needs native
+press, focus, animation, and accessibility behavior. kstyled 0.4 moves static
+style work to build time without forcing native components into a DOM-shaped
+API.
+
+## Use Storybook for review, not decoration
+
+Stories are grouped by component purpose and model controlled interactions.
+Selection, input, disclosure, modal, and feedback examples produce an
+observable state change. Responsive viewports and accessibility results stay in
+the same review surface.
+
+## Optimize shipped work
+
+The icon runtime now derives glyph code points from the typed icon list. The
+6.4 MB IcoMoon selection file is no longer imported or published, reducing the
+npm dry-run from about 5.5 MB to 3.9 MB compressed.
+
+Fonts remain the largest intentional package cost. Storybook demo media is
+measured separately because it is not shipped in the npm package.
+
+## Release only what CI can reproduce
+
+The release workflow runs component and story coverage, TypeScript, Jest, the
+package build, E2E smoke tests, a static Storybook build, and npm tarball
+inspection. Publishing is restricted to GitHub Actions on main with provenance.

@@ -36,6 +36,9 @@ describe('[RadioButton] render', () => {
 
     const baseElement = await waitFor(() => testingLib.toJSON());
     expect(baseElement).toBeTruthy();
+    expect(testingLib.getByTestId('radio-group-content')).toHaveStyle({
+      flexWrap: 'wrap',
+    });
   });
 
   describe('label', () => {
@@ -159,8 +162,9 @@ describe('[RadioButton]', () => {
     // After layout, the styles should reflect the innerLayout values
     // margin should be 2 and borderRadius should be width/2 = 20
     const updatedStyle =
-      StyleSheet.flatten(testingLib.getByTestId('circle-radio-0').props.style) ??
-      {};
+      StyleSheet.flatten(
+        testingLib.getByTestId('circle-radio-0').props.style,
+      ) ?? {};
     const updatedMargin =
       updatedStyle.margin ??
       updatedStyle.marginTop ??
@@ -323,7 +327,7 @@ describe('[RadioButton]', () => {
       expect(radioButton.props.accessibilityLabel).toBe('Select option one');
     });
 
-    it('should have accessibilityState with selected=true when selected', async () => {
+    it('should expose checked state when selected', async () => {
       component = createComponent(
         <RadioButton label="Option 1" testID="radio-a11y" selected={true} />,
       );
@@ -332,7 +336,7 @@ describe('[RadioButton]', () => {
 
       const radioButton = testingLib.getByTestId('radio-a11y');
       expect(radioButton.props.accessibilityState).toEqual({
-        selected: true,
+        checked: true,
         disabled: false,
       });
     });
@@ -346,7 +350,7 @@ describe('[RadioButton]', () => {
 
       const radioButton = testingLib.getByTestId('radio-a11y');
       expect(radioButton.props.accessibilityState).toEqual({
-        selected: undefined,
+        checked: false,
         disabled: true,
       });
     });

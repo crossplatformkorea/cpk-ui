@@ -5,7 +5,7 @@
  * This shim re-exports everything from react-dom and adds a findDOMNode polyfill.
  */
 
-const ReactDOM = require('react-dom');
+const ReactDOM = require('../node_modules/react-dom');
 
 if (typeof ReactDOM.findDOMNode !== 'function') {
   ReactDOM.findDOMNode = function findDOMNode(componentOrElement) {

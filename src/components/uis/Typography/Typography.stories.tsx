@@ -2,95 +2,33 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {Typography} from './Typography';
 import {withThemeProvider} from '../../../../.storybook/decorators';
 import {ScrollView, View} from 'react-native';
-import {ThemeParam} from '../../../utils/theme';
+import type {ThemeParam} from '../../../utils/theme';
+
+const customTypographyTheme: ThemeParam = {
+  light: {text: {basic: '#0057B8'}},
+  dark: {text: {basic: '#8AB8FF'}},
+};
 
 const meta = {
-  title: 'Typography',
+  title: 'Foundations/Typography',
   component: Typography.Title,
   parameters: {
-    notes: `
-A comprehensive typography system with predefined text styles for consistent design.
-
-## Features
-- **Pre-defined Text Styles**: Multiple typography variants for different use cases
-- **Theme Integration**: Automatically uses theme colors and styles
-- **Responsive**: Works across all platforms (iOS, Android, Web)
-- **Customizable**: Can override styles while maintaining base typography
-
-## Available Typography Variants
-- **Title**: Large heading text
-- **Heading1**: Primary heading
-- **Heading2**: Secondary heading
-- **Heading3**: Tertiary heading
-- **Subtitle1**: Large subtitle
-- **Subtitle2**: Standard subtitle
-- **Body1**: Primary body text
-- **Body2**: Secondary body text
-- **Body3**: Tertiary body text
-- **Body4**: Small body text
-- **Caption**: Small caption text
-- **Button**: Button text style
-
-## Usage
-\`\`\`tsx
-<Typography.Title>Page Title</Typography.Title>
-<Typography.Heading1>Main Heading</Typography.Heading1>
-<Typography.Body1>This is body text.</Typography.Body1>
-<Typography.Caption>Small caption text</Typography.Caption>
-\`\`\`
-
-### With Custom Styling
-\`\`\`tsx
-<Typography.Body1 style={{color: 'blue', fontWeight: 'bold'}}>
-  Custom styled text
-</Typography.Body1>
-\`\`\`
-        `,
     docs: {
       description: {
-        component: `
-A comprehensive typography system with predefined text styles for consistent design.
-
-## Features
-- **Pre-defined Text Styles**: Multiple typography variants for different use cases
-- **Theme Integration**: Automatically uses theme colors and styles
-- **Responsive**: Works across all platforms (iOS, Android, Web)
-- **Customizable**: Can override styles while maintaining base typography
-
-## Available Typography Variants
-- **Title**: Large heading text
-- **Heading1**: Primary heading
-- **Heading2**: Secondary heading
-- **Heading3**: Tertiary heading
-- **Subtitle1**: Large subtitle
-- **Subtitle2**: Standard subtitle
-- **Body1**: Primary body text
-- **Body2**: Secondary body text
-- **Body3**: Tertiary body text
-- **Body4**: Small body text
-- **Caption**: Small caption text
-- **Button**: Button text style
-
-## Usage
-\`\`\`tsx
-<Typography.Title>Page Title</Typography.Title>
-<Typography.Heading1>Main Heading</Typography.Heading1>
-<Typography.Body1>This is body text.</Typography.Body1>
-<Typography.Caption>Small caption text</Typography.Caption>
-\`\`\`
-
-### With Custom Styling
-\`\`\`tsx
-<Typography.Body1 style={{color: 'blue', fontWeight: 'bold'}}>
-  Custom styled text
-</Typography.Body1>
-\`\`\`
-        `,
+        component:
+          'The text hierarchy shared across cpk-ui. Select a semantic variant before applying local style overrides so size, weight, and line height remain consistent across platforms.',
       },
     },
   },
   argTypes: {},
-  decorators: [withThemeProvider],
+  decorators: [
+    (Story, context) =>
+      withThemeProvider(
+        Story,
+        context,
+        context.parameters.customTheme as ThemeParam | undefined,
+      ),
+  ],
 } satisfies Meta<typeof Typography.Title>;
 
 export default meta;
@@ -110,40 +48,13 @@ export const AllTypography: Story = {
     </ScrollView>
   ),
   args: {
-    children: 'Hello world',
-  },
-  argTypes: {
-    theme: {
-      control: 'select',
-      options: ['light', 'dark'],
-    },
+    children: 'Build once. Ship everywhere.',
   },
 };
 
 export const CustomTitle: Story = {
   args: {
-    children: 'Custom Color',
-    // @ts-ignore
-    theme: {
-      light: {
-        text: {
-          basic: 'blue',
-        },
-      },
-      dark: {
-        text: {
-          basic: 'skyblue',
-        },
-      },
-    } as ThemeParam,
+    children: 'Theme-aware title',
   },
-  decorators: [
-    (Story, context) =>
-      withThemeProvider(
-        Story,
-        context,
-        // @ts-ignore
-        context.args.theme as ThemeParam,
-      ),
-  ],
+  parameters: {customTheme: customTypographyTheme},
 };

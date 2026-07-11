@@ -1,50 +1,24 @@
-import type {ComponentProps} from 'react';
+import React from 'react';
+import {View} from 'react-native';
 import type {Meta, StoryObj} from '@storybook/react';
 import {withThemeProvider} from '../../../../.storybook/decorators';
+import {
+  StoryCanvas,
+  StoryRow,
+  StorySection,
+  StoryStack,
+  StoryText,
+} from '../../../../.storybook/story-ui';
 import {LoadingIndicator} from './LoadingIndicator';
 
 const meta = {
-  title: 'LoadingIndicator',
-  component: (props) => <LoadingIndicator {...props} />,
+  title: 'Feedback/LoadingIndicator',
+  component: LoadingIndicator,
   parameters: {
     docs: {
       description: {
-        component: `
-A loading indicator component that displays a spinner or custom loading animation.
-
-## Features
-- **Flexible Sizing**: Preset sizes and custom numeric values
-- **Platform Adaptive**: Uses native ActivityIndicator on mobile platforms
-- **Custom Colors**: Support for custom loading indicator colors
-- **Custom Elements**: Can replace with custom loading animation
-
-## Size Options
-- \`small\`: 30px indicator
-- \`medium\`: 40px indicator
-- \`large\`: 50px indicator (default on native)
-- Custom number: Any pixel value (e.g., \`size={45}\`)
-
-## Platform Behavior
-- **iOS/Android**: Uses native ActivityIndicator with "small" or "large" sizes
-- **Web**: Custom implementation with flexible sizing
-- **Medium size**: Maps to "large" on native platforms
-
-## Usage
-\`\`\`tsx
-<LoadingIndicator
-  size="medium"
-  color="#0000FF"
-/>
-\`\`\`
-
-### With Custom Element
-\`\`\`tsx
-<LoadingIndicator
-  size={50}
-  customElement={<CustomSpinner />}
-/>
-\`\`\`
-        `,
+        component:
+          'Indicates indeterminate progress with a native activity indicator where available and a matching web treatment. Use it only when completion cannot be expressed as a determinate value.',
       },
     },
   },
@@ -52,7 +26,8 @@ A loading indicator component that displays a spinner or custom loading animatio
     size: {
       control: 'radio',
       options: ['small', 'medium', 'large', 20, 30, 40, 50],
-      description: 'Indicator size: "small" (30px), "medium" (40px), "large" (50px), or custom number in pixels',
+      description:
+        'Indicator size: "small" (30px), "medium" (40px), "large" (50px), or custom number in pixels',
     },
     color: {
       description: 'Custom color for the loading indicator',
@@ -72,10 +47,35 @@ export const Basic: Story = {
   args: {
     size: 'medium',
   },
-  argTypes: {
-    theme: {
-      control: 'select',
-      options: ['light', 'dark'],
-    },
-  },
+};
+
+export const SizesAndContent: Story = {
+  render: () => (
+    <StoryCanvas>
+      <StorySection label="Sizes">
+        <StoryRow style={{alignItems: 'flex-end'}}>
+          {(['small', 'medium', 'large', 64] as const).map((size) => (
+            <StoryStack key={String(size)} style={{alignItems: 'center'}}>
+              <LoadingIndicator size={size} />
+              <StoryText>{String(size)}</StoryText>
+            </StoryStack>
+          ))}
+        </StoryRow>
+      </StorySection>
+      <StorySection label="Custom element">
+        <LoadingIndicator
+          customElement={
+            <View
+              style={{
+                backgroundColor: '#307EF1',
+                borderRadius: 4,
+                height: 24,
+                width: 24,
+              }}
+            />
+          }
+        />
+      </StorySection>
+    </StoryCanvas>
+  ),
 };

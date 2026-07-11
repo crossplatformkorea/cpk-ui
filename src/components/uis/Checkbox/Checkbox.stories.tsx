@@ -1,4 +1,4 @@
-import {type ComponentProps} from 'react';
+import {useState, type ComponentProps} from 'react';
 import {Text} from 'react-native';
 import {css} from 'kstyled';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -16,108 +16,29 @@ const colors: CheckboxColor[] = [
   'secondary',
 ];
 
+function InteractiveCheckbox(props: ComponentProps<typeof Checkbox>) {
+  const [checked, setChecked] = useState(props.checked ?? false);
+
+  return (
+    <Checkbox
+      {...props}
+      checked={checked}
+      onPress={() => {
+        setChecked((value) => !value);
+        props.onPress?.();
+      }}
+    />
+  );
+}
+
 const meta = {
-  title: 'Checkbox',
-  component: (props) => <Checkbox {...props} />,
+  title: 'Inputs/Checkbox',
+  component: Checkbox,
   parameters: {
-    notes: `
-An animated Checkbox component with smooth transitions and flexible sizing options.
-
-## Features
-- **Smooth Animations**: Spring-based fade and scale animations
-- **Flexible Sizing**: Preset sizes and custom numeric values
-- **Color Variants**: Multiple color options for different contexts
-- **Disabled State**: Can disable checkbox interaction
-- **Icon Elements**: Add elements before or after the checkbox
-- **Optimized Performance**: Memoized for better performance
-
-## Size Options
-- \`small\`: 16px checkbox
-- \`medium\`: 20px checkbox (default)
-- \`large\`: 24px checkbox
-- Custom number: Any pixel value (e.g., \`size={28}\`)
-
-## Animation Details
-The checkbox uses two simultaneous animations:
-- **Fade**: Opacity transition from 0 to 1
-- **Scale**: Size transition from 0.8 to 1.0
-
-## Usage
-
-### With String Text
-\`\`\`tsx
-<Checkbox
-  checked={isChecked}
-  onPress={() => setIsChecked(!isChecked)}
-  size="medium"
-  color="primary"
-  text="Accept terms"
-  direction="right"
-/>
-\`\`\`
-
-### With Custom Element
-\`\`\`tsx
-<Checkbox
-  checked={isChecked}
-  onPress={() => setIsChecked(!isChecked)}
-  size="large"
-  color="success"
-  text={<CustomComponent />}
-  direction="left"
-/>
-\`\`\`
-        `,
     docs: {
       description: {
-        component: `
-An animated Checkbox component with smooth transitions and flexible sizing options.
-
-## Features
-- **Smooth Animations**: Spring-based fade and scale animations
-- **Flexible Sizing**: Preset sizes and custom numeric values
-- **Color Variants**: Multiple color options for different contexts
-- **Disabled State**: Can disable checkbox interaction
-- **Icon Elements**: Add elements before or after the checkbox
-- **Optimized Performance**: Memoized for better performance
-
-## Size Options
-- \`small\`: 16px checkbox
-- \`medium\`: 20px checkbox (default)
-- \`large\`: 24px checkbox
-- Custom number: Any pixel value (e.g., \`size={28}\`)
-
-## Animation Details
-The checkbox uses two simultaneous animations:
-- **Fade**: Opacity transition from 0 to 1
-- **Scale**: Size transition from 0.8 to 1.0
-
-## Usage
-
-### With String Text
-\`\`\`tsx
-<Checkbox
-  checked={isChecked}
-  onPress={() => setIsChecked(!isChecked)}
-  size="medium"
-  color="primary"
-  text="Accept terms"
-  direction="right"
-/>
-\`\`\`
-
-### With Custom Element
-\`\`\`tsx
-<Checkbox
-  checked={isChecked}
-  onPress={() => setIsChecked(!isChecked)}
-  size="large"
-  color="success"
-  text={<CustomComponent />}
-  direction="left"
-/>
-\`\`\`
-        `,
+        component:
+          'A multi-select control for independent choices. Make the label part of the press target, keep checked state controlled by the parent, and use disabled only when the choice cannot currently change.',
       },
     },
   },
@@ -130,7 +51,8 @@ The checkbox uses two simultaneous animations:
     size: {
       control: 'radio',
       options: ['small', 'medium', 'large', 16, 20, 24, 32],
-      description: 'Checkbox size: "small" (16px), "medium" (20px), "large" (24px), or custom number in pixels',
+      description:
+        'Checkbox size: "small" (16px), "medium" (20px), "large" (24px), or custom number in pixels',
     },
     checked: {
       defaultValue: false,
@@ -157,40 +79,31 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
+  render: (args) => <InteractiveCheckbox {...args} />,
   args: {
     color: 'primary',
     size: 'medium',
-    text: 'Click Checkbox!',
+    text: 'Include prerelease builds',
     direction: 'right',
     checked: false,
     onPress: () => {},
   },
-  argTypes: {
-    theme: {
-      control: 'select',
-      options: ['light', 'dark'],
-    },
-  },
 };
 
 export const WithLeftText: Story = {
+  render: (args) => <InteractiveCheckbox {...args} />,
   args: {
     color: 'primary',
     size: 'medium',
-    text: 'Accept terms and conditions',
+    text: 'Set as default channel',
     direction: 'left',
     checked: false,
     onPress: () => {},
   },
-  argTypes: {
-    theme: {
-      control: 'select',
-      options: ['light', 'dark'],
-    },
-  },
 };
 
 export const WithCustomElement: Story = {
+  render: (args) => <InteractiveCheckbox {...args} />,
   args: {
     color: 'success',
     size: 'large',
@@ -200,17 +113,11 @@ export const WithCustomElement: Story = {
           font-weight: bold;
         `}
       >
-        Custom Element
+        Notify release managers
       </Typography.Body2>
     ),
     direction: 'right',
     checked: true,
     onPress: () => {},
-  },
-  argTypes: {
-    theme: {
-      control: 'select',
-      options: ['light', 'dark'],
-    },
   },
 };

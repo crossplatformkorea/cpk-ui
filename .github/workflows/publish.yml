@@ -55,6 +55,7 @@ jobs:
           bun run test:all
           bun run build
           bun run e2e-smoke
+          bun run storybook:build
 
       - name: Read and validate version
         id: version

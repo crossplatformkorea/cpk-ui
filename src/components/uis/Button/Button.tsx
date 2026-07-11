@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef, type ReactElement} from 'react';
+import React, {useCallback, useMemo, type ReactElement} from 'react';
 import type {
   Insets,
   StyleProp,
@@ -6,8 +6,7 @@ import type {
   TouchableHighlightProps,
   ViewStyle,
 } from 'react-native';
-import {Platform, TouchableHighlight, View} from 'react-native';
-import {useHover} from 'react-native-web-hooks';
+import {TouchableHighlight, View} from 'react-native';
 import {styled, css} from 'kstyled';
 
 import {useTheme} from '../../../providers/ThemeProvider';
@@ -16,6 +15,7 @@ import type {CpkTheme} from '../../../utils/theme';
 import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
 import {Typography} from '../Typography/Typography';
 import * as Haptics from 'expo-haptics';
+import {useHoverState} from '../../../hooks/useHoverState';
 
 export type ButtonType = 'text' | 'solid' | 'outlined';
 export type ButtonColorType =
@@ -244,8 +244,7 @@ export function Button({
   hapticFeedback,
   accessibilityLabel,
 }: Props): ReactElement {
-  const ref = useRef<React.ElementRef<typeof TouchableHighlight>>(null);
-  const hovered = useHover(ref);
+  const {hovered, hoverProps} = useHoverState();
   const {theme} = useTheme();
 
   const {innerDisabled} = useButtonState({disabled, onPress, loading});
@@ -371,7 +370,9 @@ export function Button({
         $type={type}
       >
         <View style={compositeStyles.content}>{children}</View>
-        <View style={compositeStyles.loading}>{loadingView}</View>
+        <View style={compositeStyles.loading}>
+          {loading ? loadingView : null}
+        </View>
       </ButtonContainer>
     ),
     [
@@ -412,21 +413,27 @@ export function Button({
 
   return (
     <TouchableHighlight
-      accessibilityLabel={accessibilityLabel ?? (typeof text === 'string' ? text : undefined)}
+      accessibilityLabel={
+        accessibilityLabel ?? (typeof text === 'string' ? text : undefined)
+      }
       accessibilityRole="button"
+      aria-busy={loading}
+      aria-disabled={innerDisabled || loading || !onPress}
       activeOpacity={activeOpacity}
       delayPressIn={30}
       disabled={innerDisabled || loading || !onPress}
       hitSlop={hitSlop}
       onPress={handlePress}
-      ref={Platform.select({
-        web: ref,
-        default: undefined,
-      })}
       style={buttonStyles}
       testID={testID}
       underlayColor={type === 'text' ? 'transparent' : theme.role.underlay}
       {...touchableHighlightProps}
+      accessibilityState={{
+        ...touchableHighlightProps?.accessibilityState,
+        busy: loading,
+        disabled: innerDisabled || loading || !onPress,
+      }}
+      {...hoverProps}
     >
       {renderContainer({
         children: ChildView,

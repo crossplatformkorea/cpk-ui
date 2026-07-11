@@ -3,7 +3,11 @@ import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {View} from 'react-native';
 import {styled} from 'kstyled';
 
-import type {RadioButtonProps, RadioButtonStyles, RadioButtonSizeType} from './RadioButton';
+import type {
+  RadioButtonProps,
+  RadioButtonStyles,
+  RadioButtonSizeType,
+} from './RadioButton';
 import RadioButtonComp from './RadioButton';
 import {Typography} from '../Typography/Typography';
 
@@ -45,6 +49,7 @@ const Container = styled.View`
 
 const Content = styled.View`
   flex-direction: row;
+  flex-wrap: wrap;
 `;
 
 function RadioGroupContainer<T>({
@@ -62,41 +67,56 @@ function RadioGroupContainer<T>({
   radioType,
 }: Omit<Props<T>, 'selected'>): ReactElement {
   // Memoize title spacer to avoid re-creating View
-  const titleSpacer = useMemo(() =>
-    title ? <View style={{height: 8}} /> : null,
-    [title]
+  const titleSpacer = useMemo(
+    () => (title ? <View style={{height: 8}} /> : null),
+    [title],
   );
 
   // Memoize radio buttons to prevent unnecessary re-renders
-  const radioButtons = useMemo(() =>
-    data.map((datum, i) => {
-      const handlePress = () => !disabled && selectValue?.(datum);
+  const radioButtons = useMemo(
+    () =>
+      data.map((datum, i) => {
+        const handlePress = () => !disabled && selectValue?.(datum);
 
-      return (
-        <RadioButtonComp
-          key={`radio-${i}`}
-          testID={`radio-${i}`}
-          {...radioType}
-          label={labels?.[i] || ''}
-          labelPosition={labelPosition}
-          onPress={handlePress}
-          selected={selectedValue === datum}
-          style={styles?.radio}
-          styles={styles?.radioStyles}
-          type={type}
-          size={size}
-          disabled={disabled}
-        />
-      );
-    }),
-    [data, selectedValue, selectValue, labels, labelPosition, radioType, styles?.radio, styles?.radioStyles, type, size, disabled]
+        return (
+          <RadioButtonComp
+            key={`radio-${i}`}
+            testID={`radio-${i}`}
+            {...radioType}
+            label={labels?.[i] || ''}
+            labelPosition={labelPosition}
+            onPress={handlePress}
+            selected={selectedValue === datum}
+            style={styles?.radio}
+            styles={styles?.radioStyles}
+            type={type}
+            size={size}
+            disabled={disabled}
+          />
+        );
+      }),
+    [
+      data,
+      selectedValue,
+      selectValue,
+      labels,
+      labelPosition,
+      radioType,
+      styles?.radio,
+      styles?.radioStyles,
+      type,
+      size,
+      disabled,
+    ],
   );
 
   return (
     <Container style={style}>
-      {title ? <Typography.Heading3 style={styles?.title}>{title}</Typography.Heading3> : null}
+      {title ? (
+        <Typography.Heading3 style={styles?.title}>{title}</Typography.Heading3>
+      ) : null}
       {titleSpacer}
-      <Content style={styles?.container}>
+      <Content style={styles?.container} testID="radio-group-content">
         {radioButtons}
       </Content>
     </Container>
@@ -104,6 +124,8 @@ function RadioGroupContainer<T>({
 }
 
 // Export memoized component for better performance
-export const RadioGroup = React.memo(RadioGroupContainer) as typeof RadioGroupContainer;
+export const RadioGroup = React.memo(
+  RadioGroupContainer,
+) as typeof RadioGroupContainer;
 
 export const RadioButton = RadioButtonComp;

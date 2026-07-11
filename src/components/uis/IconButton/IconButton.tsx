@@ -1,7 +1,6 @@
-import React, {useCallback, useMemo, useRef, type ReactElement} from 'react';
+import React, {useCallback, useMemo, type ReactElement} from 'react';
 import type {StyleProp, TouchableHighlightProps, ViewStyle} from 'react-native';
-import {Platform, TouchableHighlight, View} from 'react-native';
-import {useHover} from 'react-native-web-hooks';
+import {TouchableHighlight, View} from 'react-native';
 import {css} from 'kstyled';
 
 import type {IconName} from '../Icon/Icon';
@@ -10,6 +9,7 @@ import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
 import {CpkTheme, getTheme} from '../../../utils/theme';
 import {useTheme} from '../../../providers/ThemeProvider';
 import * as Haptics from 'expo-haptics';
+import {useHoverState} from '../../../hooks/useHoverState';
 
 type Styles = {
   container?: StyleProp<ViewStyle>;
@@ -59,12 +59,8 @@ const ButtonStyles = ({
   }
 
   if (type === 'outlined') {
-    backgroundColor = isDisabled
-      ? theme.bg.disabled
-      : theme.bg.basic;
-    borderColor = isDisabled
-      ? theme.bg.disabled
-      : theme.button[color].bg;
+    backgroundColor = isDisabled ? theme.bg.disabled : theme.bg.basic;
+    borderColor = isDisabled ? theme.bg.disabled : theme.button[color].bg;
   }
 
   if (type === 'solid' || color === 'light') {
@@ -120,18 +116,21 @@ export function IconButton({
   hapticFeedback,
   accessibilityLabel,
 }: IconButtonProps): ReactElement {
-  const ref = useRef<React.ElementRef<typeof TouchableHighlight>>(null);
-  const hovered = useHover(ref);
+  const {hovered, hoverProps} = useHoverState();
   const {theme} = useTheme();
 
   // Memoize button styles
-  const buttonStylesConfig = useMemo(() => ButtonStyles({
-    theme,
-    type,
-    color,
-    loading,
-    disabled,
-  }), [theme, type, color, loading, disabled]);
+  const buttonStylesConfig = useMemo(
+    () =>
+      ButtonStyles({
+        theme,
+        type,
+        color,
+        loading,
+        disabled,
+      }),
+    [theme, type, color, loading, disabled],
+  );
 
   // Memoize icon size calculation
   const iconSize = useMemo(() => {
@@ -146,123 +145,150 @@ export function IconButton({
 
   // Memoize style strings
   const borderRadiusStr = useMemo(() => '99px', []);
-  const borderWidthStr = useMemo(() => `${buttonStylesConfig.borderWidth}px`, [buttonStylesConfig.borderWidth]);
+  const borderWidthStr = useMemo(
+    () => `${buttonStylesConfig.borderWidth}px`,
+    [buttonStylesConfig.borderWidth],
+  );
 
   // Memoize composite styles
-  const compositeStyles: Styles = useMemo(() => ({
-    container: [
-      css`
-        background-color: ${buttonStylesConfig.backgroundColor};
-        border-color: ${buttonStylesConfig.borderColor};
-        border-width: ${borderWidthStr};
-        padding: 12px;
-      `,
-      styles?.container,
-    ],
-    icon: [
-      css`
-        color: ${buttonStylesConfig.iconColor};
-      `,
-      styles?.icon,
-    ],
-    disabled: [
-      css`
-        background-color: ${buttonStylesConfig.disabledBackgroundColor};
-        border-color: ${buttonStylesConfig.disabledBorderColor};
-      `,
-      styles?.disabled,
-    ],
-    hovered: [
-      {
-        shadowColor: theme.text.basic,
-        shadowOpacity: 0.24,
-        shadowRadius: 16,
-        elevation: 10,
-      },
-      styles?.hovered,
-    ],
-  }), [buttonStylesConfig, borderWidthStr, theme.text.basic, styles]);
+  const compositeStyles: Styles = useMemo(
+    () => ({
+      container: [
+        css`
+          background-color: ${buttonStylesConfig.backgroundColor};
+          border-color: ${buttonStylesConfig.borderColor};
+          border-width: ${borderWidthStr};
+          padding: 12px;
+        `,
+        styles?.container,
+      ],
+      icon: [
+        css`
+          color: ${buttonStylesConfig.iconColor};
+        `,
+        styles?.icon,
+      ],
+      disabled: [
+        css`
+          background-color: ${buttonStylesConfig.disabledBackgroundColor};
+          border-color: ${buttonStylesConfig.disabledBorderColor};
+        `,
+        styles?.disabled,
+      ],
+      hovered: [
+        {
+          shadowColor: theme.text.basic,
+          shadowOpacity: 0.24,
+          shadowRadius: 16,
+          elevation: 10,
+        },
+        styles?.hovered,
+      ],
+    }),
+    [buttonStylesConfig, borderWidthStr, theme.text.basic, styles],
+  );
 
   // Memoize press handler
-  const handlePress = useCallback((e: any) => {
-    onPress?.(e);
-    if (hapticFeedback) {
-      Haptics.impactAsync(hapticFeedback);
-    }
-  }, [onPress, hapticFeedback]);
+  const handlePress = useCallback(
+    (e: any) => {
+      onPress?.(e);
+      if (hapticFeedback) {
+        Haptics.impactAsync(hapticFeedback);
+      }
+    },
+    [onPress, hapticFeedback],
+  );
 
   // Memoize loading view
-  const LoadingView = useMemo(() => 
-    loadingElement || (
-      <LoadingIndicator
-        color={theme.text.disabled}
-        size="small"
-        style={css`
-          justify-content: center;
-          align-items: center;
-          height: ${iconSize}px;
-          width: ${iconSize}px;
-        `}
-      />
-    ),
-    [loadingElement, theme.text.disabled, iconSize]
+  const LoadingView = useMemo(
+    () =>
+      loadingElement || (
+        <LoadingIndicator
+          color={theme.text.disabled}
+          size="small"
+          style={css`
+            justify-content: center;
+            align-items: center;
+            height: ${iconSize}px;
+            width: ${iconSize}px;
+          `}
+        />
+      ),
+    [loadingElement, theme.text.disabled, iconSize],
   );
 
   // Memoize icon view
-  const IconView = useMemo(() => 
-    iconElement || (
-      <Icon
-        color={buttonStylesConfig.iconColor}
-        name={icon || 'QuestBoxFill'}
-        size={iconSize}
-        style={compositeStyles?.icon}
-      />
-    ),
-    [iconElement, buttonStylesConfig.iconColor, icon, iconSize, compositeStyles?.icon]
+  const IconView = useMemo(
+    () =>
+      iconElement || (
+        <Icon
+          color={buttonStylesConfig.iconColor}
+          name={icon || 'QuestBoxFill'}
+          size={iconSize}
+          style={compositeStyles?.icon}
+        />
+      ),
+    [
+      iconElement,
+      buttonStylesConfig.iconColor,
+      icon,
+      iconSize,
+      compositeStyles?.icon,
+    ],
   );
 
   // Memoize container styles
-  const containerStyles = useMemo(() => [
-    css`
-      flex-direction: row;
-      border-radius: ${borderRadiusStr};
-    `,
-    style,
-  ], [borderRadiusStr, style]);
+  const containerStyles = useMemo(
+    () => [
+      css`
+        flex-direction: row;
+        border-radius: ${borderRadiusStr};
+      `,
+      style,
+    ],
+    [borderRadiusStr, style],
+  );
 
   // Memoize inner container styles
-  const innerContainerStyles = useMemo(() => [
-    css`
-      padding: 4px;
-      border-radius: ${borderRadiusStr};
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-    `,
-    compositeStyles.container,
-    hovered && !disabled && compositeStyles.hovered,
-    disabled && compositeStyles.disabled,
-  ], [borderRadiusStr, compositeStyles, hovered, disabled]);
+  const innerContainerStyles = useMemo(
+    () => [
+      css`
+        padding: 4px;
+        border-radius: ${borderRadiusStr};
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+      `,
+      compositeStyles.container,
+      hovered && !disabled && compositeStyles.hovered,
+      disabled && compositeStyles.disabled,
+    ],
+    [borderRadiusStr, compositeStyles, hovered, disabled],
+  );
 
   return (
     <View style={containerStyles}>
       <TouchableHighlight
         accessibilityLabel={accessibilityLabel ?? icon}
         accessibilityRole="button"
+        aria-busy={loading}
+        aria-disabled={!!disabled || loading}
         activeOpacity={activeOpacity}
         delayPressIn={50}
         disabled={disabled || loading}
         onPress={handlePress}
-        ref={Platform.select({
-          web: ref,
-          default: undefined,
-        })}
         style={css`
           border-radius: ${borderRadiusStr};
         `}
         testID={testID}
         underlayColor={theme.role.underlay}
         {...touchableHighlightProps}
+        accessibilityState={{
+          ...touchableHighlightProps?.accessibilityState,
+          busy: loading,
+          disabled: !!disabled || loading,
+        }}
+        {...hoverProps}
       >
         <View
           style={innerContainerStyles}

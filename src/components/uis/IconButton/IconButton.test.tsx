@@ -1,16 +1,21 @@
+jest.mock('react-native/Libraries/Utilities/Platform', () => {
+  const platform = {
+    OS: 'web',
+    select: (options: Record<string, unknown>) => options.web ?? options.default,
+  };
+
+  return {...platform, default: platform};
+});
+
 import React, {type ReactElement} from 'react';
 import type {RenderAPI} from '@testing-library/react-native';
-import {render} from '@testing-library/react-native';
+import {fireEvent, render} from '@testing-library/react-native';
 
 import {createComponent} from '../../../../test/testUtils';
 import type {IconButtonProps} from './IconButton';
 import {IconButton} from './IconButton';
 
 let testingLib: RenderAPI;
-
-jest.mock('react-native-web-hooks', () => ({
-  useHover: () => true,
-}));
 
 const Component = (props?: IconButtonProps): ReactElement =>
   createComponent(<IconButton {...props} />);
@@ -34,6 +39,24 @@ describe('[IconButton]', () => {
     const json = testingLib.toJSON();
 
     expect(json).toBeTruthy();
+  });
+
+  it('applies and removes hover styles from pointer events', () => {
+    testingLib = render(
+      Component({
+        icon: 'Plus',
+        testID: 'hover-icon-button',
+      }),
+    );
+
+    const button = testingLib.getByTestId('hover-icon-button');
+    const container = testingLib.getByTestId('button-container');
+
+    fireEvent(button, 'pointerEnter');
+    expect(container).toHaveStyle({shadowOpacity: 0.24});
+
+    fireEvent(button, 'pointerLeave');
+    expect(container).not.toHaveStyle({shadowOpacity: 0.24});
   });
 
   describe('loading', () => {
@@ -199,6 +222,21 @@ describe('[IconButton]', () => {
 
       const button = testingLib.getByTestId('a11y-icon-button');
       expect(button.props.accessibilityLabel).toBe('Add new item');
+    });
+
+    it('should expose busy and disabled states while loading', () => {
+      testingLib = render(
+        Component({
+          icon: 'Plus',
+          loading: true,
+          testID: 'a11y-icon-button',
+        }),
+      );
+
+      const button = testingLib.getByTestId('a11y-icon-button');
+      expect(button.props.accessibilityState).toEqual(
+        expect.objectContaining({busy: true, disabled: true}),
+      );
     });
   });
 });
