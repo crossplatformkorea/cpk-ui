@@ -12,9 +12,9 @@
 
 ### Things to Keep in Mind
 
-> Only components in the `main` directory are published to `npm`. These are the components intended for production use.
-> When creating new components, please ensure you write `test code` for them.
-> Add stories to the same directory (e.g., component.stories.tsx) to showcase components. This allows users to easily view a demo of all components at a glance.
+> Components exported from `src` are compiled into the `lib` npm package.
+> Every public component needs regression tests and colocated Storybook stories.
+> Run the component and story coverage checks before opening a pull request.
 
 ## How to Contribute
 
@@ -36,19 +36,23 @@
    git clone https://github.com/<your-github-username>/cpk-ui.git
    ```
 3. Install dependencies:
-   ```
-   yarn
+   ```bash
+   bun install --frozen-lockfile
    ```
 
 4. Run the project:
 
    1. **Start Metro Bundler**
-      ```
-      yarn start
+      ```bash
+      bun run start
       ```
 
    2. **Run on iOS / Android / Web**
-      Use [Expo Dev Tools](https://docs.expo.dev/workflow/development-mode/#toggling-development-mode-in-expo-dev-tools) to run on all three platforms.
+      ```bash
+      bun run ios
+      bun run android
+      bun run web
+      ```
 
       > If you encounter the error `We ran "xcodebuild" command but it exited with error code 65` on your first run, follow [this guide](https://github.com/facebook/react-native/issues/24450#issuecomment-516760157) to install [CocoaPods](https://cocoapods.org).
 
@@ -56,19 +60,20 @@
 
    - Example vscode [setting.json](https://gist.github.com/hyochan/815e9040593180c4725d7694d863e5a1)
 
-6. While implementing components, run `yarn watch` to dynamically build TypeScript files.
+6. Run `bun run test:all` before pushing. Use `bun run storybook:web` for
+   interactive component review and `bun run build` to verify package output.
 
 ---
 
 ### Commit Messages
 
-A commit message should include a title, summary, and a test plan.
+Use Angular Conventional Commits: `<type>(<scope>): <subject>`.
 
-- **Title**: Write in the imperative mood and add a tag ([android], [video], etc.) to indicate the affected code.
-- **Summary**: Explain why the commit is needed and how it addresses the issue. Include details not apparent from the code itself.
-- **Test Plan**: Describe how to verify that the changes work. This helps others write test plans for related areas in the future.
+- Use `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, or `chore`.
+- Write an imperative, lowercase subject without a trailing period.
+- Add a body when the reason or migration impact is not clear from the diff.
 
-Refer to [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/) for more guidance.
+Example: `fix(button): preserve native press state`
 
 ---
 

@@ -326,7 +326,7 @@ Each subfolder serves a specific purpose:
 
 - **ESLint & Prettier** must be used to enforce style rules.
 - Use **double quotes for strings**, **tabs for indentation**, and **no semicolons**.
-- Always run `yarn lint` before committing changes.
+- Always run `bun run lint` before committing changes.
 
 ---
 

@@ -20,8 +20,9 @@ will likely get reverted accidentally sooner or later. PRs must include tests fo
 
 ## Checklist
 
-Before you create this PR confirms that it meets all requirements listed below by checking the relevant checkboxes (`[x]`). This will ensure a smooth and quick review process.
+Before creating this PR, confirm that it meets the requirements below by
+checking the relevant boxes (`[x]`).
 
 - [ ] I read the [Contributor Guide](https://github.com/crossplatformkorea/cpk-ui/blob/main/CONTRIBUTING.md) and followed the process outlined there for submitting PRs.
-- [ ] Run `yarn test:all` and make sure nothing fails.
+- [ ] Run `bun run test:all` and make sure nothing fails.
 - [ ] I am willing to follow-up on review comments in a timely manner.
