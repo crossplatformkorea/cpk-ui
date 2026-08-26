@@ -2,6 +2,32 @@
 
 All notable changes to cpk-ui are documented here.
 
+## 0.8.0-beta.0 - 2026-08-26
+
+### Added
+
+- Add a responsive, controlled Calendar with month/week paging, O(1) marker
+  lookup, locale-aware labels, keyboard and screen-reader support, fixed-week
+  geometry, light/dark palettes, and native/web swipe implementations.
+- Add a list-agnostic ParallaxHeader and `useParallaxHeader` controller for
+  Animated ScrollView, FlatList, and FlashList consumers on native and web.
+- Accept a host-resolved `yyyy-MM-dd` today key so business-timezone calendars
+  do not silently fall back to the device timezone.
+
+### Changed
+
+- Make Reanimated an explicit published peer for components that run scroll and
+  calendar motion on the UI thread.
+- Make the E2E smoke runner use the repository's Bun toolchain instead of an
+  undeclared global npx installation.
+
+### Verification
+
+- 23 Jest suites and 294 tests.
+- 23 of 23 public components and 69 component stories covered.
+- TypeScript package build, Storybook web build, seven-part E2E smoke, and npm
+  tarball validation included in the release process.
+
 ## 0.7.0 - 2026-07-11
 
 ### Upgrade

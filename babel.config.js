@@ -13,7 +13,12 @@ module.exports = (api) => {
         '@babel/preset-typescript',
         ['@babel/preset-react', {runtime: 'automatic'}],
       ],
-      plugins: [['babel-plugin-kstyled', {strict: true}]],
+      plugins: [
+        ['babel-plugin-kstyled', {strict: true}],
+        // Worklets in <Calendar>'s pager/page must be transformed here too,
+        // or the stories build and then throw on first paint.
+        'react-native-reanimated/plugin',
+      ],
     };
   }
 

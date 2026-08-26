@@ -64,7 +64,7 @@ async function testPeerDeps() {
 
 // --- Test 2: TypeScript compilation ---
 async function testTypeCheck() {
-  exec('npx tsc --noEmit');
+  exec('bun x tsc --noEmit');
 }
 
 // --- Test 3: Library build ---
@@ -110,10 +110,13 @@ async function testExportResolution() {
 async function testMetroBundle() {
   // Try to create a web bundle to verify metro resolution works
   try {
-    exec('npx expo export --platform web --output-dir /tmp/cpk-ui-e2e-smoke', {
-      timeout: TIMEOUT_MS,
-      env: {...process.env, NODE_ENV: 'production'},
-    });
+    exec(
+      'bun x expo export --platform web --output-dir /tmp/cpk-ui-e2e-smoke',
+      {
+        timeout: TIMEOUT_MS,
+        env: {...process.env, NODE_ENV: 'production'},
+      },
+    );
   } finally {
     // Cleanup
     try {
