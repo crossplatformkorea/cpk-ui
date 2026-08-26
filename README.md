@@ -10,7 +10,7 @@ maintained by Cross Platform Korea and uses
 [kstyled](https://crossplatformkorea.github.io/kstyled) for typed,
 compile-time-aware styling.
 
-`cpk-ui@0.7.0` pairs with `kstyled@0.4.1`. Keep the runtime and Babel plugin on
+`cpk-ui@0.8.0-beta.0` pairs with `kstyled@0.4.1`. Keep the runtime and Babel plugin on
 the same kstyled version.
 
 ## Install
@@ -18,9 +18,9 @@ the same kstyled version.
 ### Expo
 
 ```bash
-npx expo install cpk-ui@0.7.0 kstyled@0.4.1 @expo/vector-icons \
+npx expo install cpk-ui@0.8.0-beta.0 kstyled@0.4.1 @expo/vector-icons \
   react-native-gesture-handler react-native-svg expo-screen-orientation \
-  @expo/match-media expo-haptics
+  react-native-reanimated @expo/match-media expo-haptics
 bun add --dev babel-plugin-kstyled@0.4.1
 ```
 
@@ -30,9 +30,9 @@ Install Expo modules first, then add the same runtime dependencies:
 
 ```bash
 npx install-expo-modules@latest
-bun add cpk-ui@0.7.0 kstyled@0.4.1 @expo/vector-icons \
+bun add cpk-ui@0.8.0-beta.0 kstyled@0.4.1 @expo/vector-icons \
   react-native-gesture-handler react-native-svg expo-screen-orientation \
-  @expo/match-media expo-haptics
+  react-native-reanimated @expo/match-media expo-haptics
 bun add --dev babel-plugin-kstyled@0.4.1
 ```
 
@@ -77,13 +77,13 @@ dark theme tokens. Applications that provide product-specific tokens can pass
 
 ## Component Surface
 
-| Area             | Components                                                             |
-| ---------------- | ---------------------------------------------------------------------- |
-| Actions          | Button, CustomPressable, Fab, IconButton                               |
-| Inputs           | Checkbox, EditText, RadioGroup, Rating, SegmentedControl, SwitchToggle |
-| Feedback         | AlertDialog, ErrorBoundary, LoadingIndicator, Snackbar                 |
-| Display          | Accordion, Card, Hr, Icon, Typography                                  |
-| Media and system | PinchZoom, StatusBarBrightness                                         |
+| Area             | Components                                                                       |
+| ---------------- | -------------------------------------------------------------------------------- |
+| Actions          | Button, CustomPressable, Fab, IconButton                                         |
+| Inputs           | Calendar, Checkbox, EditText, RadioGroup, Rating, SegmentedControl, SwitchToggle |
+| Feedback         | AlertDialog, ErrorBoundary, LoadingIndicator, Snackbar                           |
+| Display          | Accordion, Card, Hr, Icon, ParallaxHeader, Typography                            |
+| Media and system | PinchZoom, StatusBarBrightness                                                   |
 
 Each public component has automated tests and Storybook coverage for its main
 states. Use the [live Storybook](https://ui.crossplatformkorea.com) to inspect
@@ -91,7 +91,7 @@ controls, responsive behavior, accessibility results, and source examples.
 
 ## Release Matrix
 
-The 0.7.0 release is verified with Expo 54, React Native 0.81, React 19,
+The 0.8.0 beta is verified with Expo 54, React Native 0.81, React 19,
 kstyled 0.4, and React Native Web 0.21. This is the release validation matrix,
 not a claim that every consumer must use those exact React or React Native
 versions.
@@ -112,7 +112,7 @@ main-branch GitHub Actions publish workflow with provenance.
 ## Documentation
 
 - [Storybook](https://ui.crossplatformkorea.com)
-- [0.7.0 release notes](./docs/releases/0.7.0.md)
+- [0.8.0 beta release notes](./docs/releases/0.8.0-beta.0.md)
 - [0.7 engineering notes](./docs/blog/2026-07-11-cpk-ui-0.7.0.md)
 - [Performance guide](./docs/PERFORMANCE.md)
 - [Changelog](./CHANGELOG.md)

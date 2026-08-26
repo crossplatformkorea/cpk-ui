@@ -11,6 +11,7 @@ export * from './providers';
 // UIs
 export * from './components/uis/Accordion/Accordion';
 export * from './components/uis/Button/Button';
+export * from './components/uis/Calendar/Calendar';
 export * from './components/uis/Card/Card';
 export * from './components/uis/Checkbox/Checkbox';
 export * from './components/uis/CustomPressable/CustomPressable';
@@ -21,6 +22,7 @@ export * from './components/uis/Icon/Icon';
 export * from './components/uis/IconButton/IconButton';
 export * from './components/uis/LoadingIndicator/LoadingIndicator';
 export * from './components/uis/PinchZoom/PinchZoom';
+export * from './components/uis/ParallaxHeader/ParallaxHeader';
 export * from './components/uis/Rating/Rating';
 export * from './components/uis/RadioGroup/RadioGroup';
 export * from './components/uis/SegmentedControl/SegmentedControl';

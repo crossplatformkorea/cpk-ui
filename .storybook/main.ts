@@ -66,6 +66,10 @@ module.exports = {
       'expo-asset',
       'expo-modules-core',
       'expo-font',
+      // <Calendar> is the first component to use Reanimated. Its published
+      // ESM build ships class properties, which webpack cannot parse on its
+      // own, and its worklets need the Reanimated babel plugin.
+      'react-native-reanimated',
     ];
 
     config.module.rules.push({
@@ -83,7 +87,10 @@ module.exports = {
             ['@babel/preset-react', {runtime: 'automatic'}],
             '@babel/preset-typescript',
           ],
-          plugins: ['babel-plugin-react-native-web'],
+          plugins: [
+            'babel-plugin-react-native-web',
+            'react-native-reanimated/plugin',
+          ],
         },
       },
     });

@@ -1,6 +1,6 @@
 {
   "name": "cpk-ui",
-  "version": "0.7.0",
+  "version": "0.8.0-beta.0",
   "main": "index",
   "react-native": "index",
   "module": "index",
@@ -38,6 +38,7 @@
     "react": ">=16.9",
     "react-native": ">=0.58",
     "react-native-gesture-handler": "*",
+    "react-native-reanimated": "*",
     "@expo/vector-icons": "*",
     "expo-haptics": "*"
   },
