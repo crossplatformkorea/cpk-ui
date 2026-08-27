@@ -21,6 +21,7 @@ export * from './components/uis/Hr/Hr';
 export * from './components/uis/Icon/Icon';
 export * from './components/uis/IconButton/IconButton';
 export * from './components/uis/LoadingIndicator/LoadingIndicator';
+export * from './components/uis/LineChart/LineChart';
 export * from './components/uis/PinchZoom/PinchZoom';
 export * from './components/uis/ParallaxHeader/ParallaxHeader';
 export * from './components/uis/Rating/Rating';

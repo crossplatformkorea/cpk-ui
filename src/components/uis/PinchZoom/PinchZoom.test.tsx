@@ -1,13 +1,13 @@
 import '@testing-library/jest-native/extend-expect';
 
-import React, {type ReactElement} from 'react';
+import React, {act, createRef, type ReactElement} from 'react';
 import {Text, View} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
 
 import {createComponent} from '../../../../test/testUtils';
 import {PinchZoom} from './PinchZoom';
-import type {PinchZoomProps} from './PinchZoom';
+import type {PinchZoomProps, PinchZoomRef} from './PinchZoom';
 
 let testingLib: RenderAPI;
 
@@ -81,9 +81,7 @@ describe('[PinchZoom]', () => {
   });
 
   it('should accept allowEmpty prop', () => {
-    testingLib = render(
-      Component({props: {allowEmpty: {x: true, y: false}}}),
-    );
+    testingLib = render(Component({props: {allowEmpty: {x: true, y: false}}}));
 
     expect(testingLib.getByTestId('pinch-zoom-container')).toBeTruthy();
   });
@@ -109,5 +107,20 @@ describe('[PinchZoom]', () => {
 
     expect(testingLib.getByTestId('full-props-test')).toBeTruthy();
     expect(testingLib.getByTestId('child-view')).toBeTruthy();
+  });
+
+  it('clamps imperative zoom values to the public scale range', () => {
+    const onScaleChanged = jest.fn();
+    const ref = createRef<PinchZoomRef>();
+    testingLib = render(
+      createComponent(
+        <PinchZoom maxScale={3} onScaleChanged={onScaleChanged} ref={ref}>
+          <View testID="child-view" />
+        </PinchZoom>,
+      ),
+    );
+
+    act(() => ref.current?.setValues({scale: 9}));
+    expect(onScaleChanged).toHaveBeenLastCalledWith(3);
   });
 });

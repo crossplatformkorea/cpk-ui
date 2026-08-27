@@ -25,7 +25,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Adds pinch, pan, momentum, and boundary correction to visual content. Wrap transformed content outside PinchZoom rather than passing a transform style, which would conflict with the gesture transform.',
+          'Adds UI-thread pinch, pan, and boundary correction to visual content. Wrap transformed content outside PinchZoom rather than passing a transform style, which would conflict with the gesture transform.',
       },
     },
   },

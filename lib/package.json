@@ -39,6 +39,7 @@
     "react-native": ">=0.58",
     "react-native-gesture-handler": "*",
     "react-native-reanimated": "*",
+    "react-native-svg": "*",
     "@expo/vector-icons": "*",
     "expo-haptics": "*"
   },
