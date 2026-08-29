@@ -2,6 +2,13 @@
 
 All notable changes to cpk-ui are documented here.
 
+## Unreleased
+
+### Fixed
+
+- Keep leading and trailing button icons in sync with the final custom text
+  colour when consumers compose nested style arrays.
+
 ## 0.8.0-beta.0 - 2026-08-26
 
 ### Added

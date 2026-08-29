@@ -163,6 +163,28 @@ describe('[Button]', () => {
     expect(button.findAllByType(Text)).toHaveLength(3);
   });
 
+  it('gives icons the final custom foreground from nested style arrays', () => {
+    testingLib = render(
+      Component({
+        props: {
+          startElement: <Text testID="leading-icon" />,
+          styles: {
+            container: [
+              {backgroundColor: 'initial-background'},
+              {backgroundColor: 'brand-background'},
+            ],
+            text: [{color: 'initial-foreground'}, {color: 'brand-foreground'}],
+          },
+          text: 'Invite',
+        },
+      }),
+    );
+
+    expect(testingLib.getByTestId('leading-icon')).toHaveStyle({
+      color: 'brand-foreground',
+    });
+  });
+
   describe('[Button] Interaction', () => {
     let cnt = 1;
 

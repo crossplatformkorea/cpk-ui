@@ -130,6 +130,17 @@ export const CustomTheme: Story = {
   },
 };
 
+export const CustomForegroundWithIcon: Story = {
+  args: {
+    startElement: <Icon name="UserPlus" />,
+    styles: {
+      container: {backgroundColor: '#9F2347'},
+      text: {color: '#FFF4F7'},
+    },
+    text: 'Invite',
+  },
+};
+
 export const VisualMatrix: Story = {
   render: () => (
     <StoryCanvas>

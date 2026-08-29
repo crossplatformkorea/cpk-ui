@@ -10,7 +10,20 @@ module.exports = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-a11y',
-    '@storybook/addon-react-native-web',
+    {
+      name: '@storybook/addon-react-native-web',
+      options: {
+        babelPlugins: [
+          ['@babel/plugin-transform-class-properties', {loose: true}],
+          'react-native-reanimated/plugin',
+        ],
+        modulesToTranspile: [
+          'react-native-gesture-handler',
+          'react-native-reanimated',
+          'react-native-svg',
+        ],
+      },
+    },
     '@storybook/addon-webpack5-compiler-babel',
     '@chromatic-com/storybook',
   ],
@@ -59,41 +72,6 @@ module.exports = {
       ...config.resolve.alias,
       'react-dom$': path.resolve(__dirname, 'react-dom-shim.js'),
     };
-
-    // Expo/RN packages that contain class properties syntax and need babel transpilation
-    const transpileModules = [
-      '@expo/vector-icons',
-      'expo-asset',
-      'expo-modules-core',
-      'expo-font',
-      // <Calendar> is the first component to use Reanimated. Its published
-      // ESM build ships class properties, which webpack cannot parse on its
-      // own, and its worklets need the Reanimated babel plugin.
-      'react-native-reanimated',
-    ];
-
-    config.module.rules.push({
-      test: /\.(js|jsx|ts|tsx)$/,
-      include: transpileModules.map((mod) =>
-        path.resolve(__dirname, '../node_modules', mod),
-      ),
-      use: {
-        loader: require.resolve('babel-loader'),
-        options: {
-          babelrc: false,
-          configFile: false,
-          presets: [
-            ['@babel/preset-env', {modules: false}],
-            ['@babel/preset-react', {runtime: 'automatic'}],
-            '@babel/preset-typescript',
-          ],
-          plugins: [
-            'babel-plugin-react-native-web',
-            'react-native-reanimated/plugin',
-          ],
-        },
-      },
-    });
 
     return config;
   },
