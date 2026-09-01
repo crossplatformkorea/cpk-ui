@@ -15,6 +15,7 @@ export * from './components/uis/Calendar/Calendar';
 export * from './components/uis/Card/Card';
 export * from './components/uis/Checkbox/Checkbox';
 export * from './components/uis/CustomPressable/CustomPressable';
+export * from './components/uis/DonutChart/DonutChart';
 export * from './components/uis/EditText/EditText';
 export * from './components/uis/Fab/Fab';
 export * from './components/uis/Hr/Hr';
