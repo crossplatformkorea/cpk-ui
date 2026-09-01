@@ -20,6 +20,7 @@ export type DonutChartProps = {
   startAngle?: number;
   style?: StyleProp<ViewStyle>;
   testID?: string;
+  trackColor?: string;
 };
 
 type Arc = DonutChartDatum & {
@@ -101,6 +102,7 @@ export function DonutChart({
   startAngle = 0,
   style,
   testID = 'donut-chart',
+  trackColor = emptyColor,
 }: DonutChartProps): ReactElement {
   const safeSize = Math.max(1, size);
   const center = safeSize / 2;
@@ -122,16 +124,16 @@ export function DonutChart({
       testID={testID}
     >
       <Svg height={safeSize} width={safeSize}>
-        {arcs.length === 0 ? (
-          <Circle
-            cx={center}
-            cy={center}
-            fill="none"
-            r={(outerRadius + innerRadius) / 2}
-            stroke={emptyColor}
-            strokeWidth={outerRadius - innerRadius}
-          />
-        ) : arcs.length === 1 ? (
+        <Circle
+          cx={center}
+          cy={center}
+          fill="none"
+          r={(outerRadius + innerRadius) / 2}
+          stroke={trackColor}
+          strokeWidth={outerRadius - innerRadius}
+          testID={`${testID}-track`}
+        />
+        {arcs.length === 1 ? (
           <Circle
             cx={center}
             cy={center}
@@ -140,7 +142,7 @@ export function DonutChart({
             stroke={arcs[0]?.color}
             strokeWidth={outerRadius - innerRadius}
           />
-        ) : (
+        ) : arcs.length > 1 ? (
           arcs.map((arc) => (
             <Path
               d={arcPath(
@@ -155,7 +157,7 @@ export function DonutChart({
               testID={`${testID}-segment-${arc.key}`}
             />
           ))
-        )}
+        ) : null}
       </Svg>
       {children === undefined ? null : (
         <View pointerEvents="box-none" style={styles.overlay}>
@@ -170,10 +172,15 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
+    bottom: 0,
     justifyContent: 'center',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
   },
 });

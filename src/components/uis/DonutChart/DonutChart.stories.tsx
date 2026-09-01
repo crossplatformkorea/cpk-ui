@@ -56,6 +56,6 @@ export const Empty: Story = {
   args: {
     accessibilityLabel: 'No category totals yet',
     data: [],
-    emptyColor: '#DDE3EA',
+    trackColor: '#DDE3EA',
   },
 };

@@ -27,6 +27,7 @@ describe('[DonutChart]', () => {
     expect(screen.getByTestId('donut-chart-segment-housing')).toBeTruthy();
     expect(screen.getByTestId('donut-chart-segment-food')).toBeTruthy();
     expect(screen.getByTestId('donut-chart-segment-travel')).toBeTruthy();
+    expect(screen.getByTestId('donut-chart-track')).toBeTruthy();
   });
 
   it('uses one complete ring for a single category', () => {
@@ -61,6 +62,7 @@ describe('[DonutChart]', () => {
 
     expect(screen.queryByTestId('donut-chart-segment-zero')).toBeNull();
     expect(screen.queryByTestId('donut-chart-segment-invalid')).toBeNull();
+    expect(screen.getByTestId('donut-chart-track')).toBeTruthy();
   });
 
   it('keeps a centered overlay inside the chart frame', () => {
