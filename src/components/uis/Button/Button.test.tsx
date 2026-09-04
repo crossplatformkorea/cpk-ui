@@ -15,6 +15,9 @@ import {css} from 'kstyled';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
 
+import {readFileSync} from 'node:fs';
+import {resolve} from 'node:path';
+
 import {createComponent} from '../../../../test/testUtils';
 import {Button} from './Button';
 import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
@@ -149,6 +152,52 @@ describe('[Button]', () => {
 
       const json = testingLib.toJSON();
       expect(json).toBeTruthy();
+    });
+
+    it('pads the label so the pressed underlay does not hug the glyphs', () => {
+      testingLib = render(
+        Component({
+          props: {
+            testID: 'text-button',
+            text: 'Get started',
+            type: 'text',
+          },
+        }),
+      );
+
+      expect(testingLib.getByTestId('button-container')).toHaveStyle({
+        paddingTop: 8,
+        paddingRight: 16,
+        paddingBottom: 8,
+        paddingLeft: 16,
+      });
+      expect(testingLib.getByTestId('text-button')).toHaveStyle({
+        alignSelf: 'flex-start',
+      });
+    });
+
+    it('keeps the pressed underlay on text buttons', () => {
+      const source = readFileSync(resolve(__dirname, 'Button.tsx'), 'utf8');
+      expect(source).toContain('underlayColor={theme.role.underlay}');
+      expect(source).not.toContain(
+        "underlayColor={type === 'text' ? 'transparent' : theme.role.underlay}",
+      );
+    });
+
+    it('does not fill a disabled text button with the solid disabled surface', () => {
+      testingLib = render(
+        Component({
+          props: {
+            disabled: true,
+            text: 'Skip',
+            type: 'text',
+          },
+        }),
+      );
+
+      expect(testingLib.getByTestId('button-container')).toHaveStyle({
+        backgroundColor: 'transparent',
+      });
     });
   });
 

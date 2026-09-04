@@ -104,7 +104,7 @@ const calculateStyles = ({
   const isDisabled = disabled || loading;
   const padding =
     type === 'text'
-      ? '8px'
+      ? '8px 16px'
       : typeof size === 'number'
         ? `${size * 0.6}px ${size * 1.2}px`
         : size === 'large'
@@ -186,16 +186,18 @@ const calculateStyles = ({
         ]
       : undefined,
     disabled: isDisabled
-      ? [
-          css`
-            background-color: ${theme.button.disabled.bg};
-            border-top-color: ${theme.bg.disabled};
-            border-bottom-color: ${theme.bg.disabled};
-            border-left-color: ${theme.bg.disabled};
-            border-right-color: ${theme.bg.disabled};
-          `,
-          styles?.disabled,
-        ]
+      ? type === 'text'
+        ? styles?.disabled
+        : [
+            css`
+              background-color: ${theme.button.disabled.bg};
+              border-top-color: ${theme.bg.disabled};
+              border-bottom-color: ${theme.bg.disabled};
+              border-left-color: ${theme.bg.disabled};
+              border-right-color: ${theme.bg.disabled};
+            `,
+            styles?.disabled,
+          ]
       : undefined,
   };
 };
@@ -403,12 +405,13 @@ export function Button({
   // Memoize button styles
   const buttonStyles = useMemo(
     () => [
+      type === 'text' ? {alignSelf: 'flex-start' as const} : null,
       style,
       css`
         border-radius: ${borderRadius}px;
       `,
     ],
-    [style, borderRadius],
+    [style, borderRadius, type],
   );
 
   return (
@@ -426,7 +429,7 @@ export function Button({
       onPress={handlePress}
       style={buttonStyles}
       testID={testID}
-      underlayColor={type === 'text' ? 'transparent' : theme.role.underlay}
+      underlayColor={theme.role.underlay}
       {...touchableHighlightProps}
       accessibilityState={{
         ...touchableHighlightProps?.accessibilityState,

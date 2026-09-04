@@ -2,7 +2,7 @@ import '@testing-library/jest-native/extend-expect';
 
 import React, {type ReactElement, useRef} from 'react';
 import type {RenderAPI} from '@testing-library/react-native';
-import {render, waitFor} from '@testing-library/react-native';
+import {fireEvent, render, waitFor} from '@testing-library/react-native';
 
 import {createComponent} from '../../../../test/testUtils';
 import AlertDialog, {type AlertDialogContext} from './AlertDialog';
@@ -221,6 +221,56 @@ describe('[AlertDialog]', () => {
         },
         {timeout: 500},
       );
+    });
+  });
+
+  describe('Controlled dialog', () => {
+    it('renders while visible and does not dismiss on outside press', async () => {
+      const onClose = jest.fn();
+      const TestControlled = (): ReactElement =>
+        createComponent(
+          <AlertDialog
+            body="Nickname field"
+            closeOnTouchOutside={false}
+            onClose={onClose}
+            showCloseButton
+            title="Set nickname"
+            visible
+          />,
+        );
+
+      testingLib = render(<TestControlled />);
+
+      await waitFor(() => {
+        expect(testingLib.getByText('Set nickname')).toBeTruthy();
+        expect(testingLib.getByText('Nickname field')).toBeTruthy();
+      });
+
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it('notifies onClose when the close control is pressed', async () => {
+      const onClose = jest.fn();
+      const TestControlledClose = (): ReactElement =>
+        createComponent(
+          <AlertDialog
+            body="Body"
+            onClose={onClose}
+            title="Title"
+            visible
+          />,
+        );
+
+      testingLib = render(<TestControlledClose />);
+
+      await waitFor(() => {
+        expect(testingLib.getByText('Title')).toBeTruthy();
+      });
+
+      fireEvent.press(
+        testingLib.getByRole('button', {name: 'Close dialog'}),
+      );
+      expect(onClose).toHaveBeenCalledTimes(1);
     });
   });
 
