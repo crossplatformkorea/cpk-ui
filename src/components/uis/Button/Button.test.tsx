@@ -10,13 +10,10 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => {
 import '@testing-library/jest-native/extend-expect';
 
 import React, {type ReactElement} from 'react';
-import {Text} from 'react-native';
+import {Text, TouchableHighlight} from 'react-native';
 import {css} from 'kstyled';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
-
-import {readFileSync} from 'node:fs';
-import {resolve} from 'node:path';
 
 import {createComponent} from '../../../../test/testUtils';
 import {Button} from './Button';
@@ -177,11 +174,38 @@ describe('[Button]', () => {
     });
 
     it('keeps the pressed underlay on text buttons', () => {
-      const source = readFileSync(resolve(__dirname, 'Button.tsx'), 'utf8');
-      expect(source).toContain('underlayColor={theme.role.underlay}');
-      expect(source).not.toContain(
-        "underlayColor={type === 'text' ? 'transparent' : theme.role.underlay}",
+      testingLib = render(
+        Component({
+          props: {
+            testID: 'text-button',
+            text: 'Get started',
+            type: 'text',
+          },
+        }),
       );
+
+      expect(
+        testingLib.UNSAFE_getByType(TouchableHighlight).props.underlayColor,
+      ).toBe(light.role.underlay);
+    });
+
+    it('lets touchableHighlightProps override the text-button underlay', () => {
+      testingLib = render(
+        Component({
+          props: {
+            testID: 'text-button',
+            text: 'Get started',
+            touchableHighlightProps: {
+              underlayColor: 'rgba(255, 0, 0, 0.2)',
+            },
+            type: 'text',
+          },
+        }),
+      );
+
+      expect(
+        testingLib.UNSAFE_getByType(TouchableHighlight).props.underlayColor,
+      ).toBe('rgba(255, 0, 0, 0.2)');
     });
 
     it('does not fill a disabled text button with the solid disabled surface', () => {

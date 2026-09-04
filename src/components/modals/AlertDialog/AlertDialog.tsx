@@ -152,12 +152,16 @@ function AlertDialogImpl(
     if (!isControlled) setUncontrolledVisible(false);
   }, [isControlled, onClose]);
 
-  const handleOpen = useCallback((alertDialogOptions?: AlertDialogOptions) => {
-    setUncontrolledVisible(true);
-    if (alertDialogOptions) {
-      setOpenedOptions(alertDialogOptions);
-    }
-  }, []);
+  const handleOpen = useCallback(
+    (alertDialogOptions?: AlertDialogOptions) => {
+      if (isControlled) return;
+      setUncontrolledVisible(true);
+      if (alertDialogOptions) {
+        setOpenedOptions(alertDialogOptions);
+      }
+    },
+    [isControlled],
+  );
 
   useImperativeHandle(
     ref,
@@ -344,10 +348,11 @@ function AlertDialogImpl(
           background-color: ${backdropColor};
         `}
       >
-        <TouchableWithoutFeedback
-          onPress={closeOnTouchOutside ? handleCloseButtonPress : undefined}
-        >
-          <View style={StyleSheet.absoluteFill} />
+        <TouchableWithoutFeedback onPress={handleBackdropPress}>
+          <View
+            style={StyleSheet.absoluteFill}
+            testID="alert-dialog-backdrop"
+          />
         </TouchableWithoutFeedback>
 
         <AlertDialogContainer
@@ -375,8 +380,7 @@ function AlertDialogImpl(
     ),
     [
       backdropColor,
-      closeOnTouchOutside,
-      handleCloseButtonPress,
+      handleBackdropPress,
       title,
       size,
       containerStyles,
@@ -406,12 +410,7 @@ function AlertDialogImpl(
           style={keyboardAvoidingStyle}
         >
         {closeOnTouchOutside ? (
-          <TouchableWithoutFeedback
-            onPress={handleBackdropPress}
-            style={css`
-              flex: 1;
-            `}
-          >
+          <TouchableWithoutFeedback onPress={handleBackdropPress}>
             {AlertDialogContent}
           </TouchableWithoutFeedback>
         ) : (
