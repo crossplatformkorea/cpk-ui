@@ -47,7 +47,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'The primary command component. Choose solid for the main action, outlined for a secondary action, and text for low-emphasis commands. Loading preserves the button footprint; disabled removes interaction.',
+          'The primary command component. Choose solid for the main action, outlined for a secondary action, and text for low-emphasis commands. Text buttons hug their label with 8px/16px padding and keep the pressed underlay. Loading preserves the button footprint; disabled removes interaction.',
       },
     },
   },

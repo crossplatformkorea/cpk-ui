@@ -10,7 +10,7 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => {
 import '@testing-library/jest-native/extend-expect';
 
 import React, {type ReactElement} from 'react';
-import {Text} from 'react-native';
+import {Text, TouchableHighlight} from 'react-native';
 import {css} from 'kstyled';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
@@ -149,6 +149,79 @@ describe('[Button]', () => {
 
       const json = testingLib.toJSON();
       expect(json).toBeTruthy();
+    });
+
+    it('pads the label so the pressed underlay does not hug the glyphs', () => {
+      testingLib = render(
+        Component({
+          props: {
+            testID: 'text-button',
+            text: 'Get started',
+            type: 'text',
+          },
+        }),
+      );
+
+      expect(testingLib.getByTestId('button-container')).toHaveStyle({
+        paddingTop: 8,
+        paddingRight: 16,
+        paddingBottom: 8,
+        paddingLeft: 16,
+      });
+      expect(testingLib.getByTestId('text-button')).toHaveStyle({
+        alignSelf: 'flex-start',
+      });
+    });
+
+    it('keeps the pressed underlay on text buttons', () => {
+      testingLib = render(
+        Component({
+          props: {
+            testID: 'text-button',
+            text: 'Get started',
+            type: 'text',
+          },
+        }),
+      );
+
+      expect(
+        testingLib.UNSAFE_getByType(TouchableHighlight).props.underlayColor,
+      ).toBe(light.role.underlay);
+    });
+
+    it('lets touchableHighlightProps override the text-button underlay', () => {
+      testingLib = render(
+        Component({
+          props: {
+            testID: 'text-button',
+            text: 'Get started',
+            touchableHighlightProps: {
+              underlayColor: 'rgba(255, 0, 0, 0.2)',
+            },
+            type: 'text',
+          },
+        }),
+      );
+
+      expect(
+        testingLib.UNSAFE_getByType(TouchableHighlight).props.underlayColor,
+      ).toBe('rgba(255, 0, 0, 0.2)');
+    });
+
+    it('does not fill a disabled text button with the solid disabled surface', () => {
+      testingLib = render(
+        Component({
+          props: {
+            disabled: true,
+            text: 'Skip',
+            type: 'text',
+          },
+        }),
+      );
+
+      expect(testingLib.getByTestId('button-container')).toHaveStyle({
+        backgroundColor: 'transparent',
+      });
     });
   });
 

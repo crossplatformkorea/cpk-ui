@@ -13,7 +13,7 @@ import {Button} from '../../uis/Button/Button';
 import type {AlertDialogSizeType} from './AlertDialog';
 
 type AlertDialogBasicStoryProps = {
-  pattern: 'confirmation' | 'destructive';
+  pattern: 'confirmation' | 'destructive' | 'blocking';
   size: AlertDialogSizeType;
 };
 
@@ -73,11 +73,29 @@ function AlertDialogBasicStory({
         <StoryRow>
           {pattern === 'confirmation' ? (
             <Button onPress={openConfirmation} text="Review publication" />
-          ) : (
+          ) : pattern === 'destructive' ? (
             <Button
               color="danger"
               onPress={openDestructive}
               text="Delete project"
+            />
+          ) : (
+            <Button
+              onPress={() =>
+                alertDialog.open({
+                  closeOnTouchOutside: false,
+                  title: 'Set nickname',
+                  body: 'Choose a unique handle. Outside taps do not dismiss this dialog.',
+                  actions: [
+                    <Button
+                      key="set"
+                      onPress={() => alertDialog.close()}
+                      text="Set"
+                    />,
+                  ],
+                })
+              }
+              text="Open blocking dialog"
             />
           )}
         </StoryRow>
@@ -100,7 +118,7 @@ const meta = {
   argTypes: {
     pattern: {
       control: 'radio',
-      options: ['confirmation', 'destructive'],
+      options: ['confirmation', 'destructive', 'blocking'],
     },
     size: {
       control: 'radio',

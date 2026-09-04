@@ -2,7 +2,7 @@ import '@testing-library/jest-native/extend-expect';
 
 import React, {type ReactElement, useRef} from 'react';
 import type {RenderAPI} from '@testing-library/react-native';
-import {render, waitFor} from '@testing-library/react-native';
+import {fireEvent, render, waitFor} from '@testing-library/react-native';
 
 import {createComponent} from '../../../../test/testUtils';
 import AlertDialog, {type AlertDialogContext} from './AlertDialog';
@@ -221,6 +221,107 @@ describe('[AlertDialog]', () => {
         },
         {timeout: 500},
       );
+    });
+  });
+
+  describe('Controlled dialog', () => {
+    it('renders while visible and does not dismiss on outside press', async () => {
+      const onClose = jest.fn();
+      const TestControlled = (): ReactElement =>
+        createComponent(
+          <AlertDialog
+            body="Nickname field"
+            closeOnTouchOutside={false}
+            onClose={onClose}
+            showCloseButton
+            title="Set nickname"
+            visible
+          />,
+        );
+
+      testingLib = render(<TestControlled />);
+
+      await waitFor(() => {
+        expect(testingLib.getByText('Set nickname')).toBeTruthy();
+        expect(testingLib.getByText('Nickname field')).toBeTruthy();
+      });
+
+      fireEvent.press(testingLib.getByTestId('alert-dialog-backdrop'));
+      expect(onClose).not.toHaveBeenCalled();
+      expect(testingLib.getByText('Set nickname')).toBeTruthy();
+    });
+
+    it('notifies onClose when the backdrop is pressed', async () => {
+      const onClose = jest.fn();
+      const TestControlledBackdrop = (): ReactElement =>
+        createComponent(
+          <AlertDialog
+            body="Body"
+            onClose={onClose}
+            title="Title"
+            visible
+          />,
+        );
+
+      testingLib = render(<TestControlledBackdrop />);
+
+      await waitFor(() => {
+        expect(testingLib.getByText('Title')).toBeTruthy();
+      });
+
+      fireEvent.press(testingLib.getByTestId('alert-dialog-backdrop'));
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('ignores imperative open while visible is controlled', async () => {
+      const TestControlledOpen = (): ReactElement => {
+        const alertDialogRef = useRef<AlertDialogContext>(null);
+
+        React.useEffect(() => {
+          alertDialogRef.current?.open({
+            title: 'Imperative title',
+            body: 'Imperative body',
+          });
+        }, []);
+
+        return createComponent(
+          <AlertDialog
+            ref={alertDialogRef}
+            body="Controlled body"
+            title="Controlled title"
+            visible={false}
+          />,
+        );
+      };
+
+      testingLib = render(<TestControlledOpen />);
+
+      expect(testingLib.queryByText('Imperative title')).toBeNull();
+      expect(testingLib.queryByText('Controlled title')).toBeNull();
+    });
+
+    it('notifies onClose when the close control is pressed', async () => {
+      const onClose = jest.fn();
+      const TestControlledClose = (): ReactElement =>
+        createComponent(
+          <AlertDialog
+            body="Body"
+            onClose={onClose}
+            title="Title"
+            visible
+          />,
+        );
+
+      testingLib = render(<TestControlledClose />);
+
+      await waitFor(() => {
+        expect(testingLib.getByText('Title')).toBeTruthy();
+      });
+
+      fireEvent.press(
+        testingLib.getByRole('button', {name: 'Close dialog'}),
+      );
+      expect(onClose).toHaveBeenCalledTimes(1);
     });
   });
 

@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {
+  KeyboardAvoidingView,
   Modal,
   Platform,
   StyleSheet,
@@ -71,10 +72,6 @@ const ActionRow = styled.View<{$marginTop: number}>`
 
 export type AlertDialogSizeType = 'small' | 'medium' | 'large' | number;
 
-export type AlertDialogProps = {
-  style?: StyleProp<ViewStyle>;
-};
-
 export type AlertDialogStyles = {
   container?: StyleProp<ViewStyle>;
   titleContainer?: StyleProp<ViewStyle>;
@@ -95,46 +92,76 @@ export type AlertDialogOptions = {
   size?: AlertDialogSizeType;
 };
 
+export type AlertDialogProps = {
+  style?: StyleProp<ViewStyle>;
+  visible?: boolean;
+  onClose?: () => void;
+} & AlertDialogOptions;
+
 export type AlertDialogContext = {
   open(alertDialogOptions?: AlertDialogOptions): void;
   close(): void;
 };
 
-function AlertDialog(
-  {style}: AlertDialogProps,
+function AlertDialogImpl(
+  {
+    actions: actionsProp,
+    backdropOpacity: backdropOpacityProp,
+    body: bodyProp,
+    closeOnTouchOutside: closeOnTouchOutsideProp,
+    onClose,
+    showCloseButton: showCloseButtonProp,
+    size: sizeProp,
+    style,
+    styles: stylesProp,
+    title: titleProp,
+    visible: visibleProp,
+  }: AlertDialogProps,
   ref: React.Ref<AlertDialogContext>,
 ): ReactElement {
-  const [options, setOptions] = useState<AlertDialogOptions | null>(null);
-  const [visible, setVisible] = useState(false);
+  const [openedOptions, setOpenedOptions] = useState<AlertDialogOptions | null>(
+    null,
+  );
+  const [uncontrolledVisible, setUncontrolledVisible] = useState(false);
   const {theme, themeType} = useTheme();
+  const isControlled = visibleProp !== undefined;
+  const visible = isControlled ? visibleProp : uncontrolledVisible;
+  const options = isControlled
+    ? {
+        actions: actionsProp,
+        backdropOpacity: backdropOpacityProp,
+        body: bodyProp,
+        closeOnTouchOutside: closeOnTouchOutsideProp,
+        showCloseButton: showCloseButtonProp,
+        size: sizeProp,
+        styles: stylesProp,
+        title: titleProp,
+      }
+    : openedOptions;
 
-  // Memoize the cleanup effect
   useEffect(() => {
-    if (!visible) {
-      const timeoutId = setTimeout(() => {
-        setOptions(null);
-        // Run after modal has finished transition
-      }, 300);
+    if (isControlled || visible) return;
+    const timeoutId = setTimeout(() => {
+      setOpenedOptions(null);
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [isControlled, visible]);
 
-      return () => clearTimeout(timeoutId);
-    }
-
-    // Return an empty cleanup function when visible is true
-    return () => {};
-  }, [visible]);
-
-  // Memoize the close handler
   const handleClose = useCallback(() => {
-    setVisible(false);
-  }, []);
+    onClose?.();
+    if (!isControlled) setUncontrolledVisible(false);
+  }, [isControlled, onClose]);
 
-  // Memoize the open handler
-  const handleOpen = useCallback((alertDialogOptions?: AlertDialogOptions) => {
-    setVisible(true);
-    if (alertDialogOptions) {
-      setOptions(alertDialogOptions);
-    }
-  }, []);
+  const handleOpen = useCallback(
+    (alertDialogOptions?: AlertDialogOptions) => {
+      if (isControlled) return;
+      setUncontrolledVisible(true);
+      if (alertDialogOptions) {
+        setOpenedOptions(alertDialogOptions);
+      }
+    },
+    [isControlled],
+  );
 
   useImperativeHandle(
     ref,
@@ -229,13 +256,10 @@ function AlertDialog(
 
   // Memoize backdrop press handler
   const handleBackdropPress = useCallback(() => {
-    if (closeOnTouchOutside) {
-      setVisible(false);
-    }
-  }, [closeOnTouchOutside]);
+    if (closeOnTouchOutside) handleClose();
+  }, [closeOnTouchOutside, handleClose]);
 
-  // Memoize close button press handler
-  const handleCloseButtonPress = useCallback(() => setVisible(false), []);
+  const handleCloseButtonPress = handleClose;
 
   // Memoize title content
   const titleContent = useMemo(
@@ -315,6 +339,8 @@ function AlertDialog(
     ],
   );
 
+  const titleSlotStyle = useMemo(() => ({flex: 1, minWidth: 0}), []);
+
   const AlertDialogContent = useMemo(
     () => (
       <Container
@@ -322,10 +348,11 @@ function AlertDialog(
           background-color: ${backdropColor};
         `}
       >
-        <TouchableWithoutFeedback
-          onPress={closeOnTouchOutside ? handleCloseButtonPress : undefined}
-        >
-          <View style={StyleSheet.absoluteFill} />
+        <TouchableWithoutFeedback onPress={handleBackdropPress}>
+          <View
+            style={StyleSheet.absoluteFill}
+            testID="alert-dialog-backdrop"
+          />
         </TouchableWithoutFeedback>
 
         <AlertDialogContainer
@@ -337,7 +364,7 @@ function AlertDialog(
           style={containerStyles}
         >
           <TitleRow style={styles?.titleContainer}>
-            {titleContent}
+            <View style={titleSlotStyle}>{titleContent}</View>
             {closeButtonContent}
           </TitleRow>
           <BodyRow
@@ -353,8 +380,7 @@ function AlertDialog(
     ),
     [
       backdropColor,
-      closeOnTouchOutside,
-      handleCloseButtonPress,
+      handleBackdropPress,
       title,
       size,
       containerStyles,
@@ -366,31 +392,40 @@ function AlertDialog(
       closeButtonContent,
       bodyContent,
       actionsContent,
+      titleSlotStyle,
     ],
   );
 
   return (
     // https://github.com/facebook/react-native/issues/48526#issuecomment-2579478884
     <View style={style}>
-      <Modal animationType="fade" transparent={true} visible={visible}>
+      <Modal
+        animationType="fade"
+        onRequestClose={handleClose}
+        transparent={true}
+        visible={visible}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={keyboardAvoidingStyle}
+        >
         {closeOnTouchOutside ? (
-          <TouchableWithoutFeedback
-            onPress={handleBackdropPress}
-            style={css`
-              flex: 1;
-            `}
-          >
+          <TouchableWithoutFeedback onPress={handleBackdropPress}>
             {AlertDialogContent}
           </TouchableWithoutFeedback>
         ) : (
           AlertDialogContent
         )}
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
 }
 
-// Export memoized component for better performance
-export default React.memo(
-  forwardRef<AlertDialogContext, AlertDialogProps>(AlertDialog),
+const keyboardAvoidingStyle = {flex: 1};
+
+export const AlertDialog = React.memo(
+  forwardRef<AlertDialogContext, AlertDialogProps>(AlertDialogImpl),
 );
+
+export default AlertDialog;
