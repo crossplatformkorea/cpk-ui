@@ -2,6 +2,27 @@
 
 All notable changes to cpk-ui are documented here.
 
+## 0.8.0-beta.1 - 2026-09-04
+
+### Added
+
+- Allow AlertDialog to stay mounted in controlled mode via `visible` and
+  `onClose`, so live forms keep focus across parent re-renders.
+- Keep the AlertDialog title on the same row as the close control, and ignore
+  outside taps when `closeOnTouchOutside` is false.
+
+### Changed
+
+- Pad text buttons `8px 16px`, hug the label instead of stretching full width,
+  restore a real pressed underlay, and skip the solid disabled fill on text
+  buttons.
+
+### Verification
+
+- 23 Jest suites and 302 tests.
+- TypeScript package build, Storybook web build, E2E smoke, and npm tarball
+  validation included in the release process.
+
 ## 0.8.0-beta.0 - 2026-08-26
 
 ### Added
