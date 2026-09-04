@@ -10,7 +10,7 @@ maintained by Cross Platform Korea and uses
 [kstyled](https://crossplatformkorea.github.io/kstyled) for typed,
 compile-time-aware styling.
 
-`cpk-ui@0.8.0-beta.0` pairs with `kstyled@0.4.1`. Keep the runtime and Babel plugin on
+`cpk-ui@0.8.0-beta.1` pairs with `kstyled@0.4.1`. Keep the runtime and Babel plugin on
 the same kstyled version.
 
 ## Install
@@ -18,7 +18,7 @@ the same kstyled version.
 ### Expo
 
 ```bash
-npx expo install cpk-ui@0.8.0-beta.0 kstyled@0.4.1 @expo/vector-icons \
+npx expo install cpk-ui@0.8.0-beta.1 kstyled@0.4.1 @expo/vector-icons \
   react-native-gesture-handler react-native-svg expo-screen-orientation \
   react-native-reanimated @expo/match-media expo-haptics
 bun add --dev babel-plugin-kstyled@0.4.1
@@ -30,7 +30,7 @@ Install Expo modules first, then add the same runtime dependencies:
 
 ```bash
 npx install-expo-modules@latest
-bun add cpk-ui@0.8.0-beta.0 kstyled@0.4.1 @expo/vector-icons \
+bun add cpk-ui@0.8.0-beta.1 kstyled@0.4.1 @expo/vector-icons \
   react-native-gesture-handler react-native-svg expo-screen-orientation \
   react-native-reanimated @expo/match-media expo-haptics
 bun add --dev babel-plugin-kstyled@0.4.1
@@ -112,7 +112,8 @@ main-branch GitHub Actions publish workflow with provenance.
 ## Documentation
 
 - [Storybook](https://ui.crossplatformkorea.com)
-- [0.8.0 beta release notes](./docs/releases/0.8.0-beta.0.md)
+- [0.8.0-beta.1 release notes](./docs/releases/0.8.0-beta.1.md)
+- [0.8.0-beta.0 release notes](./docs/releases/0.8.0-beta.0.md)
 - [0.7 engineering notes](./docs/blog/2026-07-11-cpk-ui-0.7.0.md)
 - [Performance guide](./docs/PERFORMANCE.md)
 - [Changelog](./CHANGELOG.md)
