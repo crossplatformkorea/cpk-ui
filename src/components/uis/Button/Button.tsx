@@ -371,7 +371,10 @@ export function Button({
         testID={loading ? 'loading-view' : 'button-container'}
         $type={type}
       >
-        <View style={compositeStyles.content}>{children}</View>
+        {/* Keep the label's native parent stable when the underlay changes opacity. */}
+        <View collapsable={false} style={compositeStyles.content}>
+          {children}
+        </View>
         <View style={compositeStyles.loading}>
           {loading ? loadingView : null}
         </View>
