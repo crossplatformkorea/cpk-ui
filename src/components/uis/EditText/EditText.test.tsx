@@ -222,6 +222,25 @@ describe('[EditText]', () => {
   });
 
   describe('input', () => {
+    it('exposes the input instead of grouping it into its touch wrapper', () => {
+      const view = render(
+        Component({
+          testID: 'email-input',
+          accessibilityLabel: 'Email address',
+          textInputProps: {keyboardType: 'email-address'},
+        }),
+      );
+
+      expect(view.getByTestId('container-touch')).toHaveProp('accessible', false);
+      expect(view.getByLabelText('Email address')).toBe(
+        view.getByTestId('email-input'),
+      );
+      expect(view.getByTestId('email-input')).toHaveProp(
+        'keyboardType',
+        'email-address',
+      );
+    });
+
     it('should trigger text changes', () => {
       const CHANGE_TEXT = 'content';
       const mockedFn = jest.fn();
