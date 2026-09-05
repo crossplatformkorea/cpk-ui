@@ -110,6 +110,26 @@ export const Secondary: Story = {
   },
 };
 
+export const IntrinsicLabel: Story = {
+  args: {
+    text: 'Add entry',
+    type: 'outlined',
+    size: 'small',
+    borderRadius: 16,
+    style: {alignSelf: 'center'},
+    styles: {text: {fontWeight: 'bold'}},
+    testID: 'intrinsic-label-button',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Hold, release, and press again. Every word must remain visible with the same bounds on Android, iOS, and web; changing underlay opacity must not flatten the label parent.',
+      },
+    },
+  },
+};
+
 export const Danger: Story = {
   args: {
     text: 'Delete release',

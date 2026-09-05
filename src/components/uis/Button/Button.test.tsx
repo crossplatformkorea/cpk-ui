@@ -1,7 +1,8 @@
 jest.mock('react-native/Libraries/Utilities/Platform', () => {
   const platform = {
     OS: 'web',
-    select: (options: Record<string, unknown>) => options.web ?? options.default,
+    select: (options: Record<string, unknown>) =>
+      options.web ?? options.default,
   };
 
   return {...platform, default: platform};
@@ -42,6 +43,31 @@ describe('[Button]', () => {
   });
 
   describe('Index', () => {
+    it('preserves a native content parent for intrinsic-width labels', () => {
+      const onPress = jest.fn();
+      testingLib = render(
+        Component({
+          props: {
+            text: 'Add entry',
+            type: 'outlined',
+            style: {alignSelf: 'center'},
+            onPress,
+          },
+        }),
+      );
+      const content = testingLib.getByTestId('button-container').findByProps({
+        collapsable: false,
+      });
+      expect(content.findByType(Text).props.children).toBe('Add entry');
+      fireEvent.press(testingLib.getByText('Add entry'));
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(
+        testingLib.getByTestId('button-container').findByProps({
+          collapsable: false,
+        }),
+      ).toBe(content);
+    });
+
     it('does not mount a spinner while idle', () => {
       testingLib = render(Component({}));
 
