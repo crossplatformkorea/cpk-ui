@@ -43,13 +43,13 @@ describe('[Button]', () => {
   });
 
   describe('Index', () => {
-    it('preserves a native content parent for intrinsic-width labels', () => {
+    it.each(['solid', 'outlined'] as const)('keeps an intrinsic %s label complete through press', (type) => {
       const onPress = jest.fn();
       testingLib = render(
         Component({
           props: {
             text: 'Add entry',
-            type: 'outlined',
+            type,
             style: {alignSelf: 'center'},
             onPress,
           },
@@ -59,6 +59,7 @@ describe('[Button]', () => {
         collapsable: false,
       });
       expect(content.findByType(Text).props.children).toBe('Add entry');
+      expect(content.findByType(Text).props.numberOfLines).toBe(1);
       fireEvent.press(testingLib.getByText('Add entry'));
       expect(onPress).toHaveBeenCalledTimes(1);
       expect(
@@ -77,10 +78,11 @@ describe('[Button]', () => {
     });
 
     it('should render loading status', () => {
-      testingLib = render(Component({props: {loading: true}}));
+      testingLib = render(Component({props: {loading: true, text: 'Add entry'}}));
 
       expect(LoadingIndicator).toBeDefined();
       expect(testingLib.getByTestId('loading-view')).toBeTruthy();
+      expect(testingLib.getByText('Add entry').props.numberOfLines).toBe(1);
       expect(
         testingLib.getByTestId('undefined-activity-indicator'),
       ).toBeTruthy();

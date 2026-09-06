@@ -130,6 +130,16 @@ export const IntrinsicLabel: Story = {
   },
 };
 
+export const IntrinsicSolidLabel: Story = {
+  ...IntrinsicLabel,
+  args: {
+    ...IntrinsicLabel.args,
+    type: 'solid',
+    size: 'medium',
+    testID: 'intrinsic-solid-label-button',
+  },
+};
+
 export const Danger: Story = {
   args: {
     text: 'Delete release',
