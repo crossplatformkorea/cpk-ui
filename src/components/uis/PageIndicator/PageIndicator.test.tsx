@@ -13,15 +13,17 @@ jest.mock('react-native-reanimated', () => ({
 function Example({
   reducedMotion,
   count = 3,
+  currentIndex = 0,
 }: {
   reducedMotion?: boolean;
   count?: number;
+  currentIndex?: number;
 }) {
   const progress = useSharedValue(0.5);
   return (
     <PageIndicator
       count={count}
-      currentIndex={0}
+      currentIndex={currentIndex}
       progress={progress}
       reducedMotion={reducedMotion}
       testID="pages"
@@ -44,16 +46,33 @@ describe('PageIndicator', () => {
     (theme) => {
       const screen = render(createComponent(<Example />, theme));
       expect(screen.getByTestId('pages')).toHaveProp('accessibilityValue', {
-        min: 1,
+        min: 0,
         max: 3,
         now: 1,
       });
-      expect(screen.getByTestId('pages')).toHaveProp('aria-valuemin', 1);
+      expect(screen.getByTestId('pages')).toHaveProp('aria-valuemin', 0);
       expect(screen.getByTestId('pages')).toHaveProp('aria-valuemax', 3);
       expect(screen.getByTestId('pages')).toHaveProp('aria-valuenow', 1);
       expect(screen.getByTestId('pages-active')).toHaveStyle({
         transform: [{translateX: 14}],
       });
+    },
+  );
+  it.each([1, 3])(
+    'finishes a %i-page native progress range at 100 percent',
+    (count) => {
+      // iOS Fabric reports now / (max - min); min=1 announces 150% for
+      // three pages and creates a zero-length range for a single page.
+      const screen = render(
+        createComponent(<Example count={count} currentIndex={count - 1} />),
+      );
+      expect(screen.getByTestId('pages')).toHaveProp('accessibilityValue', {
+        min: 0,
+        max: count,
+        now: count,
+      });
+      expect(screen.getByTestId('pages')).toHaveProp('aria-valuemin', 0);
+      expect(screen.getByTestId('pages')).toHaveProp('aria-valuenow', count);
     },
   );
   it('keeps the indicator at the committed page with reduced motion', () => {

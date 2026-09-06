@@ -85,9 +85,9 @@ export function PageIndicator({
       accessible
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="progressbar"
-      accessibilityValue={{min: 1, max: pageCount, now: selected + 1}}
+      accessibilityValue={{min: 0, max: pageCount, now: selected + 1}}
       aria-label={accessibilityLabel}
-      aria-valuemin={1}
+      aria-valuemin={0}
       aria-valuemax={pageCount}
       aria-valuenow={selected + 1}
       pointerEvents="none"
