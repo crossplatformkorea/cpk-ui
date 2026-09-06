@@ -48,6 +48,9 @@ describe('PageIndicator', () => {
         max: 3,
         now: 1,
       });
+      expect(screen.getByTestId('pages')).toHaveProp('aria-valuemin', 1);
+      expect(screen.getByTestId('pages')).toHaveProp('aria-valuemax', 3);
+      expect(screen.getByTestId('pages')).toHaveProp('aria-valuenow', 1);
       expect(screen.getByTestId('pages-active')).toHaveStyle({
         transform: [{translateX: 14}],
       });
