@@ -15,8 +15,8 @@ jest.mock('@expo/vector-icons/createIconSetFromIcoMoon', () => ({
 
 import '@testing-library/jest-native/extend-expect';
 
-import React, {type ReactElement} from 'react';
-import {Text} from 'react-native';
+import React, {createRef, type ReactElement} from 'react';
+import {Text, type TextInput} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {act, fireEvent, render} from '@testing-library/react-native';
 
@@ -222,6 +222,33 @@ describe('[EditText]', () => {
   });
 
   describe('input', () => {
+    it('exposes the input instead of grouping it into its touch wrapper', () => {
+      const inputRef = createRef<TextInput>();
+      const view = render(
+        createComponent(
+          <EditText
+            ref={inputRef}
+            testID="email-input"
+            accessibilityLabel="Email address"
+            textInputProps={{keyboardType: 'email-address'}}
+          />,
+        ),
+      );
+
+      expect(view.getByTestId('container-touch')).toHaveProp('accessible', false);
+      expect(view.getByLabelText('Email address')).toBe(
+        view.getByTestId('email-input'),
+      );
+      expect(view.getByTestId('email-input')).toHaveProp(
+        'keyboardType',
+        'email-address',
+      );
+      if (!inputRef.current) throw new Error('Input ref was not attached');
+      const focus = jest.spyOn(inputRef.current, 'focus');
+      fireEvent.press(view.getByTestId('container-touch'));
+      expect(focus).toHaveBeenCalledTimes(1);
+    });
+
     it('should trigger text changes', () => {
       const CHANGE_TEXT = 'content';
       const mockedFn = jest.fn();
@@ -360,23 +387,15 @@ describe('[EditText]', () => {
       expect(input).toHaveStyle({color: 'yellow'});
     });
 
-    it('should trigger `onFocus` when touching container', async () => {
-      const focusFn = jest.fn();
-
+    it('focuses the input when touching its container', () => {
+      const inputRef = createRef<TextInput>();
       testingLib = render(
-        Component({
-          onFocus: focusFn,
-          colors: {focused: 'yellow'},
-        }),
+        createComponent(<EditText ref={inputRef} />),
       );
-
-      const touch = testingLib.getByTestId('container-touch');
-
-      expect(touch).toBeTruthy();
-
-      fireEvent(touch, 'press');
-      // Below should work but no luck in testing-library
-      // expect(focusFn).toBeCalled();
+      if (!inputRef.current) throw new Error('Input ref was not attached');
+      const focus = jest.spyOn(inputRef.current, 'focus');
+      fireEvent.press(testingLib.getByTestId('container-touch'));
+      expect(focus).toHaveBeenCalledTimes(1);
     });
 
     describe('onBlur (focused === false)', () => {

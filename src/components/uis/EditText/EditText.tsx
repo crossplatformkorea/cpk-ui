@@ -329,6 +329,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       (children: ReactNode): ReactElement => {
         return (
           <TouchableWithoutFeedback
+            accessible={false}
             onPress={() => inputRef.current?.focus()}
             testID="container-touch"
           >

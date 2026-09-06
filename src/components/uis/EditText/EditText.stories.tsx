@@ -145,3 +145,23 @@ export const StateMatrix: Story = {
     </StoryCanvas>
   ),
 };
+
+export const AccessibleEmail: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Focus the email field with VoiceOver, TalkBack, or a keyboard. The editable field must remain discoverable; tapping its surrounding border still focuses it.',
+      },
+    },
+  },
+  render: (args) => <InteractiveEditText {...args} />,
+  args: {
+    testID: 'email-input',
+    label: 'Email',
+    accessibilityLabel: 'Email address',
+    decoration: 'boxed',
+    placeholder: 'you@example.com',
+    textInputProps: {keyboardType: 'email-address', autoCorrect: false},
+  },
+};
