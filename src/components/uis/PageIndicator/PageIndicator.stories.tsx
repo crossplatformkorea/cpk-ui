@@ -1,0 +1,68 @@
+import React, {useState} from 'react';
+import {View} from 'react-native';
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from 'react-native-reanimated';
+import type {Meta, StoryObj} from '@storybook/react';
+
+import {withThemeProvider} from '../../../../.storybook/decorators';
+import {Typography} from '../Typography/Typography';
+import {PageIndicator} from './PageIndicator';
+
+const meta = {
+  title: 'Feedback/PageIndicator',
+  component: PageIndicator,
+  decorators: [withThemeProvider],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Connect a continuous UI-thread page position, not an index updated after scrolling. Swipe, reverse mid-drag and test reduced motion.',
+      },
+    },
+  },
+} satisfies Meta<typeof PageIndicator>;
+export default meta;
+type Story = StoryObj<typeof Pager>;
+
+function Pager({reducedMotion = false}: {reducedMotion?: boolean}) {
+  const progress = useSharedValue(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const onScroll = useAnimatedScrollHandler((event) => {
+    progress.set(event.contentOffset.x / 280);
+  });
+  return (
+    <View style={{gap: 24, padding: 24}}>
+      <Animated.ScrollView
+        horizontal
+        pagingEnabled
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        showsHorizontalScrollIndicator={false}
+        style={{width: 280, height: 120}}
+        onMomentumScrollEnd={(event) =>
+          setCurrentIndex(Math.round(event.nativeEvent.contentOffset.x / 280))
+        }
+      >
+        {['First page', 'Second page', 'Last page'].map((label) => (
+          <View
+            key={label}
+            style={{width: 280, justifyContent: 'center', alignItems: 'center'}}
+          >
+            <Typography.Heading4>{label}</Typography.Heading4>
+          </View>
+        ))}
+      </Animated.ScrollView>
+      <PageIndicator
+        count={3}
+        currentIndex={currentIndex}
+        progress={progress}
+        reducedMotion={reducedMotion}
+      />
+    </View>
+  );
+}
+
+export const Continuous: Story = {render: () => <Pager />};
+export const ReducedMotion: Story = {render: () => <Pager reducedMotion />};
