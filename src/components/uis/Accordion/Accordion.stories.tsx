@@ -1,7 +1,9 @@
-import type {ComponentProps} from 'react';
+import {useState} from 'react';
+import {Text, View} from 'react-native';
 import {css} from 'kstyled';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Accordion} from './Accordion';
+import {Button} from '../Button/Button';
 import {withThemeProvider} from '../../../../.storybook/decorators';
 
 const ACCORDION_DOCS =
@@ -89,4 +91,42 @@ export const AllItemsExpanded: Story = {
     data: defaultData,
     shouldAnimate: true,
   },
+};
+
+function ControlledActionsExample() {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <Accordion
+      data={[{title: 'Meal', items: ['Actions']}]}
+      expandedIndexes={expanded ? [0] : []}
+      onExpandedChange={(_, open) => setExpanded(open)}
+      renderHeader={({title, toggle}) => (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: 16,
+          }}
+        >
+          <Text>{title}</Text>
+          <Button text="More" type="text" onPress={toggle} />
+        </View>
+      )}
+      renderItem={() => (
+        <View style={{flexDirection: 'row', gap: 8}}>
+          <Button text="Edit" type="text" />
+          <Button text="Archive" type="text" color="danger" />
+        </View>
+      )}
+      styles={{
+        container: {borderRadius: 16, borderWidth: 1, borderColor: '#dfe3ec'},
+      }}
+    />
+  );
+}
+
+export const ControlledActions: Story = {
+  args: {data: defaultData},
+  render: () => <ControlledActionsExample />,
 };

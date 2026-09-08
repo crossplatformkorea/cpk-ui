@@ -1,10 +1,102 @@
 import React, {type ReactElement} from 'react';
-import {StyleSheet, Text} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {useReducedMotion} from 'react-native-reanimated';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
 
 import {createComponent, createTestProps} from '../../../../test/testUtils';
 import {Accordion} from './Accordion';
+
+jest.mock('react-native-reanimated', () => ({
+  ...jest.requireActual('react-native-reanimated/mock'),
+  useReducedMotion: jest.fn(() => false),
+}));
+
+describe('[Accordion] controlled custom header', () => {
+  const datum = [{title: 'Meal', items: ['Edit']}];
+  it('keeps independent controls and only changes disclosure through the owner', () => {
+    const changed = jest.fn();
+    const edited = jest.fn();
+    const header = ({
+      expanded,
+      toggle,
+    }: {
+      expanded: boolean;
+      toggle: () => void;
+    }) => (
+      <View>
+        <Pressable onPress={edited} testID="edit">
+          <Text>Edit icon</Text>
+        </Pressable>
+        <Pressable
+          accessibilityState={{expanded}}
+          onPress={toggle}
+          testID="more"
+        >
+          <Text>More</Text>
+        </Pressable>
+      </View>
+    );
+    const screen = render(
+      createComponent(
+        <Accordion
+          data={datum}
+          expandedIndexes={[]}
+          onExpandedChange={changed}
+          renderHeader={header}
+        />,
+      ),
+    );
+    fireEvent.press(screen.getByTestId('edit'));
+    expect(edited).toHaveBeenCalledTimes(1);
+    expect(changed).not.toHaveBeenCalled();
+    fireEvent.press(screen.getByTestId('more'));
+    expect(changed).toHaveBeenLastCalledWith(0, true);
+    expect(
+      screen.getByTestId('body-0', {includeHiddenElements: true}).props
+        .pointerEvents,
+    ).toBe('none');
+    screen.rerender(
+      createComponent(
+        <Accordion
+          data={datum}
+          expandedIndexes={[0]}
+          onExpandedChange={changed}
+          renderHeader={header}
+        />,
+      ),
+    );
+    expect(screen.getAllByText('Edit')).toHaveLength(1);
+    fireEvent.press(screen.getByTestId('more'));
+    expect(changed).toHaveBeenLastCalledWith(0, false);
+    screen.rerender(
+      createComponent(
+        <Accordion
+          data={datum}
+          expandedIndexes={[]}
+          onExpandedChange={changed}
+          renderHeader={header}
+        />,
+      ),
+    );
+    expect(screen.queryByText('Edit')).toBeNull();
+  });
+  it('disables motion for the system preference and explicit opt-out', () => {
+    jest.mocked(useReducedMotion).mockReturnValue(true);
+    const screen = render(createComponent(<Accordion data={datum} />));
+    const body = screen.getByTestId('body-0', {includeHiddenElements: true});
+    expect(StyleSheet.flatten(body.props.style).transitionDuration).toBe(0);
+    jest.mocked(useReducedMotion).mockReturnValue(false);
+    screen.rerender(
+      createComponent(<Accordion data={datum} shouldAnimate={false} />),
+    );
+    expect(
+      StyleSheet.flatten(
+        screen.getByTestId('body-0', {includeHiddenElements: true}).props.style,
+      ).transitionDuration,
+    ).toBe(0);
+  });
+});
 
 let props: any;
 let component: ReactElement;
@@ -185,22 +277,17 @@ describe('[Accordion] event test', () => {
     testingLib = render(component);
   });
 
-  it('should trigger onLayout event when itemBody rendered', () => {
+  it('keeps one body tree and lets native layout determine expanded height', () => {
     const {getByTestId} = testingLib;
-    const itemTitle = getByTestId('measure-body-0', {
-      includeHiddenElements: true,
-    });
-
-    fireEvent(itemTitle, 'layout', {
-      nativeEvent: {
-        layout: {
-          height: 300,
-        },
-      },
-    });
-
     const body = getByTestId('body-0', {includeHiddenElements: true});
-    expect(StyleSheet.flatten(body.props.style).height).toBeDefined();
+    expect(StyleSheet.flatten(body.props.style).height).toBe(0);
+    expect(
+      testingLib.queryByTestId('measure-body-0', {includeHiddenElements: true}),
+    ).toBeNull();
+    fireEvent.press(getByTestId('title-0'));
+    expect(
+      StyleSheet.flatten(getByTestId('body-0').props.style).height,
+    ).toBeUndefined();
   });
 
   it('should trigger press event when clicking title', () => {
@@ -213,10 +300,6 @@ describe('[Accordion] event test', () => {
         'aria-hidden'
       ],
     ).toBe(true);
-    expect(
-      testingLib.getByTestId('measure-body-0', {includeHiddenElements: true})
-        .props.importantForAccessibility,
-    ).toBe('no-hide-descendants');
 
     fireEvent.press(testingLib.getByTestId('title-0'));
 
