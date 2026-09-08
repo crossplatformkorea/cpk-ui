@@ -80,6 +80,7 @@ describe('[Accordion] controlled custom header', () => {
       ),
     );
     expect(screen.queryByText('Edit')).toBeNull();
+    expect(screen.queryByText('Edit', {includeHiddenElements: true})).toBeNull();
   });
   it('disables motion for the system preference and explicit opt-out', () => {
     jest.mocked(useReducedMotion).mockReturnValue(true);

@@ -2,6 +2,8 @@ import React, {useMemo, useState, type ReactElement} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import Animated, {
   Easing,
+  FadeIn,
+  FadeOut,
   LinearTransition,
   ReduceMotion,
   useReducedMotion,
@@ -52,6 +54,14 @@ export function AccordionItem<T, K>({
       LinearTransition.duration(duration)
         .easing(Easing.bezier(0.23, 1, 0.32, 1))
         .reduceMotion(ReduceMotion.System),
+    [duration],
+  );
+  const entering = useMemo(
+    () => FadeIn.duration(duration).reduceMotion(ReduceMotion.System),
+    [duration],
+  );
+  const exiting = useMemo(
+    () => FadeOut.duration(duration).reduceMotion(ReduceMotion.System),
     [duration],
   );
   const toggle = (): void => {
@@ -194,41 +204,49 @@ export function AccordionItem<T, K>({
         ]}
         testID={`body-${testID}`}
       >
-        {data.items.map((body, index) => {
-          const content = renderItem ? (
-            renderItem(body)
-          ) : typeof body === 'string' ? (
-            <Typography.Body3
-              style={[{fontSize: itemFontSize}, styles?.itemText]}
-            >
-              {body}
-            </Typography.Body3>
-          ) : null;
-          const itemStyle = [
-            {
-              backgroundColor: theme.bg.paper,
-              paddingVertical: vertical,
-              paddingHorizontal: horizontal,
-            },
-            styles?.itemContainer,
-          ];
-          // Do not wrap custom controls in a second pressable.
-          return onPressItem ? (
-            <TouchableOpacity
-              key={index}
-              activeOpacity={activeOpacity}
-              disabled={!expanded}
-              onPress={() => onPressItem(data.title, body)}
-              style={itemStyle}
-            >
-              {content}
-            </TouchableOpacity>
-          ) : (
-            <View key={index} style={itemStyle}>
-              {content}
-            </View>
-          );
-        })}
+        {expanded ? (
+          <Animated.View
+            collapsable={false}
+            entering={entering}
+            exiting={exiting}
+          >
+            {data.items.map((body, index) => {
+              const content = renderItem ? (
+                renderItem(body)
+              ) : typeof body === 'string' ? (
+                <Typography.Body3
+                  style={[{fontSize: itemFontSize}, styles?.itemText]}
+                >
+                  {body}
+                </Typography.Body3>
+              ) : null;
+              const itemStyle = [
+                {
+                  backgroundColor: theme.bg.paper,
+                  paddingVertical: vertical,
+                  paddingHorizontal: horizontal,
+                },
+                styles?.itemContainer,
+              ];
+              // Do not wrap custom controls in a second pressable.
+              return onPressItem ? (
+                <TouchableOpacity
+                  key={index}
+                  activeOpacity={activeOpacity}
+                  disabled={!expanded}
+                  onPress={() => onPressItem(data.title, body)}
+                  style={itemStyle}
+                >
+                  {content}
+                </TouchableOpacity>
+              ) : (
+                <View key={index} style={itemStyle}>
+                  {content}
+                </View>
+              );
+            })}
+          </Animated.View>
+        ) : null}
       </Animated.View>
     </Animated.View>
   );
