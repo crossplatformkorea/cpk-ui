@@ -21,17 +21,25 @@ ReorderableList with accessible handles and controlled persistence callbacks.
 
 ## Evidence (2026-09-09, Asia/Seoul; 2026-09-08 UTC)
 
-- `test:all`:27 suites /332 tests PASS, types/lint/component/story coverage PASS.
+- `test:all`:27 suites /336 tests PASS, types/lint/component/story coverage PASS.
 - Library build, eight package/Metro smoke gates and Storybook build PASS.
 - Physical Pixel10: reorder/reverse, edit after drop, save/reopen, scrolled
   range, long names, Dark/font1.5 and canceled confirmation PASS on the
   specifically recorded BooKoo development QA artifact. Its full provenance is
   maintained by the consumer; no private fixture data is copied here.
-- Physical iPad automation preflight again timed out before any test executed;
-  connection alone does not pass the native iOS gate. Simulator parity pending.
-- Live web interaction pending: the browser adapter is stuck on its blocked
-  data-URL connection-error page even after the server responds HTTP200.
-  Do not bypass the browser policy or present compilation as interaction QA.
+- Physical iPad automation preflight timed out before any test executed. The
+  existing iOS26.5 BooKoo simulator was rebuilt with signing and app data intact;
+  category drag, expanded editor, archive-dialog rendering and Cancel passed.
+  Physical-iPad/full-app acceptance is not inferred from that focused replay.
+- Live web CI preview at719e2db: mouse drag/reorder, keyboard reverse, Dark
+  scrolled-range reorder, long titles and disabled semantics PASS. Custom
+  header/body/actions and dark scrim were visually inspected. Body presses
+  retain the dialog; Cancel closes it. Browser error log is empty.
+- Review fixed outside-touch propagation and index-aware accessibility movement,
+  with regression tests. Row wrappers no longer expose duplicate adjustable
+  controls. Web mouse gestures start immediately; native touch retains its hold.
+- An early local-browser connection error was left untouched. The successful
+  web replay used the normal HTTPS preview produced by passing PR CI.
 
 Publication authorization is explicit. Publish only after the remaining native
 iOS/web checks, through the trusted main-branch GitHub workflow. This document
