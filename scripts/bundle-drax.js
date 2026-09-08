@@ -16,6 +16,7 @@ const checks = [
   ['lib/module/HoverLayer.js', '...StyleSheet.absoluteFill,'],
   ['lib/module/SortableItem.js', 'sortable._internal.onItemSnapEnd?.();'],
   ['lib/module/hooks/useSortableList.js', 'flushVisualOrder();'],
+  ['lib/module/compat/useDraxPanGesture.js', 'useState(false)'],
 ];
 for (const [file, marker] of checks) {
   if (!readFileSync(join(engine, file), 'utf8').includes(marker)) {

@@ -5,6 +5,18 @@ import {dirname, join} from 'node:path';
 // dependency install must retain these fixes until Drax publishes them upstream.
 const root = dirname(require.resolve('react-native-drax/package.json'));
 describe('Drax dependency compatibility patch', () => {
+  it('initializes gesture config from the first reaction, not React render', () => {
+    for (const path of [
+      'src/compat/useDraxPanGesture.ts',
+      'lib/module/compat/useDraxPanGesture.js',
+    ]) {
+      const source = readFileSync(join(root, path), 'utf8');
+      expect(source).toContain('useState(false)');
+      expect(source).toContain('useState(0)');
+      expect(source).not.toMatch(/useState\(\s*config\./);
+      expect(source).not.toContain('prev !== null && current !== prev');
+    }
+  });
   it.each(['src', 'lib/module'])(
     'keeps overlays absolute in %s on RN 0.85+',
     (tree) => {

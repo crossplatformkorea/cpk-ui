@@ -1,3 +1,6 @@
+diff --git a/node_modules/react-native-drax/.bun-tag-3bee79cd5ff29c44 b/.bun-tag-3bee79cd5ff29c44
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
 diff --git a/lib/module/DebugOverlay.js b/lib/module/DebugOverlay.js
 index e2eaa95da0ddd965046ca991baa93fec364979ed..d3ea0e990acd3d8c5363a19f8cfdec38ab52a5dd 100644
 --- a/lib/module/DebugOverlay.js
@@ -35,7 +38,7 @@ index 0fc6c22b7ee2147a407e7ad7afe7a40ad85e0acc..9589c89462a32ab9f098ebf32f18227f
 -    onItemSnapEnd,
      fixedKeys
    } = sortable._internal;
- 
+
 @@ -182,7 +181,7 @@ const SortableItemInner = ({
            draxViewProps.onDragDrop?.(event);
          },
@@ -45,8 +48,37 @@ index 0fc6c22b7ee2147a407e7ad7afe7a40ad85e0acc..9589c89462a32ab9f098ebf32f18227f
            draxViewProps.onSnapEnd?.(snapData);
          },
          onMeasure: measurements => {
+diff --git a/lib/module/compat/useDraxPanGesture.js b/lib/module/compat/useDraxPanGesture.js
+index ec37fe2ee9f04c71eb47d4235b19510c9366b17d..458dba5e611a831a71f2c77fcb8ffbf70df92837 100644
+--- a/lib/module/compat/useDraxPanGesture.js
++++ b/lib/module/compat/useDraxPanGesture.js
+@@ -41,18 +41,19 @@ function useDraxPanGestureV3(config) {
+ function useDraxPanGestureV2(config) {
+   const Gesture = rngh.Gesture;
+
+-  // Mirror SharedValues to React state for v2 gesture config
+-  const [enabled, setEnabled] = useState(config.enabledSV.value);
+-  const [longPressDelay, setLongPressDelay] = useState(config.longPressDelaySV.value);
++  // Start inert; the first UI-thread reaction supplies the current config.
++  // SharedValues must never be read during React render, even initial state.
++  const [enabled, setEnabled] = useState(false);
++  const [longPressDelay, setLongPressDelay] = useState(0);
+
+   // Watch SharedValue changes and sync to JS state
+   useAnimatedReaction(() => config.enabledSV.value, (current, prev) => {
+-    if (prev !== null && current !== prev) {
++    if (current !== prev) {
+       runOnJS(setEnabled)(current);
+     }
+   });
+   useAnimatedReaction(() => config.longPressDelaySV.value, (current, prev) => {
+-    if (prev !== null && current !== prev) {
++    if (current !== prev) {
+       runOnJS(setLongPressDelay)(current);
+     }
+   });
 diff --git a/lib/module/hooks/useSortableList.js b/lib/module/hooks/useSortableList.js
-index 074bc22b0b79c45f0c47b45083fc8af6033320b3..de859b197643148dde37f46a4772f501ec431096 100644
+index 074bc22b0b79c45f0c47b45083fc8af6033320b3..95846801db9eac1cfad8c1e68f5ca8c666c985f4 100644
 --- a/lib/module/hooks/useSortableList.js
 +++ b/lib/module/hooks/useSortableList.js
 @@ -153,9 +153,8 @@ export const useSortableList = options => {
@@ -118,7 +150,7 @@ index d93750fec7bc3ec02292024d3049055dde40cfb1..86e8e05a6bfeed47f628f1f49246b4c7
 --- a/src/DebugOverlay.tsx
 +++ b/src/DebugOverlay.tsx
 @@ -116,7 +116,7 @@ export const DebugOverlay = ({
- 
+
  const styles = StyleSheet.create({
    container: {
 -    ...StyleSheet.absoluteFillObject,
@@ -131,7 +163,7 @@ index 41031b38b156c885562c6a94b3dc45f7d38cd58c..2fb5526122dd82fcfa881a30909e1b29
 --- a/src/HoverLayer.tsx
 +++ b/src/HoverLayer.tsx
 @@ -152,7 +152,7 @@ export const HoverLayer = memo(
- 
+
  const styles = StyleSheet.create({
    container: {
 -    ...StyleSheet.absoluteFillObject,
@@ -150,7 +182,7 @@ index c5504c865d9edf3def798fc29a44e1084e26f36a..4c7102a96e24a871d3a1c50257c4ae7d
 -    onItemSnapEnd,
      fixedKeys,
    } = sortable._internal;
- 
+
 @@ -221,7 +220,7 @@ const SortableItemInner = ({
            draxViewProps.onDragDrop?.(event);
          }}
@@ -160,6 +192,42 @@ index c5504c865d9edf3def798fc29a44e1084e26f36a..4c7102a96e24a871d3a1c50257c4ae7d
            draxViewProps.onSnapEnd?.(snapData);
          }}
          onMeasure={(measurements) => {
+diff --git a/src/compat/useDraxPanGesture.ts b/src/compat/useDraxPanGesture.ts
+index 565782b6ef5c8fdcf6d3af230efd9d8cc69346c8..995e36a67704a30af5911b6b36635669740f38b2 100644
+--- a/src/compat/useDraxPanGesture.ts
++++ b/src/compat/useDraxPanGesture.ts
+@@ -42,17 +42,16 @@ function useDraxPanGestureV3(config: DraxPanGestureConfig): DraxPanGesture {
+ function useDraxPanGestureV2(config: DraxPanGestureConfig): DraxPanGesture {
+   const Gesture = rngh.Gesture;
+
+-  // Mirror SharedValues to React state for v2 gesture config
+-  const [enabled, setEnabled] = useState(config.enabledSV.value);
+-  const [longPressDelay, setLongPressDelay] = useState(
+-    config.longPressDelaySV.value
+-  );
++  // Start inert; the first UI-thread reaction supplies the current config.
++  // SharedValues must never be read during React render, even initial state.
++  const [enabled, setEnabled] = useState(false);
++  const [longPressDelay, setLongPressDelay] = useState(0);
+
+   // Watch SharedValue changes and sync to JS state
+   useAnimatedReaction(
+     () => config.enabledSV.value,
+     (current, prev) => {
+-      if (prev !== null && current !== prev) {
++      if (current !== prev) {
+         runOnJS(setEnabled)(current);
+       }
+     }
+@@ -61,7 +60,7 @@ function useDraxPanGestureV2(config: DraxPanGestureConfig): DraxPanGesture {
+   useAnimatedReaction(
+     () => config.longPressDelaySV.value,
+     (current, prev) => {
+-      if (prev !== null && current !== prev) {
++      if (current !== prev) {
+         runOnJS(setLongPressDelay)(current);
+       }
+     }
 diff --git a/src/hooks/useSortableList.ts b/src/hooks/useSortableList.ts
 index 1ff54d05e16d6a0b25e81d3e98098b59e172026b..906262b10ec13a143e36f404ae43ede7333a4a3f 100644
 --- a/src/hooks/useSortableList.ts
@@ -208,7 +276,7 @@ index 1ff54d05e16d6a0b25e81d3e98098b59e172026b..906262b10ec13a143e36f404ae43ede7
 +      }
        return undefined;
      }
- 
+
 @@ -745,6 +770,20 @@ export const useSortableList = <T,>(
      const measurements = originalIndexes.map((origIdx) => getMeasForOrigIdx(origIdx));
      const missingIdx = measurements.findIndex((m) => !m);
@@ -229,4 +297,4 @@ index 1ff54d05e16d6a0b25e81d3e98098b59e172026b..906262b10ec13a143e36f404ae43ede7
 +      }
        return draggedDisplayIndexRef.current ?? 0;
      }
- 
+

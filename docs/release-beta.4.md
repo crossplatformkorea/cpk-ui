@@ -21,7 +21,7 @@ ReorderableList with accessible handles and controlled persistence callbacks.
 
 ## Evidence (2026-09-09, Asia/Seoul; 2026-09-08 UTC)
 
-- `test:all`:27 suites /336 tests PASS, types/lint/component/story coverage PASS.
+- `test:all`:27 suites /337 tests PASS, types/lint/component/story coverage PASS.
 - Library build, eight package/Metro smoke gates and Storybook build PASS.
 - Physical Pixel10: reorder/reverse, edit after drop, save/reopen, scrolled
   range, long names, Dark/font1.5 and canceled confirmation PASS on the
@@ -38,6 +38,9 @@ ReorderableList with accessible handles and controlled persistence callbacks.
 - Review fixed outside-touch propagation and index-aware accessibility movement,
   with regression tests. Row wrappers no longer expose duplicate adjustable
   controls. Web mouse gestures start immediately; native touch retains its hold.
+- The RNGH2 compatibility adapter now initializes from the first animated
+  reaction rather than reading SharedValues in React render. This removes the
+  repeated Reanimated render warnings observed during the native replay.
 - An early local-browser connection error was left untouched. The successful
   web replay used the normal HTTPS preview produced by passing PR CI.
 
