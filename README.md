@@ -119,6 +119,33 @@ main-branch GitHub Actions publish workflow with provenance.
 - [Changelog](./CHANGELOG.md)
 - [Contributing](./CONTRIBUTING.md)
 
+### Custom dialog slots
+
+`AlertDialog` supports the same slots in controlled props and
+`useCPK().alertDialog.open(options)`: `renderHeader`, `renderBody`, and
+`renderActions`. Each receives `{close}`. Render functions take precedence
+over the existing `title`, `body`, and `actions` content; keep `title` as a
+plain string to name the dialog for assistive technology.
+
+```tsx
+alertDialog.open({
+  title: 'Transfer ownership',
+  renderHeader: () => <OwnershipHeader />,
+  renderBody: () => <OwnershipExplanation />,
+  renderActions: ({close}) => [
+    <Button key="cancel" text="Cancel" onPress={close} />,
+    <Button key="confirm" text="Transfer" onPress={requestTransfer} />,
+  ],
+  closeOnTouchOutside: false,
+});
+```
+
+The header may contain an icon or any custom content. Keep its root's height
+intrinsic (not `flex: 1` inside the title slot). Custom action `style` overrides
+the equal-width defaults; `flex: 0, flexBasis: 'auto'` works for intrinsic-width
+actions on native and web. Use `styles.actionContainer` to align the group.
+The backdrop consistently darkens either theme and respects `backdropOpacity`.
+
 ## License
 
 MIT
