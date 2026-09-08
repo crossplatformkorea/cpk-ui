@@ -446,13 +446,7 @@ function AlertDialogImpl(
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={keyboardAvoidingStyle}
         >
-          {closeOnTouchOutside ? (
-            <TouchableWithoutFeedback onPress={handleBackdropPress}>
-              {AlertDialogContent}
-            </TouchableWithoutFeedback>
-          ) : (
-            AlertDialogContent
-          )}
+          {AlertDialogContent}
         </KeyboardAvoidingView>
       </Modal>
     </View>

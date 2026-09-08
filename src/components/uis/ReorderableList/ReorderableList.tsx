@@ -1,5 +1,11 @@
 import React, {useCallback, useMemo, useRef, type ReactElement} from 'react';
-import {StyleSheet, View, type StyleProp, type ViewStyle} from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import {FlashList, type FlashListRef} from '@shopify/flash-list';
 import {
   DraxHandle,
@@ -20,6 +26,7 @@ export interface ReorderableListItem<T> {
 
 export interface ReorderableListProps<T> {
   data: T[];
+  /** Use a stable item identity; index-only keys cannot survive reordering. */
   keyExtractor: (item: T, index: number) => string;
   getItemLabel: (item: T) => string;
   renderItem: (info: ReorderableListItem<T>) => ReactElement;
@@ -86,16 +93,17 @@ function ReorderableContent<T>({
       if (!disabled && event.fromIndex !== event.toIndex) onReorder(event.data);
     },
     lockToMainAxis: true,
-    longPressDelay: 220,
+    // Mouse dragging should begin immediately; touch keeps scroll protection.
+    longPressDelay: Platform.OS === 'web' ? 0 : 220,
     animationConfig: 'spring',
     inactiveItemStyle: {opacity: 0.8},
     onDragStart: () => onDragStateChange?.(true),
     onDragEnd: () => onDragStateChange?.(false),
   });
   const moveAccessible = useCallback(
-    (item: T, direction: -1 | 1): void => {
+    (item: T, rowIndex: number, direction: -1 | 1): void => {
       if (disabled) return;
-      const key = keyExtractor(item, 0);
+      const key = keyExtractor(item, rowIndex);
       const from = data.findIndex(
         (row, index) => keyExtractor(row, index) === key,
       );
@@ -138,6 +146,9 @@ function ReorderableContent<T>({
             dragHandle
             style={styles?.item}
             accessible={false}
+            accessibilityRole="none"
+            accessibilityLabel={undefined}
+            accessibilityHint={undefined}
           >
             {renderItem({
               item,
@@ -146,6 +157,28 @@ function ReorderableContent<T>({
                 <DraxHandle>
                   <View
                     accessible
+                    focusable
+                    {...(Platform.OS === 'web'
+                      ? {
+                          tabIndex: 0 as const,
+                          onKeyDown: (event: {
+                            key: string;
+                            preventDefault: () => void;
+                          }) => {
+                            if (
+                              event.key !== 'ArrowUp' &&
+                              event.key !== 'ArrowDown'
+                            )
+                              return;
+                            event.preventDefault();
+                            moveAccessible(
+                              item,
+                              index,
+                              event.key === 'ArrowUp' ? -1 : 1,
+                            );
+                          },
+                        }
+                      : {})}
                     accessibilityRole="adjustable"
                     accessibilityLabel={getItemLabel(item)}
                     accessibilityHint={accessibilityHint}
@@ -162,9 +195,9 @@ function ReorderableContent<T>({
                     ]}
                     onAccessibilityAction={({nativeEvent}) => {
                       if (nativeEvent.actionName === 'increment')
-                        moveAccessible(item, 1);
+                        moveAccessible(item, index, 1);
                       if (nativeEvent.actionName === 'decrement')
-                        moveAccessible(item, -1);
+                        moveAccessible(item, index, -1);
                     }}
                     testID={`${testID}-handle-${keyExtractor(item, index)}`}
                     style={[layout.handle, styles?.handle]}

@@ -312,6 +312,25 @@ describe('[AlertDialog]', () => {
   });
 
   describe('Controlled dialog', () => {
+    it('keeps header and body presses inside the dialog', () => {
+      const onClose = jest.fn();
+      const screen = render(
+        createComponent(
+          <AlertDialog
+            visible
+            title="Decision"
+            body="Read this first"
+            closeOnTouchOutside
+            onClose={onClose}
+          />,
+        ),
+      );
+      fireEvent.press(screen.getByText('Decision'));
+      fireEvent.press(screen.getByText('Read this first'));
+      expect(onClose).not.toHaveBeenCalled();
+      fireEvent.press(screen.getByTestId('alert-dialog-backdrop'));
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
     it('renders while visible and does not dismiss on outside press', async () => {
       const onClose = jest.fn();
       const TestControlled = (): ReactElement =>

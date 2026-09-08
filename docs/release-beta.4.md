@@ -19,7 +19,7 @@ ReorderableList with accessible handles and controlled persistence callbacks.
   Architecture), FlashList2, Gesture Handler>=2.28 and Reanimated4.1+. Do not
   imply old-architecture compatibility from the previous broad peer ranges.
 
-## Evidence (September9)
+## Evidence (2026-09-09, Asia/Seoul; 2026-09-08 UTC)
 
 - `test:all`:27 suites /332 tests PASS, types/lint/component/story coverage PASS.
 - Library build, eight package/Metro smoke gates and Storybook build PASS.
