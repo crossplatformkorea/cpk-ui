@@ -356,6 +356,7 @@ export function Button({
       loadingView: ReactElement;
     }): ReactElement => (
       <ButtonContainer
+        collapsable={false}
         $disabled={innerDisabled}
         $size={size}
         style={[
@@ -371,11 +372,11 @@ export function Button({
         testID={loading ? 'loading-view' : 'button-container'}
         $type={type}
       >
-        {/* Keep the label's native parent stable when the underlay changes opacity. */}
+        {/* Press/disabled opacity must not reparent the label or spinner in Fabric. */}
         <View collapsable={false} style={compositeStyles.content}>
           {children}
         </View>
-        <View style={compositeStyles.loading}>
+        <View collapsable={false} style={compositeStyles.loading}>
           {loading ? loadingView : null}
         </View>
       </ButtonContainer>

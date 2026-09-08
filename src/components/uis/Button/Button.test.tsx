@@ -11,7 +11,7 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => {
 import '@testing-library/jest-native/extend-expect';
 
 import React, {type ReactElement} from 'react';
-import {Text, TouchableHighlight} from 'react-native';
+import {Text, TouchableHighlight, View} from 'react-native';
 import {css} from 'kstyled';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
@@ -55,18 +55,63 @@ describe('[Button]', () => {
           },
         }),
       );
-      const content = testingLib.getByTestId('button-container').findByProps({
-        collapsable: false,
-      });
-      expect(content.findByType(Text).props.children).toBe('Add entry');
+      const content = testingLib
+        .getByTestId('button-container')
+        .findAllByType(View)[0];
+      expect(content?.props.collapsable).toBe(false);
+      expect(content?.findByType(Text).props.children).toBe('Add entry');
       fireEvent.press(testingLib.getByText('Add entry'));
       expect(onPress).toHaveBeenCalledTimes(1);
       expect(
-        testingLib.getByTestId('button-container').findByProps({
-          collapsable: false,
-        }),
+        testingLib.getByTestId('button-container').findAllByType(View)[0],
       ).toBe(content);
     });
+
+    it.each(['solid', 'outlined', 'text'] as const)(
+      'preserves %s native parents through press, loading and retry',
+      (type) => {
+        const onPress = jest.fn();
+        const props: ButtonProps = {
+          type,
+          text: 'Save',
+          testID: 'save',
+          onPress,
+          styles: {disabled: {opacity: 0.82}},
+        };
+        testingLib = render(Component({props}));
+        const container = testingLib.getByTestId('button-container');
+        const parents = container.findAllByType(View);
+        expect(container.props.collapsable).toBe(false);
+        expect(parents).toHaveLength(2);
+        for (const parent of parents)
+          expect(parent.props.collapsable).toBe(false);
+        for (let round = 0; round < 3; round += 1) {
+          fireEvent.press(testingLib.getByTestId('save'));
+          testingLib.rerender(
+            Component({props: {...props, disabled: true, loading: true}}),
+          );
+          expect(testingLib.getByTestId('loading-view')).toBe(container);
+          const busyParents = container
+            .findAllByType(View)
+            .filter((node) => parents.includes(node));
+          expect(busyParents).toEqual(parents);
+          for (const parent of busyParents)
+            expect(parent.props.collapsable).toBe(false);
+          expect(testingLib.getByTestId('save')).toHaveAccessibilityState({
+            busy: true,
+            disabled: true,
+          });
+          fireEvent.press(testingLib.getByTestId('save'));
+          expect(onPress).toHaveBeenCalledTimes(round + 1);
+          testingLib.rerender(Component({props}));
+          expect(testingLib.getByTestId('button-container')).toBe(container);
+          expect(container.findAllByType(View)).toEqual(parents);
+          expect(
+            testingLib.queryByTestId('undefined-activity-indicator'),
+          ).toBeNull();
+        }
+      },
+    );
 
     it('does not mount a spinner while idle', () => {
       testingLib = render(Component({}));
