@@ -25,6 +25,7 @@ export * from './components/uis/PageIndicator/PageIndicator';
 export * from './components/uis/PinchZoom/PinchZoom';
 export * from './components/uis/ParallaxHeader/ParallaxHeader';
 export * from './components/uis/Rating/Rating';
+export * from './components/uis/ReorderableList/ReorderableList';
 export * from './components/uis/RadioGroup/RadioGroup';
 export * from './components/uis/SegmentedControl/SegmentedControl';
 export * from './components/uis/StatusbarBrightness/StatusBarBrightness';

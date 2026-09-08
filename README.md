@@ -82,7 +82,7 @@ dark theme tokens. Applications that provide product-specific tokens can pass
 | Actions          | Button, CustomPressable, Fab, IconButton                                         |
 | Inputs           | Calendar, Checkbox, EditText, RadioGroup, Rating, SegmentedControl, SwitchToggle |
 | Feedback         | AlertDialog, ErrorBoundary, LoadingIndicator, Snackbar                           |
-| Display          | Accordion, Card, Hr, Icon, ParallaxHeader, Typography                            |
+| Display          | Accordion, Card, Hr, Icon, ParallaxHeader, ReorderableList, Typography           |
 | Media and system | PinchZoom, StatusBarBrightness                                                   |
 
 Each public component has automated tests and Storybook coverage for its main
@@ -90,6 +90,41 @@ states. Use the [live Storybook](https://ui.crossplatformkorea.com) to inspect
 controls, responsive behavior, accessibility results, and source examples.
 
 ## Release Matrix
+
+### ReorderableList (0.8.0-beta.4)
+
+`ReorderableList<T>` composes FlashList and react-native-drax. Provide stable
+domain keys, `getItemLabel`, controlled `data`/`onReorder`, and place the
+supplied `dragHandle` inside `renderItem`. Keep the host within
+`GestureHandlerRootView` and give the list a bounded viewport. Apply the new
+order optimistically and roll back on persistence failure. `disabled` removes
+handles without hiding content. The 48pt handles also expose assistive
+increment/decrement actions; no visible Move up/Move down controls are needed.
+Variable row height, autoscroll and reduced motion are owned by the engine.
+FlashList's default visible-item anchoring is disabled for this reorderable
+surface: keeping the former first row anchored after a move would scroll the
+viewport unexpectedly. Accepted orders become real row layout, not permanent
+transforms, so subsequent inline editor height changes remain coherent.
+The row renderer owns text semantics: compact titles may truncate, body copy
+must not inherit that limit. See Display/ReorderableList stories.
+
+Requires FlashList 2 (New Architecture), React 19 and Reanimated 4. The package
+bundles its exact patched, JS-only Drax 1.1.0 dependency and MIT license. The
+reproducible patch is `patches/react-native-drax@1.1.0.patch`; the build refuses
+an unpatched engine. Consumers do not need a local patch, fork or postinstall
+mutation. In RN 0.85+ overlays use `StyleSheet.absoluteFill` instead of removed
+`absoluteFillObject`. Verify the packed engine, not only the source checkout.
+The same patch late-binds SortableItem's snap callback: the container registers
+it in a layout effect, so destructuring it during render captures `undefined`
+and prevents the completed drop from committing. Package-boundary regression
+guards cover source and module output; native drag/persistence remains required.
+The patch also supports partially measured single-column virtualized lists:
+hit testing uses known slots and displacement needs geometry only within the
+changed range. Unknown row heights are not guessed, and grid behavior remains
+unchanged. When the consumer accepts an order, flush the temporary visual
+permutation into actual data and clear shifts in the layout phase. Tests cover
+partial measurement, variable heights, horizontal lists and accepted order;
+native reorder → expand/edit → save → reopen must still be replayed.
 
 The 0.8.0 beta is verified with Expo 54, React Native 0.81, React 19,
 kstyled 0.4, and React Native Web 0.21. This is the release validation matrix,

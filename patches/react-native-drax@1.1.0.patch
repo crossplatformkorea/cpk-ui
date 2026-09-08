@@ -1,0 +1,232 @@
+diff --git a/lib/module/DebugOverlay.js b/lib/module/DebugOverlay.js
+index e2eaa95da0ddd965046ca991baa93fec364979ed..d3ea0e990acd3d8c5363a19f8cfdec38ab52a5dd 100644
+--- a/lib/module/DebugOverlay.js
++++ b/lib/module/DebugOverlay.js
+@@ -96,7 +96,7 @@ export const DebugOverlay = ({
+ };
+ const styles = StyleSheet.create({
+   container: {
+-    ...StyleSheet.absoluteFillObject,
++    ...StyleSheet.absoluteFill,
+     zIndex: 99999
+   },
+   overlay: {
+diff --git a/lib/module/HoverLayer.js b/lib/module/HoverLayer.js
+index ba0b0517bb6983e83342326ad31abc1bbbeeb8d0..84c7193dc63dd2c28a31aa41a8e85d045670fe07 100644
+--- a/lib/module/HoverLayer.js
++++ b/lib/module/HoverLayer.js
+@@ -136,7 +136,7 @@ export const HoverLayer = /*#__PURE__*/memo(({
+ });
+ const styles = StyleSheet.create({
+   container: {
+-    ...StyleSheet.absoluteFillObject,
++    ...StyleSheet.absoluteFill,
+     // Default hidden — useAnimatedStyle overrides to opacity:1 when dragging.
+     // Prevents a one-frame flash on first mount before the animated style evaluates.
+     opacity: 0,
+diff --git a/lib/module/SortableItem.js b/lib/module/SortableItem.js
+index 0fc6c22b7ee2147a407e7ad7afe7a40ad85e0acc..9589c89462a32ab9f098ebf32f18227f54a8e0f8 100644
+--- a/lib/module/SortableItem.js
++++ b/lib/module/SortableItem.js
+@@ -88,7 +88,6 @@ const SortableItemInner = ({
+     rawData,
+     originalIndexes,
+     scrollPosition,
+-    onItemSnapEnd,
+     fixedKeys
+   } = sortable._internal;
+ 
+@@ -182,7 +181,7 @@ const SortableItemInner = ({
+           draxViewProps.onDragDrop?.(event);
+         },
+         onSnapEnd: snapData => {
+-          onItemSnapEnd?.();
++          sortable._internal.onItemSnapEnd?.();
+           draxViewProps.onSnapEnd?.(snapData);
+         },
+         onMeasure: measurements => {
+diff --git a/lib/module/hooks/useSortableList.js b/lib/module/hooks/useSortableList.js
+index 074bc22b0b79c45f0c47b45083fc8af6033320b3..de859b197643148dde37f46a4772f501ec431096 100644
+--- a/lib/module/hooks/useSortableList.js
++++ b/lib/module/hooks/useSortableList.js
+@@ -153,9 +153,8 @@ export const useSortableList = options => {
+         }
+       }
+       if (matches) {
+-        // Parent accepted our reorder — stableData stays unchanged.
+-        // FlatList keeps rendering the original data order; permanent shifts
+-        // handle the visual reorder. No Fabric commit → no race → no blink.
++        // Commit accepted order to actual layout and clear temporary transforms.
++        flushVisualOrder();
+         return;
+       }
+     }
+@@ -346,6 +345,30 @@ export const useSortableList = options => {
+     const measurements = order.map(origIdx => getMeasForOrigIdx(origIdx));
+     const missingShiftIdx = measurements.findIndex(m => !m);
+     if (missingShiftIdx >= 0) {
++      // Virtual lists need geometry only for the changed contiguous range.
++      if (numColumns <= 1 && !phantom) {
++        const first = order.findIndex((value, index) => value !== originalIndexes[index]);
++        if (first < 0) return {};
++        let last = order.length - 1;
++        while (last > first && order[last] === originalIndexes[last]) last--;
++        const start = getMeasForOrigIdx(originalIndexes[first]);
++        const next = getMeasForOrigIdx(originalIndexes[first + 1]);
++        if (!start || !next) return undefined;
++        const gap = horizontal ? next.x - start.x - start.width : next.y - start.y - start.height;
++        let cursor = horizontal ? start.x : start.y;
++        const shifts = {};
++        for (let index = first; index <= last; index++) {
++          const measurement = measurements[index];
++          if (!measurement) return undefined;
++          if (index !== skipIndex) {
++            shifts[measurement.key] = horizontal
++              ? {x: cursor - measurement.x, y: 0}
++              : {x: 0, y: cursor - measurement.y};
++          }
++          cursor += (horizontal ? measurement.width : measurement.height) + gap;
++        }
++        return shifts;
++      }
+       return undefined;
+     }
+     const gap = computeItemGap();
+@@ -696,6 +719,20 @@ export const useSortableList = options => {
+     const measurements = originalIndexes.map(origIdx => getMeasForOrigIdx(origIdx));
+     const missingIdx = measurements.findIndex(m => !m);
+     if (missingIdx >= 0) {
++      if (numColumns <= 1) {
++        const position = horizontal ? contentPos.x : contentPos.y;
++        let lastMeasured = draggedDisplayIndexRef.current ?? 0;
++        for (let index = 0; index < measurements.length; index++) {
++          const measurement = measurements[index];
++          if (!measurement) continue;
++          lastMeasured = index;
++          const end = horizontal ? measurement.x + measurement.width : measurement.y + measurement.height;
++          const next = measurements[index + 1];
++          const gap = next ? (horizontal ? next.x : next.y) - end : 0;
++          if (position < end + gap / 2) return index;
++        }
++        return lastMeasured;
++      }
+       return draggedDisplayIndexRef.current ?? 0;
+     }
+     const gap = computeItemGap();
+diff --git a/src/DebugOverlay.tsx b/src/DebugOverlay.tsx
+index d93750fec7bc3ec02292024d3049055dde40cfb1..86e8e05a6bfeed47f628f1f49246b4c755f1fe47 100644
+--- a/src/DebugOverlay.tsx
++++ b/src/DebugOverlay.tsx
+@@ -116,7 +116,7 @@ export const DebugOverlay = ({
+ 
+ const styles = StyleSheet.create({
+   container: {
+-    ...StyleSheet.absoluteFillObject,
++    ...StyleSheet.absoluteFill,
+     zIndex: 99999,
+   },
+   overlay: {
+diff --git a/src/HoverLayer.tsx b/src/HoverLayer.tsx
+index 41031b38b156c885562c6a94b3dc45f7d38cd58c..2fb5526122dd82fcfa881a30909e1b29f295102a 100644
+--- a/src/HoverLayer.tsx
++++ b/src/HoverLayer.tsx
+@@ -152,7 +152,7 @@ export const HoverLayer = memo(
+ 
+ const styles = StyleSheet.create({
+   container: {
+-    ...StyleSheet.absoluteFillObject,
++    ...StyleSheet.absoluteFill,
+     // Default hidden — useAnimatedStyle overrides to opacity:1 when dragging.
+     // Prevents a one-frame flash on first mount before the animated style evaluates.
+     opacity: 0,
+diff --git a/src/SortableItem.tsx b/src/SortableItem.tsx
+index c5504c865d9edf3def798fc29a44e1084e26f36a..4c7102a96e24a871d3a1c50257c4ae7dc3288b33 100644
+--- a/src/SortableItem.tsx
++++ b/src/SortableItem.tsx
+@@ -126,7 +126,6 @@ const SortableItemInner = ({
+     rawData,
+     originalIndexes,
+     scrollPosition,
+-    onItemSnapEnd,
+     fixedKeys,
+   } = sortable._internal;
+ 
+@@ -221,7 +220,7 @@ const SortableItemInner = ({
+           draxViewProps.onDragDrop?.(event);
+         }}
+         onSnapEnd={(snapData) => {
+-          onItemSnapEnd?.();
++          sortable._internal.onItemSnapEnd?.();
+           draxViewProps.onSnapEnd?.(snapData);
+         }}
+         onMeasure={(measurements) => {
+diff --git a/src/hooks/useSortableList.ts b/src/hooks/useSortableList.ts
+index 1ff54d05e16d6a0b25e81d3e98098b59e172026b..906262b10ec13a143e36f404ae43ede7333a4a3f 100644
+--- a/src/hooks/useSortableList.ts
++++ b/src/hooks/useSortableList.ts
+@@ -172,9 +172,9 @@ export const useSortableList = <T,>(
+         }
+       }
+       if (matches) {
+-        // Parent accepted our reorder — stableData stays unchanged.
+-        // FlatList keeps rendering the original data order; permanent shifts
+-        // handle the visual reorder. No Fabric commit → no race → no blink.
++        // Accepted data must become real list layout, not permanent transforms:
++        // otherwise recycled cells retain old hit targets and expanded rows overlap.
++        flushVisualOrder();
+         return;
+       }
+     }
+@@ -382,6 +382,31 @@ export const useSortableList = <T,>(
+     const measurements = order.map((origIdx) => getMeasForOrigIdx(origIdx));
+     const missingShiftIdx = measurements.findIndex((m) => !m);
+     if (missingShiftIdx >= 0) {
++      // Virtual lists do not mount the entire collection. Only a changed
++      // contiguous range needs geometry; untouched offscreen rows do not move.
++      if (numColumns <= 1 && !phantom) {
++        const first = order.findIndex((value, index) => value !== originalIndexes[index]);
++        if (first < 0) return {};
++        let last = order.length - 1;
++        while (last > first && order[last] === originalIndexes[last]) last--;
++        const start = getMeasForOrigIdx(originalIndexes[first]!);
++        const next = getMeasForOrigIdx(originalIndexes[first + 1]!);
++        if (!start || !next) return undefined;
++        const gap = horizontal ? next.x - start.x - start.width : next.y - start.y - start.height;
++        let cursor = horizontal ? start.x : start.y;
++        const shifts: Record<string, Position> = {};
++        for (let index = first; index <= last; index++) {
++          const measurement = measurements[index];
++          if (!measurement) return undefined;
++          if (index !== skipIndex) {
++            shifts[measurement.key] = horizontal
++              ? {x: cursor - measurement.x, y: 0}
++              : {x: 0, y: cursor - measurement.y};
++          }
++          cursor += (horizontal ? measurement.width : measurement.height) + gap;
++        }
++        return shifts;
++      }
+       return undefined;
+     }
+ 
+@@ -745,6 +770,20 @@ export const useSortableList = <T,>(
+     const measurements = originalIndexes.map((origIdx) => getMeasForOrigIdx(origIdx));
+     const missingIdx = measurements.findIndex((m) => !m);
+     if (missingIdx >= 0) {
++      if (numColumns <= 1) {
++        const position = horizontal ? contentPos.x : contentPos.y;
++        let lastMeasured = draggedDisplayIndexRef.current ?? 0;
++        for (let index = 0; index < measurements.length; index++) {
++          const measurement = measurements[index];
++          if (!measurement) continue;
++          lastMeasured = index;
++          const end = horizontal ? measurement.x + measurement.width : measurement.y + measurement.height;
++          const next = measurements[index + 1];
++          const gap = next ? (horizontal ? next.x : next.y) - end : 0;
++          if (position < end + gap / 2) return index;
++        }
++        return lastMeasured;
++      }
+       return draggedDisplayIndexRef.current ?? 0;
+     }
+ 
