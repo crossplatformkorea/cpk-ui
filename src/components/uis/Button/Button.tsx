@@ -323,7 +323,8 @@ export function Button({
           color: textStyle?.color,
         })}
         {!text || typeof text === 'string' ? (
-          <Typography.Body2 style={compositeStyles.text}>
+          // Keep command labels on one line during Android intrinsic remeasurement.
+          <Typography.Body2 numberOfLines={1} style={compositeStyles.text}>
             {text}
           </Typography.Body2>
         ) : (
