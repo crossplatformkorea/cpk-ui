@@ -46,4 +46,15 @@ describe('[CustomPressable]', () => {
       customHitSlop,
     );
   });
+
+  it('honors numeric zero hit slop for adjacent actions', () => {
+    const {getByRole} = render(
+      createComponent(
+        <CustomPressable hitSlop={0}>
+          <Text>Exact bounds</Text>
+        </CustomPressable>,
+      ),
+    );
+    expect(getByRole('button').props.hitSlop).toBe(0);
+  });
 });

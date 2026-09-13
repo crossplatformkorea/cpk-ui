@@ -242,3 +242,19 @@ export const VisualMatrix: Story = {
     </StoryCanvas>
   ),
 };
+
+export const RoundedPressFeedback: Story = {
+  args: {
+    text: 'Create ledger',
+    borderRadius: 28,
+    onPress: action('create-ledger'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'On Android, hold and drag across the pill edges: one foreground Material ripple stays inside the rounded surface. Loading retains the same native content parents.',
+      },
+    },
+  },
+};
