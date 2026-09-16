@@ -166,6 +166,41 @@ async function testLibImports() {
   }
 }
 
+// A local patched dependency is insufficient: npm consumers must receive it.
+async function testBundledEngine() {
+  const packed = JSON.parse(exec('npm pack ./lib --dry-run --json'))[0];
+  if (!packed.bundled?.includes('react-native-drax')) {
+    throw new Error('Published artifact would omit the patched drag engine');
+  }
+  const expected = [
+    'LICENSE.md',
+    'src/SortableItem.tsx',
+    'lib/module/SortableItem.js',
+    'lib/module/hooks/useSortableList.js',
+    'lib/module/HoverLayer.js',
+  ];
+  for (const file of expected) {
+    if (
+      !packed.files.some(
+        (f) => f.path === `node_modules/react-native-drax/${file}`,
+      )
+    ) {
+      throw new Error(`Bundled Drax file missing: ${file}`);
+    }
+  }
+  const consumerRoot = path.join(ROOT, 'lib');
+  const resolved = require.resolve('react-native-drax/package.json', {
+    paths: [consumerRoot],
+  });
+  const expectedRoot = path.join(
+    consumerRoot,
+    'node_modules/react-native-drax',
+  );
+  if (path.dirname(resolved) !== expectedRoot) {
+    throw new Error('Package does not resolve its own bundled engine');
+  }
+}
+
 // --- Test 7: Native module compatibility matrix ---
 async function testNativeModuleCompat() {
   const pkg = JSON.parse(
@@ -268,6 +303,7 @@ async function main() {
     ['Export resolution', testExportResolution],
     ['Library build', testLibBuild],
     ['Build output verification', testLibImports],
+    ['Published drag engine and license', testBundledEngine],
     ['Metro web bundle', testMetroBundle],
   ];
 

@@ -76,3 +76,31 @@ export const Disabled: Story = {
     </StoryCanvas>
   ),
 };
+
+export const FilledCircle: Story = {
+  render: () => (
+    <CustomPressable
+      accessibilityLabel="Circular action"
+      onPress={() => {}}
+      hitSlop={0}
+      style={{
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: '#03C75A',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <StoryText>+</StoryText>
+    </CustomPressable>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The Android foreground ripple remains visible over the fill and clipped to its circle; hit slop does not enlarge visual feedback.',
+      },
+    },
+  },
+};

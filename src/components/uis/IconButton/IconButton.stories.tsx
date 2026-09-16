@@ -95,3 +95,15 @@ export const Variants: Story = {
     </StoryCanvas>
   ),
 };
+
+export const CircularPressFeedback: Story = {
+  args: {icon: 'Plus', type: 'text', onPress},
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A transparent icon action uses a circular Material ripple on Android, without a rectangular background.',
+      },
+    },
+  },
+};

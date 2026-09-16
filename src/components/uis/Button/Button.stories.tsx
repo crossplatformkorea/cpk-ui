@@ -1,4 +1,5 @@
 import {action} from '@storybook/addon-actions';
+import {useEffect, useState} from 'react';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {withThemeProvider} from '../../../../.storybook/decorators';
@@ -150,6 +151,40 @@ export const Danger: Story = {
   },
 };
 
+function LoadingCycleExample() {
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (!loading) return;
+    const timer = setTimeout(() => setLoading(false), 700);
+    return () => clearTimeout(timer);
+  }, [loading]);
+  return (
+    <StoryCanvas>
+      <StorySection label="Press repeatedly; save returns to idle without reparenting">
+        <StoryStack>
+          {buttonTypes.map((type) => (
+            <Button
+              key={type}
+              borderRadius={0}
+              disabled={loading}
+              loading={loading}
+              onPress={() => setLoading(true)}
+              styles={{disabled: {opacity: 0.82}}}
+              testID={`loading-cycle-${type}`}
+              text="Save"
+              type={type}
+            />
+          ))}
+        </StoryStack>
+      </StorySection>
+    </StoryCanvas>
+  );
+}
+
+export const LoadingCycle: Story = {
+  render: () => <LoadingCycleExample />,
+};
+
 export const CustomTheme: Story = {
   args: {
     text: 'Brand action',
@@ -216,4 +251,20 @@ export const VisualMatrix: Story = {
       </StorySection>
     </StoryCanvas>
   ),
+};
+
+export const RoundedPressFeedback: Story = {
+  args: {
+    text: 'Create ledger',
+    borderRadius: 28,
+    onPress: action('create-ledger'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'On Android, hold and drag across the pill edges: one foreground Material ripple stays inside the rounded surface. Loading retains the same native content parents.',
+      },
+    },
+  },
 };

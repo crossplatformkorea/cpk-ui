@@ -6,6 +6,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  isValidElement,
   type ReactElement,
 } from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
@@ -90,6 +91,14 @@ export type AlertDialogOptions = {
   actions?: ReactElement[];
   showCloseButton?: boolean;
   size?: AlertDialogSizeType;
+  /** Custom slots take precedence over title/body/actions. Keep title for a11y. */
+  renderHeader?: (context: AlertDialogRenderContext) => ReactElement | null;
+  renderBody?: (context: AlertDialogRenderContext) => ReactElement | null;
+  renderActions?: (context: AlertDialogRenderContext) => ReactElement[] | null;
+};
+
+export type AlertDialogRenderContext = {
+  close: () => void;
 };
 
 export type AlertDialogProps = {
@@ -110,6 +119,9 @@ function AlertDialogImpl(
     body: bodyProp,
     closeOnTouchOutside: closeOnTouchOutsideProp,
     onClose,
+    renderHeader: renderHeaderProp,
+    renderBody: renderBodyProp,
+    renderActions: renderActionsProp,
     showCloseButton: showCloseButtonProp,
     size: sizeProp,
     style,
@@ -123,7 +135,7 @@ function AlertDialogImpl(
     null,
   );
   const [uncontrolledVisible, setUncontrolledVisible] = useState(false);
-  const {theme, themeType} = useTheme();
+  const {theme} = useTheme();
   const isControlled = visibleProp !== undefined;
   const visible = isControlled ? visibleProp : uncontrolledVisible;
   const options = isControlled
@@ -131,6 +143,9 @@ function AlertDialogImpl(
         actions: actionsProp,
         backdropOpacity: backdropOpacityProp,
         body: bodyProp,
+        renderHeader: renderHeaderProp,
+        renderBody: renderBodyProp,
+        renderActions: renderActionsProp,
         closeOnTouchOutside: closeOnTouchOutsideProp,
         showCloseButton: showCloseButtonProp,
         size: sizeProp,
@@ -176,6 +191,9 @@ function AlertDialogImpl(
     backdropOpacity = 0.2,
     title,
     body,
+    renderHeader,
+    renderBody,
+    renderActions,
     styles,
     actions,
     closeOnTouchOutside = true,
@@ -227,13 +245,11 @@ function AlertDialogImpl(
     }
   }, [size]);
 
-  // Memoize backdrop color calculation
+  // A scrim subdues the background in either theme. A white dark-mode overlay
+  // washes out the page and reverses the dialog's foreground hierarchy.
   const backdropColor = useMemo(
-    () =>
-      themeType === 'light'
-        ? `rgba(0,0,0,${backdropOpacity})`
-        : `rgba(255,255,255,${backdropOpacity})`,
-    [themeType, backdropOpacity],
+    () => `rgba(0,0,0,${backdropOpacity})`,
+    [backdropOpacity],
   );
 
   // Memoize shadow styles
@@ -260,11 +276,14 @@ function AlertDialogImpl(
   }, [closeOnTouchOutside, handleClose]);
 
   const handleCloseButtonPress = handleClose;
+  const renderContext = useMemo(() => ({close: handleClose}), [handleClose]);
 
   // Memoize title content
   const titleContent = useMemo(
     () =>
-      typeof title === 'string' ? (
+      renderHeader ? (
+        renderHeader(renderContext)
+      ) : typeof title === 'string' ? (
         <Typography.Heading3
           style={[{fontSize: sizeConfig.titleFontSize}, styles?.title]}
         >
@@ -273,13 +292,21 @@ function AlertDialogImpl(
       ) : (
         title
       ),
-    [title, sizeConfig.titleFontSize, styles?.title],
+    [
+      renderHeader,
+      renderContext,
+      title,
+      sizeConfig.titleFontSize,
+      styles?.title,
+    ],
   );
 
   // Memoize body content
   const bodyContent = useMemo(
     () =>
-      typeof body === 'string' ? (
+      renderBody ? (
+        renderBody(renderContext)
+      ) : typeof body === 'string' ? (
         <Typography.Body3
           style={[{fontSize: sizeConfig.bodyFontSize}, styles?.body]}
         >
@@ -288,29 +315,38 @@ function AlertDialogImpl(
       ) : (
         body
       ),
-    [body, sizeConfig.bodyFontSize, styles?.body],
+    [renderBody, renderContext, body, sizeConfig.bodyFontSize, styles?.body],
   );
 
   // Memoize actions content
+  const renderedActions = useMemo(
+    () => (renderActions ? renderActions(renderContext) : actions),
+    [renderActions, renderContext, actions],
+  );
   const actionsContent = useMemo(
     () =>
-      actions ? (
+      renderedActions ? (
         <ActionRow
           $marginTop={sizeConfig.actionMarginTop}
           style={styles?.actionContainer}
         >
-          {actions.map((action, index) =>
-            cloneElement(action, {
-              key: `action-${index}`,
-              style: {
-                flex: 1,
-                marginLeft: index !== 0 ? 12 : 0,
-              },
-            } as any),
+          {renderedActions.map((action, index) =>
+            isValidElement<{style?: StyleProp<ViewStyle>}>(action)
+              ? cloneElement(action, {
+                  key: `action-${index}`,
+                  style: [
+                    {
+                      flex: 1,
+                      marginLeft: index !== 0 ? 12 : 0,
+                    },
+                    action.props.style,
+                  ],
+                })
+              : action,
           )}
         </ActionRow>
       ) : null,
-    [actions, sizeConfig.actionMarginTop, styles?.actionContainer],
+    [renderedActions, sizeConfig.actionMarginTop, styles?.actionContainer],
   );
 
   // Memoize close button content
@@ -344,6 +380,7 @@ function AlertDialogImpl(
   const AlertDialogContent = useMemo(
     () => (
       <Container
+        testID="alert-dialog-overlay"
         style={css`
           background-color: ${backdropColor};
         `}
@@ -409,13 +446,7 @@ function AlertDialogImpl(
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={keyboardAvoidingStyle}
         >
-        {closeOnTouchOutside ? (
-          <TouchableWithoutFeedback onPress={handleBackdropPress}>
-            {AlertDialogContent}
-          </TouchableWithoutFeedback>
-        ) : (
-          AlertDialogContent
-        )}
+          {AlertDialogContent}
         </KeyboardAvoidingView>
       </Modal>
     </View>

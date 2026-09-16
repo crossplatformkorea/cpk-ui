@@ -1,5 +1,6 @@
 import React, {type ReactElement} from 'react';
 import type {Meta, StoryObj} from '@storybook/react';
+import {View} from 'react-native';
 
 import {withThemeProvider} from '../../../../.storybook/decorators';
 import {
@@ -10,10 +11,12 @@ import {
 } from '../../../../.storybook/story-ui';
 import {useCPK} from '../../../providers';
 import {Button} from '../../uis/Button/Button';
+import {Icon} from '../../uis/Icon/Icon';
+import {Typography} from '../../uis/Typography/Typography';
 import type {AlertDialogSizeType} from './AlertDialog';
 
 type AlertDialogBasicStoryProps = {
-  pattern: 'confirmation' | 'destructive' | 'blocking';
+  pattern: 'confirmation' | 'destructive' | 'blocking' | 'spacious';
   size: AlertDialogSizeType;
 };
 
@@ -21,7 +24,74 @@ function AlertDialogBasicStory({
   pattern,
   size,
 }: AlertDialogBasicStoryProps): ReactElement {
-  const {alertDialog} = useCPK();
+  const {alertDialog, theme} = useCPK();
+  const openSpacious = () =>
+    alertDialog.open({
+      title: 'Transfer ownership',
+      renderHeader: () => (
+        <View style={{gap: 20, flexShrink: 0}}>
+          <View
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 32,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: theme.button.warning.bg,
+            }}
+          >
+            <Icon name="Crown" size={32} color={theme.button.warning.text} />
+          </View>
+          <Typography.Heading5>Transfer ownership</Typography.Heading5>
+        </View>
+      ),
+      renderBody: () => (
+        <Typography.Body2>
+          This cannot be undone. Make Alex the new owner?
+        </Typography.Body2>
+      ),
+      backdropOpacity: 0.46,
+      showCloseButton: false,
+      closeOnTouchOutside: false,
+      styles: {
+        container: {
+          flex: 0,
+          flexBasis: 'auto',
+          width: '88%',
+          maxWidth: 360,
+          paddingTop: 28,
+          paddingBottom: 28,
+          paddingLeft: 28,
+          paddingRight: 28,
+          borderRadius: 18,
+        },
+        bodyContainer: {marginTop: 12, marginBottom: 0},
+        actionContainer: {
+          marginTop: 32,
+          justifyContent: 'flex-end',
+          paddingRight: 0,
+        },
+      },
+      renderActions: ({close}) => [
+        <Button
+          key="cancel"
+          text="Cancel"
+          type="text"
+          color="light"
+          style={{flex: 0, flexBasis: 'auto'}}
+          styles={{text: {color: theme.text.label}}}
+          onPress={close}
+        />,
+        <Button
+          key="transfer"
+          text="Transfer"
+          type="text"
+          color="warning"
+          style={{flex: 0, flexBasis: 'auto'}}
+          onPress={close}
+        />,
+      ],
+    });
   const openConfirmation = () =>
     alertDialog.open({
       title: 'Publish this release?',
@@ -71,7 +141,9 @@ function AlertDialogBasicStory({
       />
       <StorySection label="Decision">
         <StoryRow>
-          {pattern === 'confirmation' ? (
+          {pattern === 'spacious' ? (
+            <Button onPress={openSpacious} text="Review ownership" />
+          ) : pattern === 'confirmation' ? (
             <Button onPress={openConfirmation} text="Review publication" />
           ) : pattern === 'destructive' ? (
             <Button
@@ -118,7 +190,7 @@ const meta = {
   argTypes: {
     pattern: {
       control: 'radio',
-      options: ['confirmation', 'destructive', 'blocking'],
+      options: ['confirmation', 'destructive', 'blocking', 'spacious'],
     },
     size: {
       control: 'radio',
@@ -146,4 +218,13 @@ export const DestructiveDecision: Story = {
     pattern: 'destructive',
     size: 'medium',
   },
+};
+
+export const DarkConfirmation: Story = {
+  args: {pattern: 'confirmation', size: 'medium'},
+  globals: {theme: 'dark'},
+};
+
+export const SpaciousDecision: Story = {
+  args: {pattern: 'spacious', size: 'medium'},
 };

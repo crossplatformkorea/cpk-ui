@@ -70,6 +70,10 @@ module.exports = {
       // ESM build ships class properties, which webpack cannot parse on its
       // own, and its worklets need the Reanimated babel plugin.
       'react-native-reanimated',
+      'react-native-drax',
+      'react-native-gesture-handler',
+      'react-native-worklets',
+      '@shopify/flash-list',
     ];
 
     config.module.rules.push({

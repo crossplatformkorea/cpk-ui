@@ -1,6 +1,11 @@
 import React, {useCallback, useMemo, type ReactElement} from 'react';
-import type {StyleProp, TouchableHighlightProps, ViewStyle} from 'react-native';
-import {TouchableHighlight, View} from 'react-native';
+import type {
+  GestureResponderEvent,
+  StyleProp,
+  TouchableHighlightProps,
+  ViewStyle,
+} from 'react-native';
+import {Platform, TouchableHighlight, View} from 'react-native';
 import {css} from 'kstyled';
 
 import type {IconName} from '../Icon/Icon';
@@ -10,6 +15,7 @@ import {CpkTheme, getTheme} from '../../../utils/theme';
 import {useTheme} from '../../../providers/ThemeProvider';
 import * as Haptics from 'expo-haptics';
 import {useHoverState} from '../../../hooks/useHoverState';
+import {CustomPressable} from '../CustomPressable/CustomPressable';
 
 type Styles = {
   container?: StyleProp<ViewStyle>;
@@ -47,7 +53,7 @@ const ButtonStyles = ({
 }) => {
   const isDisabled = disabled || loading;
 
-  let backgroundColor = theme.bg.basic;
+  let backgroundColor = 'transparent';
   let borderColor = 'transparent';
   let iconColor = theme.text.basic;
 
@@ -190,7 +196,7 @@ export function IconButton({
 
   // Memoize press handler
   const handlePress = useCallback(
-    (e: any) => {
+    (e: GestureResponderEvent) => {
       onPress?.(e);
       if (hapticFeedback) {
         Haptics.impactAsync(hapticFeedback);
@@ -265,6 +271,35 @@ export function IconButton({
     ],
     [borderRadiusStr, compositeStyles, hovered, disabled],
   );
+
+  if (Platform.OS === 'android') {
+    return (
+      <View style={containerStyles}>
+        <CustomPressable
+          {...touchableHighlightProps}
+          accessibilityLabel={accessibilityLabel ?? icon}
+          accessibilityRole="button"
+          accessibilityState={{
+            ...touchableHighlightProps?.accessibilityState,
+            busy: loading,
+            disabled: !!disabled || loading,
+          }}
+          disabled={disabled || loading}
+          onPress={handlePress}
+          style={{borderRadius: 99}}
+          testID={testID}
+        >
+          <View
+            collapsable={false}
+            style={innerContainerStyles}
+            testID={loading ? 'loading-view' : 'button-container'}
+          >
+            {loading ? LoadingView : IconView}
+          </View>
+        </CustomPressable>
+      </View>
+    );
+  }
 
   return (
     <View style={containerStyles}>

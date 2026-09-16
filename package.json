@@ -33,7 +33,7 @@
     "test:all": "bun run lint && bun run components:check && bun run storybook:check && bun run tsc && bun run test",
     "prebuild": "find ./lib -mindepth 1 ! -name 'package.json' -exec rm -rf {} +",
     "build": "tsc --project tsconfigBuild.json && cpx './src/**/*.{ts,tsx}' ./lib/src/",
-    "postbuild": "cp ./src/react-native.config.cjs ./lib/react-native.config.cjs && rm -rf ./lib/tsconfig* && cp README.md ./lib/README.md && mkdir -p ./lib/components/uis/Icon && find ./src/components/uis/Icon/ -type f \\( -name '*.otf' -o -name '*.ttf' \\) -exec cp {} ./lib/components/uis/Icon/ \\;",
+    "postbuild": "cp ./src/react-native.config.cjs ./lib/react-native.config.cjs && rm -rf ./lib/tsconfig* && cp README.md ./lib/README.md && mkdir -p ./lib/components/uis/Icon && find ./src/components/uis/Icon/ -type f \\( -name '*.otf' -o -name '*.ttf' \\) -exec cp {} ./lib/components/uis/Icon/ \\; && node scripts/bundle-drax.js",
     "storybook:build": "storybook build --docs -o ./doc-build -c ./.storybook",
     "storybook:serve": "npx http-server ./doc-build",
     "export": "expo export -p web",
@@ -46,6 +46,7 @@
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "8.4.4",
     "@react-native-community/slider": "5.0.1",
+    "@shopify/flash-list": "2.0.2",
     "expo": "~54.0.35",
     "expo-constants": "~18.0.13",
     "expo-font": "~14.0.12",
@@ -57,6 +58,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
+    "react-native-drax": "1.1.0",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-reanimated": "~4.1.1",
     "react-native-safe-area-context": "~5.6.0",
@@ -132,5 +134,8 @@
     "ts-node": "^10.9.2",
     "typescript": "~5.9.3"
   },
-  "packageManager": "bun@1.3.13"
+  "packageManager": "bun@1.3.13",
+  "patchedDependencies": {
+    "react-native-drax@1.1.0": "patches/react-native-drax@1.1.0.patch"
+  }
 }

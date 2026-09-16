@@ -1,12 +1,13 @@
 import React, {useCallback, useMemo, type ReactElement} from 'react';
 import type {
   Insets,
+  GestureResponderEvent,
   StyleProp,
   TextStyle,
   TouchableHighlightProps,
   ViewStyle,
 } from 'react-native';
-import {TouchableHighlight, View} from 'react-native';
+import {Platform, TouchableHighlight, View} from 'react-native';
 import {styled, css} from 'kstyled';
 
 import {useTheme} from '../../../providers/ThemeProvider';
@@ -14,6 +15,7 @@ import {cloneElemWithDefaultColors} from '../../../utils/guards';
 import type {CpkTheme} from '../../../utils/theme';
 import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
 import {Typography} from '../Typography/Typography';
+import {CustomPressable} from '../CustomPressable/CustomPressable';
 import * as Haptics from 'expo-haptics';
 import {useHoverState} from '../../../hooks/useHoverState';
 
@@ -357,6 +359,7 @@ export function Button({
       loadingView: ReactElement;
     }): ReactElement => (
       <ButtonContainer
+        collapsable={false}
         $disabled={innerDisabled}
         $size={size}
         style={[
@@ -372,11 +375,11 @@ export function Button({
         testID={loading ? 'loading-view' : 'button-container'}
         $type={type}
       >
-        {/* Keep the label's native parent stable when the underlay changes opacity. */}
+        {/* Press/disabled opacity must not reparent the label or spinner in Fabric. */}
         <View collapsable={false} style={compositeStyles.content}>
           {children}
         </View>
-        <View style={compositeStyles.loading}>
+        <View collapsable={false} style={compositeStyles.loading}>
           {loading ? loadingView : null}
         </View>
       </ButtonContainer>
@@ -390,6 +393,7 @@ export function Button({
       compositeStyles.content,
       compositeStyles.loading,
       hovered,
+      borderRadius,
       type,
       loading,
     ],
@@ -397,7 +401,7 @@ export function Button({
 
   // Memoize press handler
   const handlePress = useCallback(
-    (e: any) => {
+    (e: GestureResponderEvent) => {
       onPress?.(e);
       if (hapticFeedback) {
         Haptics.impactAsync(hapticFeedback);
@@ -413,10 +417,40 @@ export function Button({
       style,
       css`
         border-radius: ${borderRadius}px;
+        overflow: hidden;
       `,
     ],
     [style, borderRadius, type],
   );
+
+  if (Platform.OS === 'android') {
+    return (
+      <CustomPressable
+        {...touchableHighlightProps}
+        accessibilityLabel={
+          accessibilityLabel ?? (typeof text === 'string' ? text : undefined)
+        }
+        accessibilityRole="button"
+        accessibilityState={{
+          ...touchableHighlightProps?.accessibilityState,
+          busy: loading,
+          disabled: innerDisabled || loading,
+        }}
+        disabled={innerDisabled || loading}
+        hitSlop={hitSlop}
+        onPress={handlePress}
+        style={buttonStyles}
+        testID={testID}
+        android_ripple={{
+          color: touchableHighlightProps?.underlayColor ?? theme.role.underlay,
+          foreground: true,
+          borderless: false,
+        }}
+      >
+        {renderContainer({children: ChildView, loadingView: LoadingView})}
+      </CustomPressable>
+    );
+  }
 
   return (
     <TouchableHighlight
