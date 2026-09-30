@@ -28,6 +28,7 @@ export * from './components/uis/Rating/Rating';
 export * from './components/uis/ReorderableList/ReorderableList';
 export * from './components/uis/RadioGroup/RadioGroup';
 export * from './components/uis/SegmentedControl/SegmentedControl';
+export * from './components/uis/SelectionFeedback/SelectionFeedback';
 export * from './components/uis/StatusbarBrightness/StatusBarBrightness';
 export * from './components/uis/SwitchToggle/SwitchToggle';
 export * from './components/uis/Typography/Typography';
