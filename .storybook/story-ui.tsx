@@ -29,11 +29,16 @@ export function StoryHeader({
 }
 
 export function StoryCanvas({children, style}: StoryChildrenProps) {
+  const {theme} = useTheme();
   return (
     <ScrollView
-      contentContainerStyle={[styles.canvas, style]}
+      contentContainerStyle={[
+        styles.canvas,
+        {backgroundColor: theme.bg.basic},
+        style,
+      ]}
       showsVerticalScrollIndicator={false}
-      style={styles.scrollView}
+      style={[styles.scrollView, {backgroundColor: theme.bg.basic}]}
     >
       {children}
     </ScrollView>

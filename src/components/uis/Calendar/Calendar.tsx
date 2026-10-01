@@ -184,6 +184,7 @@ function CalendarContainer(
     renderHeader,
     renderWeekdayLabel,
     renderDay,
+    selectionAnimation = false,
     onDayLongPress,
     onDisabledDayPress,
     labels: labelsPropInput,
@@ -343,7 +344,9 @@ function CalendarContainer(
   } = useDisabledState({minDate, maxDate, disabledDates, isDateDisabled});
 
   // ── latest-value refs, so no handler identity depends on a changing callback ─
+  const selectionIntent = useRef<CalendarDateKey | null>(null);
   const callbacksRef = useRef({
+    selectionAnimation,
     onChange,
     onMonthChange,
     onModeChange,
@@ -353,6 +356,7 @@ function CalendarContainer(
 
   const stateRef = useRef({
     pageKey,
+    selectedKey,
     mode,
     weekStart,
     monthsToShow,
@@ -363,6 +367,7 @@ function CalendarContainer(
 
   useEffect(() => {
     callbacksRef.current = {
+      selectionAnimation,
       onChange,
       onMonthChange,
       onModeChange,
@@ -370,6 +375,7 @@ function CalendarContainer(
       onDisabledDayPress,
     };
   }, [
+    selectionAnimation,
     onChange,
     onDayLongPress,
     onDisabledDayPress,
@@ -380,6 +386,7 @@ function CalendarContainer(
   useEffect(() => {
     stateRef.current = {
       pageKey,
+      selectedKey,
       mode,
       weekStart,
       monthsToShow,
@@ -394,6 +401,7 @@ function CalendarContainer(
     modeProp,
     monthsToShow,
     pageKey,
+    selectedKey,
     weekStart,
   ]);
 
@@ -461,6 +469,11 @@ function CalendarContainer(
   const selectKey = useCallback(
     (key: CalendarDateKey, source: CalendarChangeSource) => {
       const current = stateRef.current;
+      selectionIntent.current =
+        current.selectedKey !== key &&
+        (source === 'press' || source === 'keyboard')
+          ? key
+          : null;
 
       if (!current.isValueControlled) {
         setSelectedKeyState(key);
@@ -499,6 +512,18 @@ function CalendarContainer(
     );
   }, []);
 
+  const consumeSelectionFeedback = useCallback(
+    (key: CalendarDateKey): boolean => {
+      if (selectionIntent.current !== key) return false;
+      selectionIntent.current = null;
+      return callbacksRef.current.selectionAnimation;
+    },
+    [],
+  );
+  useEffect(() => {
+    if (selectionIntent.current !== selectedKey) selectionIntent.current = null;
+  }, [focusedKey, selectedKey]);
+
   const chrome = useMemo<CalendarChrome>(
     () =>
       Object.freeze({
@@ -517,12 +542,14 @@ function CalendarContainer(
         styles,
         renderDay,
         onPress: handleDayPress,
+        consumeSelectionFeedback,
         onLongPress: onDayLongPress ? handleDayLongPress : undefined,
         onDisabledPress: onDisabledDayPress
           ? handleDisabledDayPress
           : undefined,
       }),
     [
+      consumeSelectionFeedback,
       fontScale,
       geometry,
       handleDayLongPress,
@@ -872,8 +899,19 @@ function CalendarContainer(
     [metrics.cellSize, monthsToShow, palette.background],
   );
 
-  const weekdayRow = showWeekdayRow ? (
-    <View style={monthsToShow > 1 ? TWO_UP_ROW : undefined}>
+  const weekdayRow = !showWeekdayRow ? null : monthsToShow === 1 ? (
+    <CalendarWeekdayRow
+      maxFontSizeMultiplier={maxFontSizeMultiplier}
+      metrics={metrics}
+      palette={palette}
+      renderWeekdayLabel={renderWeekdayLabel}
+      showWeekNumbers={showWeekNumbers}
+      styles={styles}
+      weekStart={weekStart}
+      weekdayLabels={weekdayLabels}
+    />
+  ) : (
+    <View style={TWO_UP_ROW}>
       {Array.from({length: monthsToShow}, (_, index) => (
         <View key={`weekday-row-${index}`} style={COLUMN}>
           <CalendarWeekdayRow
@@ -889,7 +927,7 @@ function CalendarContainer(
         </View>
       ))}
     </View>
-  ) : null;
+  );
 
   return (
     <KeyboardView

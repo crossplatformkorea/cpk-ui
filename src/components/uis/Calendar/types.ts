@@ -182,7 +182,12 @@ export type CalendarStyles = {
 };
 
 export type CalendarRenderDay = (
-  ctx: CalendarDayState & {palette: CalendarPalette; cellSize: number},
+  ctx: CalendarDayState & {
+    palette: CalendarPalette;
+    cellSize: number;
+    /** Maximum ink diameter that fits the measured column during selection motion. */
+    contentMaxSize?: number;
+  },
 ) => ReactNode;
 
 /**
@@ -213,6 +218,7 @@ export type CalendarChrome = Readonly<{
   styles: CalendarStyles;
   renderDay?: CalendarRenderDay;
   onPress: (key: CalendarDateKey) => void;
+  consumeSelectionFeedback?: (key: CalendarDateKey) => boolean;
   onLongPress?: (key: CalendarDateKey) => void;
   onDisabledPress?: (key: CalendarDateKey) => void;
 }>;
@@ -234,6 +240,8 @@ export type CalendarHeaderContext = {
 };
 
 export type CalendarProps = {
+  /** Pop the selected day only after a changed press or keyboard selection. */
+  selectionAnimation?: boolean;
   /** Controlled selection. `null` clears it. A `Date` is normalized to its local day key. */
   value?: Date | CalendarDateKey | null;
   /** Uncontrolled initial selection. Ignored when `value !== undefined`. */

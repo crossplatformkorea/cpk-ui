@@ -1,5 +1,12 @@
-import React, {useCallback, useMemo, type ReactElement} from 'react';
-import type {TextStyle, ViewStyle} from 'react-native';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactElement,
+} from 'react';
+import type {LayoutChangeEvent, TextStyle, ViewStyle} from 'react-native';
 import {Platform, Pressable, Text, View} from 'react-native';
 import {css} from 'kstyled';
 
@@ -10,6 +17,11 @@ import type {
   CalendarPalette,
 } from './types';
 import {isSameMarker} from './utils';
+import {
+  SelectionFeedback,
+  SELECTION_FEEDBACK_PEAK_SCALE,
+  type SelectionFeedbackHandle,
+} from '../SelectionFeedback/SelectionFeedback';
 
 const CELL = css`
   flex: 1;
@@ -130,6 +142,33 @@ function CalendarDayContainer(props: CalendarDayProps): ReactElement {
   } = props;
 
   const {palette, metrics, geometry, styles} = chrome;
+  const [cellWidth, setCellWidth] = useState<number | null>(null);
+  const onLayout = useCallback((event: LayoutChangeEvent): void => {
+    const width = event.nativeEvent.layout.width;
+    if (Number.isFinite(width) && width > 0)
+      setCellWidth((previous) =>
+        previous !== null && Math.abs(previous - width) < 0.5 ? previous : width,
+      );
+  }, []);
+  // Font scale grows row height, while seven columns still share one viewport.
+  // Reserve room for the spring rather than clipping a larger circle to a pill.
+  const contentMaxSize =
+    cellWidth === null ? undefined : cellWidth / SELECTION_FEEDBACK_PEAK_SCALE;
+  const pillGeometry = useMemo(() => {
+    if (contentMaxSize === undefined || metrics.numberSize <= contentMaxSize)
+      return geometry.pill;
+    return {
+      ...geometry.pill,
+      width: contentMaxSize,
+      height: contentMaxSize,
+      borderRadius: contentMaxSize / 2,
+    };
+  }, [contentMaxSize, geometry.pill, metrics.numberSize]);
+  const feedback = useRef<SelectionFeedbackHandle>(null);
+  useEffect(() => {
+    if (isSelected && chrome.consumeSelectionFeedback?.(day.key))
+      feedback.current?.play();
+  }, [chrome.consumeSelectionFeedback, day.key, isSelected]);
 
   const pillStyle = useMemo<ViewStyle | null>(() => {
     if (isSelected) {
@@ -234,6 +273,7 @@ function CalendarDayContainer(props: CalendarDayProps): ReactElement {
       accessibilityState={{disabled: isDisabled, selected: isSelected}}
       aria-disabled={isDisabled}
       aria-selected={isSelected}
+      onLayout={onLayout}
       onLongPress={chrome.onLongPress ? handleLongPress : undefined}
       onPress={handlePress}
       style={cellStyle}
@@ -241,37 +281,42 @@ function CalendarDayContainer(props: CalendarDayProps): ReactElement {
       testID={`calendar-day-${day.key}`}
     >
       {chrome.renderDay ? (
-        chrome.renderDay({
-          day,
-          isSelected,
-          isToday,
-          isDisabled,
-          marker,
-          palette,
-          cellSize: metrics.cellSize,
-        })
+        <SelectionFeedback active={isSelected} ref={feedback} variant="pop">
+          {chrome.renderDay({
+            day,
+            isSelected,
+            isToday,
+            isDisabled,
+            marker,
+            palette,
+            cellSize: metrics.cellSize,
+            contentMaxSize,
+          })}
+        </SelectionFeedback>
       ) : (
         <>
-          <View style={[PILL, geometry.pill, pillStyle]}>
-            <Text
-              adjustsFontSizeToFit={Platform.OS === 'ios'}
-              maxFontSizeMultiplier={chrome.maxFontSizeMultiplier}
-              minimumFontScale={0.8}
-              numberOfLines={1}
-              style={[
-                DAY_TEXT,
-                geometry.dayText,
-                textStyle,
-                styles.dayText,
-                day.isOutside ? styles.outsideDayText : null,
-                isDisabled ? styles.disabledDayText : null,
-                isSelected ? styles.selectedDayText : null,
-                isToday ? styles.todayDayText : null,
-              ]}
-            >
-              {dayLabel}
-            </Text>
-          </View>
+          <SelectionFeedback active={isSelected} ref={feedback} variant="pop">
+            <View style={[PILL, pillGeometry, pillStyle]}>
+              <Text
+                adjustsFontSizeToFit={Platform.OS === 'ios'}
+                maxFontSizeMultiplier={chrome.maxFontSizeMultiplier}
+                minimumFontScale={0.8}
+                numberOfLines={1}
+                style={[
+                  DAY_TEXT,
+                  geometry.dayText,
+                  textStyle,
+                  styles.dayText,
+                  day.isOutside ? styles.outsideDayText : null,
+                  isDisabled ? styles.disabledDayText : null,
+                  isSelected ? styles.selectedDayText : null,
+                  isToday ? styles.todayDayText : null,
+                ]}
+              >
+                {dayLabel}
+              </Text>
+            </View>
+          </SelectionFeedback>
 
           {dots || badgeText ? (
             <View

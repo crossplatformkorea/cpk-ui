@@ -466,3 +466,23 @@ export const CustomRenderDay: Story = {
     </StoryCanvas>
   ),
 };
+
+/** Deliberate changed choices pop; month navigation and repeated choices stay still. */
+export const SelectionMotion: Story = {
+  args: {selectionAnimation: true},
+};
+
+export const NarrowSelectionMotion: Story = {
+  args: {selectionAnimation: true, size: 96, paging: 'none'},
+  render: (args) => (
+    <StoryCanvas>
+      <StoryHeader
+        title="Large cells in narrow columns"
+        description="Tall cells keep their height. The circular mark fits the actual column, including the top of its selection spring."
+      />
+      <View style={{width: 320, maxWidth: '100%'}}>
+        <Calendar {...args} />
+      </View>
+    </StoryCanvas>
+  ),
+};

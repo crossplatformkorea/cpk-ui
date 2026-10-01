@@ -117,6 +117,27 @@ beforeEach(() => {
 });
 
 describe('[Calendar] render', () => {
+  it('keeps a single weekday row directly in the calendar layout', () => {
+    const screen = render(
+      createComponent(
+        <Calendar
+          today={TODAY}
+          monthsToShow={1}
+          styles={{weekdayRow: {height: 40, marginBottom: 12}}}
+        />,
+      ),
+    );
+    const tree = findNode(screen.toJSON(), (node) => node.props?.testID === 'calendar');
+    expect(
+      tree?.children?.some(
+        (node) => node.props?.testID === 'calendar-weekday-row',
+      ),
+    ).toBe(true);
+    expect(screen.getByTestId('calendar-weekday-row', {includeHiddenElements: true})).toHaveStyle({
+      height: 40,
+      marginBottom: 12,
+    });
+  });
   it('should render without crashing in light and dark', async () => {
     const light = render(createComponent(<Calendar today={TODAY} />, 'light'));
 

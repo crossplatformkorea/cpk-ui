@@ -1,13 +1,16 @@
-import React from 'react';
+import React, {createRef} from 'react';
 import {Text} from 'react-native';
-import {render} from '@testing-library/react-native';
+import {act, render} from '@testing-library/react-native';
 import {
   cancelAnimation,
   useReducedMotion,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import {SelectionFeedback} from './SelectionFeedback';
+import {
+  SelectionFeedback,
+  type SelectionFeedbackHandle,
+} from './SelectionFeedback';
 
 jest.mock('react-native-reanimated', () => ({
   ...jest.requireActual('react-native-reanimated/mock'),
@@ -43,12 +46,12 @@ describe('SelectionFeedback', () => {
     const screen = render(<SelectionFeedback selection={0} />);
     screen.rerender(<SelectionFeedback selection={1} />);
     expect(withTiming).toHaveBeenCalledWith(
-      1.08,
+      1.12,
       expect.objectContaining({duration: 100}),
     );
     expect(withSpring).toHaveBeenCalledWith(
       1,
-      expect.objectContaining({duration: 350, dampingRatio: 0.8}),
+      expect.objectContaining({duration: 300, dampingRatio: 0.8}),
     );
     const cancelled = jest.mocked(cancelAnimation).mock.calls.length;
     screen.rerender(<SelectionFeedback selection={2} />);
@@ -77,4 +80,20 @@ describe('SelectionFeedback', () => {
       expect(withSpring).not.toHaveBeenCalled();
     },
   );
+  it('supports an explicit committed-action trigger without replaying on mount', () => {
+    const ref = createRef<SelectionFeedbackHandle>();
+    render(<SelectionFeedback ref={ref} variant="pop" />);
+    expect(withSpring).not.toHaveBeenCalled();
+    act(() => ref.current?.play());
+    expect(withSpring).toHaveBeenCalledTimes(1);
+    act(() => ref.current?.play());
+    expect(withSpring).toHaveBeenCalledTimes(2);
+  });
+  it('suppresses an imperative trigger under system reduced motion', () => {
+    jest.mocked(useReducedMotion).mockReturnValue(true);
+    const ref = createRef<SelectionFeedbackHandle>();
+    render(<SelectionFeedback ref={ref} variant="pop" />);
+    act(() => ref.current?.play());
+    expect(withSpring).not.toHaveBeenCalled();
+  });
 });

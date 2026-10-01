@@ -16,7 +16,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Wrap selection contents inside a stable press target. A changed identity grows 8% and settles; mount, unchanged selection and deselection stay still. Rapid changes cancel the prior pulse. System reduced motion is the default.',
+          'Wrap selection contents inside a stable press target. A changed identity grows 12% and settles; mount, unchanged selection and deselection stay still. Rapid changes cancel the prior pulse. System reduced motion is the default.',
       },
     },
   },
@@ -26,8 +26,10 @@ type Story = StoryObj<typeof Choices>;
 
 function Choices({
   reducedMotion,
+  variant,
 }: {
   reducedMotion?: boolean;
+  variant?: 'pulse' | 'pop';
 }): React.ReactElement {
   const {theme} = useTheme();
   const [selected, setSelected] = useState(0);
@@ -50,6 +52,7 @@ function Choices({
               active={selected === value}
               selection={selected}
               reducedMotion={reducedMotion}
+              variant={variant}
               style={{
                 width: 40,
                 height: 40,
@@ -76,3 +79,5 @@ function Choices({
 }
 export const Interactive: Story = {render: () => <Choices />};
 export const ReducedMotion: Story = {render: () => <Choices reducedMotion />};
+
+export const Pop: Story = {render: () => <Choices variant="pop" />};

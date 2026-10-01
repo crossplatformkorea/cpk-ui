@@ -2,9 +2,10 @@ import '@testing-library/jest-native/extend-expect';
 import 'jest-plugin-context/setup';
 import 'givens/setup';
 
-jest.mock('react-native-reanimated', () =>
-  require('react-native-reanimated/mock'),
-);
+jest.mock('react-native-reanimated', () => ({
+  ...require('react-native-reanimated/mock'),
+  useReducedMotion: jest.fn(() => false),
+}));
 
 jest.mock('expo-font', () => {
   return {
