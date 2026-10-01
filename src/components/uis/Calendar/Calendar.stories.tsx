@@ -472,6 +472,24 @@ export const SelectionMotion: Story = {
   args: {selectionAnimation: true},
 };
 
+export const BoundarySelectionMotion: Story = {
+  args: {
+    selectionAnimation: true,
+    fixedWeeks: true,
+    defaultMonth: '2026-10',
+    defaultValue: '2026-10-01',
+  },
+  render: (args) => (
+    <StoryCanvas>
+      <StoryHeader
+        title="Selection at month boundaries"
+        description="Choose 2 or 31, then repeat. Only the visible page confirms a changed selection; preloaded neighbours remain quiet."
+      />
+      <Calendar {...args} />
+    </StoryCanvas>
+  ),
+};
+
 export const NarrowSelectionMotion: Story = {
   args: {selectionAnimation: true, size: 96, paging: 'none'},
   render: (args) => (

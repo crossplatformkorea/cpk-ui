@@ -814,14 +814,25 @@ function CalendarContainer(
   const rowCount = mode === 'week' ? 1 : currentGrid.rowCount;
   const collapsible = mode === 'week' || (monthsToShow === 1 && rowCount > 1);
 
+  // Preloaded pages repeat boundary dates. Only the visible slot may consume
+  // deliberate feedback, otherwise an offscreen copy steals the spring.
+  const quietChrome = useMemo<CalendarChrome>(
+    () => ({...chrome, consumeSelectionFeedback: undefined}),
+    [chrome],
+  );
+
   const renderGrid = useCallback(
-    (gridPageKey: CalendarPageKey, gridTestID: string): ReactNode => {
+    (
+      gridPageKey: CalendarPageKey,
+      gridTestID: string,
+      isVisibleSlot: boolean,
+    ): ReactNode => {
       const grid = gridFor(gridPageKey);
 
       return (
         <CalendarPage
           activeRow={activeRow}
-          chrome={chrome}
+          chrome={isVisibleSlot ? chrome : quietChrome}
           collapse={collapse}
           collapsible={collapsible}
           disabledVersion={disabledVersion}
@@ -846,6 +857,7 @@ function CalendarContainer(
       gridFor,
       isDisabled,
       markers,
+      quietChrome,
       selectedKey,
       showOutsideDays,
       showWeekNumbers,
@@ -856,8 +868,13 @@ function CalendarContainer(
 
   const renderSlot = useCallback(
     (slotPageKey: CalendarPageKey): ReactNode => {
+      const isVisibleSlot = slotPageKey === pageKey;
       if (monthsToShow === 1) {
-        return renderGrid(slotPageKey, `calendar-page-${slotPageKey}`);
+        return renderGrid(
+          slotPageKey,
+          `calendar-page-${slotPageKey}`,
+          isVisibleSlot,
+        );
       }
 
       const monthKeys: CalendarPageKey[] = [slotPageKey];
@@ -870,13 +887,17 @@ function CalendarContainer(
         <View style={TWO_UP_ROW}>
           {monthKeys.map((monthKey) => (
             <View key={monthKey} style={COLUMN}>
-              {renderGrid(monthKey, `calendar-page-${monthKey}`)}
+              {renderGrid(
+                monthKey,
+                `calendar-page-${monthKey}`,
+                isVisibleSlot,
+              )}
             </View>
           ))}
         </View>
       );
     },
-    [mode, monthsToShow, renderGrid, weekStart],
+    [mode, monthsToShow, pageKey, renderGrid, weekStart],
   );
 
   const slots = useMemo<readonly CalendarPagerSlot[]>(() => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {fireEvent, render} from '@testing-library/react-native';
+import {fireEvent, render, within} from '@testing-library/react-native';
 import {useReducedMotion, withTiming} from 'react-native-reanimated';
 import {createComponent} from '../../../../test/testUtils';
 import {Calendar} from './Calendar';
@@ -19,6 +19,38 @@ describe('Calendar deliberate selection motion', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.mocked(useReducedMotion).mockReturnValue(false);
+  });
+  it('keeps boundary-date feedback on the visible pager slot', () => {
+    const screen = render(
+      createComponent(
+        <Calendar
+          selectionAnimation
+          fixedWeeks
+          today={today}
+          defaultMonth="2026-10"
+          defaultValue="2026-10-01"
+        />,
+      ),
+    );
+    for (const month of ['2026-09', '2026-11']) {
+      const page = screen.UNSAFE_root.find(
+        (node) =>
+          node.props.testID === `calendar-page-${month}` &&
+          node.props.chrome !== undefined,
+      );
+      expect(page.props.chrome.consumeSelectionFeedback).toBeUndefined();
+    }
+    const visible = within(screen.getByTestId('calendar-page-2026-10'));
+    fireEvent.press(visible.getByTestId('calendar-day-2026-10-02'));
+    expect(pulseCount()).toBe(1);
+    fireEvent.press(visible.getByTestId('calendar-day-2026-10-02'));
+    expect(pulseCount()).toBe(1);
+    fireEvent.press(visible.getByTestId('calendar-day-2026-10-31'));
+    expect(pulseCount()).toBe(2);
+    expect(
+      visible.getByTestId('calendar-day-2026-10-31').props.accessibilityState
+        .selected,
+    ).toBe(true);
   });
   it('animates changed presses once, including rapid cross-row choices', () => {
     const screen = render(
