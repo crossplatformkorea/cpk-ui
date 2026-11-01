@@ -3,7 +3,7 @@ import '@testing-library/jest-native/extend-expect';
 import React, {type ReactElement, useRef} from 'react';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render, waitFor} from '@testing-library/react-native';
-import {StyleSheet, View} from 'react-native';
+import {KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
 
 import {createComponent} from '../../../../test/testUtils';
 import AlertDialog, {type AlertDialogContext} from './AlertDialog';
@@ -175,6 +175,28 @@ describe('[AlertDialog]', () => {
       fireEvent.press(view.getByText('Dismiss custom'));
       expect(view.queryByText('Custom header')).toBeNull();
     });
+
+    it.each(['android', 'ios'] as const)(
+      'lifts the dialog above the keyboard on %s',
+      (os) => {
+        const original = Platform.OS;
+        Platform.OS = os;
+        try {
+          const view = render(
+            createComponent(
+              <AlertDialog visible title="With a field" body="Body" />,
+            ),
+          );
+          // Android modals are edge-to-edge, so adjustResize does not move
+          // them; only the avoiding view keeps a field and its actions visible.
+          expect(view.UNSAFE_getByType(KeyboardAvoidingView).props.behavior).toBe(
+            'padding',
+          );
+        } finally {
+          Platform.OS = original;
+        }
+      },
+    );
 
     it('supports render functions in controlled mode', () => {
       const close = jest.fn();

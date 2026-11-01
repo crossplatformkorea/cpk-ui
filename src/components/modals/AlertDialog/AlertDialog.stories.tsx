@@ -11,6 +11,7 @@ import {
 } from '../../../../.storybook/story-ui';
 import {useCPK} from '../../../providers';
 import {Button} from '../../uis/Button/Button';
+import {EditText} from '../../uis/EditText/EditText';
 import {Icon} from '../../uis/Icon/Icon';
 import {Typography} from '../../uis/Typography/Typography';
 import type {AlertDialogSizeType} from './AlertDialog';
@@ -157,7 +158,17 @@ function AlertDialogBasicStory({
                 alertDialog.open({
                   closeOnTouchOutside: false,
                   title: 'Set nickname',
-                  body: 'Choose a unique handle. Outside taps do not dismiss this dialog.',
+                  // A field shows whether the card clears the software
+                  // keyboard, including on short Android phones.
+                  renderBody: () => (
+                    <View style={{gap: 12}}>
+                      <Typography.Body2>
+                        Choose a unique handle. Outside taps do not dismiss
+                        this dialog.
+                      </Typography.Body2>
+                      <EditText decoration="underline" label="Nickname" />
+                    </View>
+                  ),
                   actions: [
                     <Button
                       key="set"
@@ -227,4 +238,8 @@ export const DarkConfirmation: Story = {
 
 export const SpaciousDecision: Story = {
   args: {pattern: 'spacious', size: 'medium'},
+};
+
+export const BlockingWithField: Story = {
+  args: {pattern: 'blocking', size: 'medium'},
 };
