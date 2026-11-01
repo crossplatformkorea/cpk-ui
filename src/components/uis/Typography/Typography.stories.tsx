@@ -58,3 +58,15 @@ export const CustomTitle: Story = {
   },
   parameters: {customTheme: customTypographyTheme},
 };
+
+export const KoreanWrapping: Story = {
+  render: (args) => (
+    <View style={{padding: 16, width: 220}}>
+      <Typography.Body2 {...args} />
+    </View>
+  ),
+  args: {
+    children:
+      '복구 기간 동안 삭제한 내역을 열어 다시 복원할 수 있어요. 가계부가 없거나 더 이상 접근할 수 없습니다.',
+  },
+};
