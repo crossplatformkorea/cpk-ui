@@ -72,6 +72,9 @@ module.exports = {
       'react-native-reanimated',
       'react-native-drax',
       'react-native-gesture-handler',
+      // <DonutChart> and <LineChart> draw with react-native-svg, whose web
+      // build also ships class properties.
+      'react-native-svg',
       'react-native-worklets',
       '@shopify/flash-list',
     ];
