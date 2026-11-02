@@ -83,6 +83,9 @@ const createTextComponent = ({
 
     return (
       <BaseText
+        // React Native's iOS default breaks Hangul between any two syllables
+        // ("있어 / 요"); native labels keep Korean words whole.
+        lineBreakStrategyIOS="hangul-word"
         {...props}
         $fontWeight={effectiveFontWeight}
         style={textStyle}

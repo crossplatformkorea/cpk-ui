@@ -55,4 +55,23 @@ describe('[Typography]', () => {
 
     expect(json).toBeTruthy();
   });
+
+  it('keeps Korean words whole on iOS unless the caller overrides it', () => {
+    testingLib = render(
+      createComponent(
+        <View>
+          <Typography.Body2>복구 기간 동안 열어 다시 복원할 수 있어요.</Typography.Body2>
+          <Typography.Body3 lineBreakStrategyIOS="none">override</Typography.Body3>
+        </View>,
+      ),
+    );
+
+    expect(
+      testingLib.getByText('복구 기간 동안 열어 다시 복원할 수 있어요.').props
+        .lineBreakStrategyIOS,
+    ).toBe('hangul-word');
+    expect(testingLib.getByText('override').props.lineBreakStrategyIOS).toBe(
+      'none',
+    );
+  });
 });

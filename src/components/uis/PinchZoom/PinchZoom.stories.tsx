@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -25,7 +26,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Adds pinch, pan, momentum, and boundary correction to visual content. Wrap transformed content outside PinchZoom rather than passing a transform style, which would conflict with the gesture transform.',
+          'Adds UI-thread pinch, pan, and boundary correction to visual content. Wrap transformed content outside PinchZoom rather than passing a transform style, which would conflict with the gesture transform.',
       },
     },
   },
@@ -190,6 +191,55 @@ export const WithCustomStyle: Story = {
       />
       <StorySection label="Focused artifact">
         <ArtifactPreview {...args} framed />
+      </StorySection>
+    </StoryCanvas>
+  ),
+};
+
+function PagingPreview(): React.ReactElement {
+  const width = useStageWidth(680);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+  return (
+    <ScrollView
+      horizontal
+      pagingEnabled
+      scrollEnabled={scrollEnabled}
+      style={{height: 300, width}}
+    >
+      {['#D6F4EB', '#E4EDFF', '#FFF0D6'].map((backgroundColor, index) => (
+        <View key={backgroundColor} style={{height: 300, width}}>
+          <PinchZoom
+            style={{flex: 1}}
+            onInteractionStart={() => setScrollEnabled(false)}
+            onScaleChanged={(scale) => setScrollEnabled(scale <= 1)}
+          >
+            <View
+              style={{
+                flex: 1,
+                backgroundColor,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text>Page {index + 1} of 3</Text>
+              <Text>Swipe at 1x; pinch to zoom and pan</Text>
+            </View>
+          </PinchZoom>
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+
+export const NativePaging: Story = {
+  render: () => (
+    <StoryCanvas>
+      <StoryHeader
+        title="Paging with zoom"
+        description="At rest, one-finger swipes belong to the parent. Zoom to pan, then return to 1x and page again."
+      />
+      <StorySection label="Three bounded pages">
+        <PagingPreview />
       </StorySection>
     </StoryCanvas>
   ),
