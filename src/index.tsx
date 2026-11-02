@@ -31,6 +31,7 @@ export * from './components/uis/SegmentedControl/SegmentedControl';
 export * from './components/uis/SelectionFeedback/SelectionFeedback';
 export * from './components/uis/StatusbarBrightness/StatusBarBrightness';
 export * from './components/uis/SwitchToggle/SwitchToggle';
+export * from './components/uis/TimePicker/TimePicker';
 export * from './components/uis/Typography/Typography';
 
 // Hooks
