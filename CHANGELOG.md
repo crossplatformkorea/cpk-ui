@@ -2,15 +2,18 @@
 
 All notable changes to cpk-ui are documented here.
 
-## Unreleased
+## 0.8.1 - 2026-11-02
 
 ### Fixed
 
 - `Calendar` day cells show only the day number in Korean, Japanese and
   Chinese. `Intl` appends `일` / `日`, which truncated two-digit days to `1…`.
   Native digits such as Arabic-Indic are kept.
-- `LineChart` sizes its tooltip to the formatted value, so long amounts such
-  as `₩1,284,000` stay inside it.
+- `Calendar` falls back to the bare day number on runtimes without
+  `Intl.DateTimeFormat#formatToParts`.
+- `LineChart` sizes its tooltip to the formatted value, counting full-width
+  CJK glyphs as wider, so long amounts such as `₩1,284,000` stay inside it.
+  The tooltip never grows past the chart frame (#27).
 
 ### Documentation
 
