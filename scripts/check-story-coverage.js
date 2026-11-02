@@ -103,6 +103,7 @@ const missingStories = componentExports.filter((modulePath) => {
   const titleValue = getNestedProperty(metaValue, ['title']);
   const allowedCategories = [
     'Actions',
+    'Charts',
     'Display',
     'Feedback',
     'Foundations',

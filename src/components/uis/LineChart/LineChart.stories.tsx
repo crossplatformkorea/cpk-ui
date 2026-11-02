@@ -22,7 +22,7 @@ const data = [
 ];
 
 const meta = {
-  title: 'Display/LineChart',
+  title: 'Charts/LineChart',
   component: LineChart,
   decorators: [withThemeProvider],
   parameters: {
@@ -49,7 +49,7 @@ export const Trend: Story = {
   render: (args) => (
     <StoryCanvas>
       <StoryHeader
-        description="Point targets occupy the full interval, while the visual marker remains compact."
+        description="With onSelect, each point is a button whose touch area reaches halfway to its neighbours. Without it, the chart is one image labelled with the series."
         title="Monthly category trend"
       />
       <StorySection label="Twelve-month detail">

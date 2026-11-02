@@ -1,28 +1,42 @@
 import {create} from '@storybook/theming/create';
 
+// The palette is cpk-ui's own light tokens (src/utils/colors.ts), so the
+// workbench reads in the same ink, paper and signal blue as the components.
+const ink = '#1B1B1B';
+const label = '#4D4D4D';
+const signal = '#3D8BFF';
+const mist = '#EDEDED';
+const pretendard =
+  '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif';
+
 export const cpkStorybookTheme = create({
   base: 'light',
-  brandTitle: 'cpk-ui',
+  brandTitle:
+    '<span style="font-family:\'Pretendard Variable\',Pretendard,sans-serif;font-size:19px;font-weight:800;letter-spacing:-0.02em;color:#1B1B1B">cpk-ui</span>',
   brandUrl: 'https://github.com/crossplatformkorea/cpk-ui',
-  colorPrimary: '#111318',
-  colorSecondary: '#2563EB',
-  appBg: '#F3F5F8',
+  brandTarget: '_self',
+  colorPrimary: ink,
+  colorSecondary: signal,
+  appBg: '#F7F7F7',
   appContentBg: '#FFFFFF',
-  appPreviewBg: '#F7F8FA',
-  appBorderColor: '#D9DEE7',
-  appBorderRadius: 6,
-  fontBase:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+  appPreviewBg: '#FFFFFF',
+  appBorderColor: mist,
+  appBorderRadius: 10,
+  fontBase: pretendard,
   fontCode: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-  textColor: '#20242C',
+  textColor: ink,
   textInverseColor: '#FFFFFF',
-  textMutedColor: '#697180',
-  barTextColor: '#596170',
-  barSelectedColor: '#1D4ED8',
-  barHoverColor: '#1D4ED8',
+  textMutedColor: label,
+  barTextColor: label,
+  barSelectedColor: signal,
+  barHoverColor: signal,
   barBg: '#FFFFFF',
+  buttonBg: '#FFFFFF',
+  buttonBorder: mist,
+  booleanBg: mist,
+  booleanSelectedBg: '#FFFFFF',
   inputBg: '#FFFFFF',
-  inputBorder: '#C9D0DB',
-  inputTextColor: '#20242C',
-  inputBorderRadius: 4,
+  inputBorder: '#CCCCCC',
+  inputTextColor: ink,
+  inputBorderRadius: 8,
 });

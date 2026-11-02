@@ -2,6 +2,22 @@
 
 All notable changes to cpk-ui are documented here.
 
+## Unreleased
+
+### Fixed
+
+- `Calendar` day cells show only the day number in Korean, Japanese and
+  Chinese. `Intl` appends `일` / `日`, which truncated two-digit days to `1…`.
+  Native digits such as Arabic-Indic are kept.
+- `LineChart` sizes its tooltip to the formatted value, so long amounts such
+  as `₩1,284,000` stay inside it.
+
+### Documentation
+
+- Storybook uses Pretendard and cpk-ui's own tokens, opens with a live
+  specimen built from the real components, and adds a 0.8.0 release page.
+  DonutChart and LineChart move to a Charts section.
+
 ## 0.8.0 - 2026-11-02
 
 First stable 0.8 release. It promotes everything shipped in 0.8.0-beta.0
