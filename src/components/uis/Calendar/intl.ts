@@ -152,10 +152,15 @@ const weekdayLabel = (date: Date, locale: string): string => {
   return format ? format.format(date) : FALLBACK_WEEKDAY_NARROW[date.getDay()];
 };
 
+// Only the number: CJK locales append a day suffix (`2일`, `2日`) that
+// truncates two-digit days in a cell. Native digits (ar-EG) are kept.
 const dayNumber = (date: Date, locale: string): string => {
   const format = getFormat(locale, 'dayNumber');
+  if (!format) return String(date.getDate());
 
-  return format ? format.format(date) : String(date.getDate());
+  const day = format.formatToParts(date).find((part) => part.type === 'day');
+
+  return day ? day.value : format.format(date);
 };
 
 const dayAccessibilityLabel = (date: Date, locale: string): string => {

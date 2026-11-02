@@ -142,6 +142,10 @@ export function LineChart({
     }));
   }, [data, frame.height, frame.width]);
   const selectedPoint = points.find((point) => point.key === selectedKey);
+  const tooltipText = selectedPoint ? formatValue(selectedPoint.value) : '';
+  // SVG text cannot be measured before paint; 7pt per glyph fits the 11pt
+  // semibold label in Latin, Hangul and digits.
+  const tooltipWidth = Math.max(88, tooltipText.length * 7 + 24);
   // Points are interactive only with `onSelect`; a read-only chart is one
   // image, and interactive point buttons must not nest inside an image.
   const interactive = onSelect !== undefined;
@@ -231,10 +235,11 @@ export function LineChart({
                 fill={colors.tooltipBackground}
                 height={26}
                 rx={6}
-                width={88}
+                testID={`${testID}-tooltip`}
+                width={tooltipWidth}
                 x={Math.min(
-                  Math.max(selectedPoint.x - 44, 4),
-                  frame.width - 92,
+                  Math.max(selectedPoint.x - tooltipWidth / 2, 4),
+                  frame.width - tooltipWidth - 4,
                 )}
                 y={Math.max(2, selectedPoint.y - 36)}
               />
@@ -243,10 +248,13 @@ export function LineChart({
                 fontSize={11}
                 fontWeight="600"
                 textAnchor="middle"
-                x={Math.min(Math.max(selectedPoint.x, 48), frame.width - 48)}
+                x={Math.min(
+                  Math.max(selectedPoint.x, tooltipWidth / 2 + 4),
+                  frame.width - tooltipWidth / 2 - 4,
+                )}
                 y={Math.max(19, selectedPoint.y - 19)}
               >
-                {formatValue(selectedPoint.value)}
+                {tooltipText}
               </SvgText>
             </G>
           ) : null}

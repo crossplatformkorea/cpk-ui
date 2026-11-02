@@ -2,7 +2,12 @@ import * as React from 'react';
 import {type ReactElement} from 'react';
 import {StyleSheet, View} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
-import {fireEvent, render, waitFor} from '@testing-library/react-native';
+import {
+  fireEvent,
+  render,
+  waitFor,
+  within,
+} from '@testing-library/react-native';
 
 import {createComponent} from '../../../../test/testUtils';
 import * as packageRoot from '../../../index';
@@ -932,6 +937,29 @@ describe('[Calendar] large font degradation', () => {
 });
 
 describe('[Calendar] locale and week start correctness', () => {
+  // Intl writes `15일` / `15日`, which truncated to `1…` in a day cell.
+  it.each([
+    ['ko', '15'],
+    ['ja', '15'],
+    ['zh', '15'],
+    ['ar-EG', '١٥'],
+  ])('should show only the day number in %s cells', (locale, expected) => {
+    const screen = render(
+      createComponent(
+        <Calendar
+          locale={locale}
+          month="2026-08"
+          paging="none"
+          today={TODAY}
+        />,
+      ),
+    );
+
+    expect(
+      within(screen.getByTestId('calendar-day-2026-08-15')).getByText(expected),
+    ).toBeTruthy();
+  });
+
   it('should render locale weekday headings in column order', () => {
     const korean = render(
       createComponent(
