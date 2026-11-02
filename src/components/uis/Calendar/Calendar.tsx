@@ -513,8 +513,23 @@ function CalendarContainer(
   }, []);
 
   const consumeSelectionFeedback = useCallback(
-    (key: CalendarDateKey): boolean => {
+    (key: CalendarDateKey, isOutside: boolean): boolean => {
       if (selectionIntent.current !== key) return false;
+      // Side by side months repeat a boundary date dimmed in its neighbour;
+      // the in-month copy plays it when that month is on screen.
+      const current = stateRef.current;
+      if (isOutside && current.monthsToShow > 1) {
+        for (let index = 0; index < current.monthsToShow; index++) {
+          const monthKey = addPages(
+            current.pageKey,
+            index,
+            current.mode,
+            current.weekStart,
+            1,
+          );
+          if (key.startsWith(monthKey)) return false;
+        }
+      }
       selectionIntent.current = null;
       return callbacksRef.current.selectionAnimation;
     },
@@ -542,6 +557,7 @@ function CalendarContainer(
         styles,
         renderDay,
         onPress: handleDayPress,
+        selectionAnimation,
         consumeSelectionFeedback,
         onLongPress: onDayLongPress ? handleDayLongPress : undefined,
         onDisabledPress: onDisabledDayPress
@@ -563,6 +579,7 @@ function CalendarContainer(
       onDisabledDayPress,
       palette,
       renderDay,
+      selectionAnimation,
       showDots,
       styles,
     ],

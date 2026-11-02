@@ -46,6 +46,7 @@ describe('Calendar measured columns', () => {
           today={today}
           defaultMonth="2026-08"
           renderDay={custom}
+          selectionAnimation
         />,
       ),
     );
@@ -62,5 +63,28 @@ describe('Calendar measured columns', () => {
       .filter(([c]) => c.day.key === '2026-08-24')
       .at(-1)?.[0];
     expect(retained?.contentMaxSize).toBe(context?.contentMaxSize);
+  });
+
+  it('keeps the configured pill and skips measurement without selection motion', () => {
+    const custom = jest.fn<
+      ReturnType<CalendarRenderDay>,
+      Parameters<CalendarRenderDay>
+    >(() => <View />);
+    const screen = render(
+      createComponent(
+        <Calendar
+          paging="none"
+          size={96}
+          today={today}
+          defaultMonth="2026-08"
+          renderDay={custom}
+        />,
+      ),
+    );
+    const day = screen.getByTestId('calendar-day-2026-08-24');
+    expect(day.props.onLayout).toBeUndefined();
+    expect(
+      custom.mock.calls.every(([c]) => c.contentMaxSize === undefined),
+    ).toBe(true);
   });
 });

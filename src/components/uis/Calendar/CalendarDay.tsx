@@ -153,7 +153,9 @@ function CalendarDayContainer(props: CalendarDayProps): ReactElement {
   // Font scale grows row height, while seven columns still share one viewport.
   // Reserve room for the spring rather than clipping a larger circle to a pill.
   const contentMaxSize =
-    cellWidth === null ? undefined : cellWidth / SELECTION_FEEDBACK_PEAK_SCALE;
+    !chrome.selectionAnimation || cellWidth === null
+      ? undefined
+      : cellWidth / SELECTION_FEEDBACK_PEAK_SCALE;
   const pillGeometry = useMemo(() => {
     if (contentMaxSize === undefined || metrics.numberSize <= contentMaxSize)
       return geometry.pill;
@@ -166,9 +168,9 @@ function CalendarDayContainer(props: CalendarDayProps): ReactElement {
   }, [contentMaxSize, geometry.pill, metrics.numberSize]);
   const feedback = useRef<SelectionFeedbackHandle>(null);
   useEffect(() => {
-    if (isSelected && chrome.consumeSelectionFeedback?.(day.key))
+    if (isSelected && chrome.consumeSelectionFeedback?.(day.key, day.isOutside))
       feedback.current?.play();
-  }, [chrome.consumeSelectionFeedback, day.key, isSelected]);
+  }, [chrome.consumeSelectionFeedback, day.isOutside, day.key, isSelected]);
 
   const pillStyle = useMemo<ViewStyle | null>(() => {
     if (isSelected) {
@@ -273,7 +275,7 @@ function CalendarDayContainer(props: CalendarDayProps): ReactElement {
       accessibilityState={{disabled: isDisabled, selected: isSelected}}
       aria-disabled={isDisabled}
       aria-selected={isSelected}
-      onLayout={onLayout}
+      onLayout={chrome.selectionAnimation ? onLayout : undefined}
       onLongPress={chrome.onLongPress ? handleLongPress : undefined}
       onPress={handlePress}
       style={cellStyle}

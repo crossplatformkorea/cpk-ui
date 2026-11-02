@@ -29,6 +29,7 @@ export interface SelectionFeedbackProps extends ViewProps {
   variant?: 'pulse' | 'pop';
   /** For a group, only the newly selected item's contents should pulse. */
   active?: boolean;
+  /** `true` keeps the item still. `false` cannot override the system setting. */
   reducedMotion?: boolean;
 }
 
@@ -56,7 +57,7 @@ export const SelectionFeedback = forwardRef<
   const previous = useRef(selection);
   const scale = useSharedValue(1);
   const systemReducedMotion = useReducedMotion();
-  const reduce = reducedMotion ?? systemReducedMotion;
+  const reduce = reducedMotion === true || systemReducedMotion;
   const play = useCallback(() => {
     cancelAnimation(scale);
     if (!active || reduce) {
@@ -64,8 +65,7 @@ export const SelectionFeedback = forwardRef<
       return;
     }
     if (variant === 'pop') scale.set(0.9);
-    const preference =
-      reducedMotion === undefined ? ReduceMotion.System : ReduceMotion.Never;
+    const preference = ReduceMotion.System;
     scale.set(
       withSequence(
         preference,
@@ -81,7 +81,7 @@ export const SelectionFeedback = forwardRef<
         }),
       ),
     );
-  }, [active, reduce, reducedMotion, scale, variant]);
+  }, [active, reduce, scale, variant]);
   useImperativeHandle(ref, () => ({play}), [play]);
   useEffect(() => {
     const changed = !Object.is(previous.current, selection);

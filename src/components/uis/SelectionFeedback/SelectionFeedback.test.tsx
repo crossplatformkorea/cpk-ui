@@ -80,6 +80,14 @@ describe('SelectionFeedback', () => {
       expect(withSpring).not.toHaveBeenCalled();
     },
   );
+  it('keeps system reduced motion when the prop is false', () => {
+    jest.mocked(useReducedMotion).mockReturnValue(true);
+    const screen = render(
+      <SelectionFeedback reducedMotion={false} selection={0} />,
+    );
+    screen.rerender(<SelectionFeedback reducedMotion={false} selection={1} />);
+    expect(withSpring).not.toHaveBeenCalled();
+  });
   it('supports an explicit committed-action trigger without replaying on mount', () => {
     const ref = createRef<SelectionFeedbackHandle>();
     render(<SelectionFeedback ref={ref} variant="pop" />);

@@ -218,7 +218,12 @@ export type CalendarChrome = Readonly<{
   styles: CalendarStyles;
   renderDay?: CalendarRenderDay;
   onPress: (key: CalendarDateKey) => void;
-  consumeSelectionFeedback?: (key: CalendarDateKey) => boolean;
+  /** Whether cells reserve room for the selection spring. */
+  selectionAnimation: boolean;
+  consumeSelectionFeedback?: (
+    key: CalendarDateKey,
+    isOutside: boolean,
+  ) => boolean;
   onLongPress?: (key: CalendarDateKey) => void;
   onDisabledPress?: (key: CalendarDateKey) => void;
 }>;
