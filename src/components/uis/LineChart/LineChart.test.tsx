@@ -1,6 +1,8 @@
 import '@testing-library/jest-native/extend-expect';
 
 import React from 'react';
+import {StyleSheet} from 'react-native';
+import {Circle} from 'react-native-svg';
 import {fireEvent, render} from '@testing-library/react-native';
 
 import {createComponent} from '../../../../test/testUtils';
@@ -20,11 +22,71 @@ describe('[LineChart]', () => {
       ),
     );
 
+    const chart = screen.getByTestId('line-chart');
+    expect(chart).toHaveProp('accessibilityLabel', 'Monthly trend');
+    expect(chart).toHaveProp('accessible', true);
+    expect(chart).toHaveProp('role', 'img');
+    expect(screen.queryByTestId('line-chart-point-0')).toBeNull();
+  });
+
+  it('summarises the series when no label is given', () => {
+    const screen = render(
+      createComponent(
+        <LineChart data={data} formatValue={(value) => `$${value}`} />,
+      ),
+    );
+
     expect(screen.getByTestId('line-chart')).toHaveProp(
       'accessibilityLabel',
-      'Monthly trend',
+      'Jan: $10, Feb: $20, Mar: $15',
     );
-    expect(screen.getByTestId('line-chart-point-0')).toBeTruthy();
+  });
+
+  it('groups point buttons instead of nesting them in an image', () => {
+    const screen = render(
+      createComponent(
+        <LineChart
+          accessibilityLabel="Monthly trend"
+          data={data}
+          onSelect={jest.fn()}
+        />,
+      ),
+    );
+
+    const chart = screen.getByTestId('line-chart');
+    expect(chart).toHaveProp('role', 'group');
+    expect(chart).toHaveProp('accessible', false);
+    expect(screen.getByTestId('line-chart-point-0')).toHaveProp(
+      'accessibilityRole',
+      'button',
+    );
+  });
+
+  it('gives each point the touch area nearest to it', () => {
+    const screen = render(
+      createComponent(<LineChart data={data} onSelect={jest.fn()} />),
+    );
+    const slot = (index: number): {left?: unknown; width?: unknown} =>
+      StyleSheet.flatten(
+        screen.getByTestId(`line-chart-point-${index}`).props.style,
+      );
+
+    // Default 320pt frame: points at 20, 160 and 300.
+    expect(slot(0)).toMatchObject({left: 0, width: 90});
+    expect(slot(1)).toMatchObject({left: 90, width: 140});
+    expect(slot(2)).toMatchObject({left: 230, width: 90});
+  });
+
+  it('draws an all-zero series on the baseline', () => {
+    const zero = [
+      {key: 'jan', label: 'Jan', value: 0},
+      {key: 'feb', label: 'Feb', value: 0},
+    ];
+    const screen = render(createComponent(<LineChart data={zero} />));
+    const [first] = screen.UNSAFE_getAllByType(Circle);
+
+    // Regular 220pt frame with a 30pt bottom inset.
+    expect(first?.props.cy).toBe(190);
   });
 
   it('selects a point through its full-width target', () => {
@@ -39,7 +101,9 @@ describe('[LineChart]', () => {
 
   it('exposes the selected point to assistive technology', () => {
     const screen = render(
-      createComponent(<LineChart data={data} selectedKey="feb" />),
+      createComponent(
+        <LineChart data={data} onSelect={jest.fn()} selectedKey="feb" />,
+      ),
     );
 
     expect(
@@ -74,7 +138,9 @@ describe('[LineChart]', () => {
       value: index === 12 ? Number.POSITIVE_INFINITY : index * 100,
     }));
     const screen = render(
-      createComponent(<LineChart data={dense} variant="compact" />),
+      createComponent(
+        <LineChart data={dense} onSelect={jest.fn()} variant="compact" />,
+      ),
     );
 
     expect(screen.getByTestId('line-chart')).toHaveStyle({height: 160});

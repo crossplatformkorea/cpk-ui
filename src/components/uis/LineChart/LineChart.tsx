@@ -68,6 +68,22 @@ function safeNumber(value: number): number {
   return Number.isFinite(value) ? value : 0;
 }
 
+// Each target reaches halfway to its neighbours, so a tap selects the
+// nearest point rather than an equal-width column.
+function targetSlot(
+  points: readonly ChartPoint[],
+  index: number,
+  width: number,
+): {left: number; width: number} {
+  const point = points[index];
+  const previous = points[index - 1];
+  const next = points[index + 1];
+  if (!point) return {left: 0, width: 0};
+  const left = previous ? (previous.x + point.x) / 2 : 0;
+  const right = next ? (point.x + next.x) / 2 : width;
+  return {left, width: Math.max(0, right - left)};
+}
+
 function makePath(points: readonly ChartPoint[]): string {
   return points
     .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
@@ -108,7 +124,9 @@ export function LineChart({
     const values = data.map((datum) => safeNumber(datum.value));
     const minimum = Math.min(0, ...values);
     const maximum = Math.max(0, ...values);
-    const range = maximum - minimum || 1;
+    // An all-zero series sits on the baseline, not on the top edge.
+    const top = maximum === minimum ? minimum + 1 : maximum;
+    const range = top - minimum;
     const innerWidth = Math.max(1, frame.width - HORIZONTAL_INSET * 2);
     const innerHeight = Math.max(1, frame.height - TOP_INSET - BOTTOM_INSET);
 
@@ -120,12 +138,20 @@ export function LineChart({
         (data.length === 1
           ? innerWidth / 2
           : (innerWidth * index) / (data.length - 1)),
-      y:
-        TOP_INSET + ((maximum - safeNumber(datum.value)) / range) * innerHeight,
+      y: TOP_INSET + ((top - safeNumber(datum.value)) / range) * innerHeight,
     }));
   }, [data, frame.height, frame.width]);
   const selectedPoint = points.find((point) => point.key === selectedKey);
-  const slotWidth = frame.width / Math.max(1, data.length);
+  // Points are interactive only with `onSelect`; a read-only chart is one
+  // image, and interactive point buttons must not nest inside an image.
+  const interactive = onSelect !== undefined;
+  const summary =
+    accessibilityLabel ??
+    (data.length === 0
+      ? emptyLabel
+      : data
+          .map((datum) => `${datum.label}: ${formatValue(datum.value)}`)
+          .join(', '));
   const onLayout = ({nativeEvent}: LayoutChangeEvent): void => {
     const {height, width} = nativeEvent.layout;
     if (height > 0 && width > 0) setFrame({height, width});
@@ -133,9 +159,10 @@ export function LineChart({
 
   return (
     <View
-      accessibilityLabel={accessibilityLabel}
-      accessibilityRole="image"
+      accessibilityLabel={summary}
+      accessible={!interactive}
       onLayout={onLayout}
+      role={interactive ? 'group' : 'img'}
       style={[
         componentStyles.container,
         {height: defaultHeight},
@@ -237,7 +264,7 @@ export function LineChart({
           ) : null}
         </Svg>
       </View>
-      {points.map((point) => (
+      {(interactive ? points : []).map((point, index) => (
         <Pressable
           accessibilityLabel={
             point.accessibilityLabel ??
@@ -252,7 +279,7 @@ export function LineChart({
           }}
           style={[
             componentStyles.target,
-            {left: slotWidth * point.index, width: slotWidth},
+            targetSlot(points, index, frame.width),
           ]}
           testID={`${testID}-point-${point.index}`}
         />

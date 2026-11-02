@@ -37,8 +37,8 @@ describe('[DonutChart]', () => {
       ),
     );
 
-    expect(screen.queryByTestId('donut-chart-segment-housing')).toBeNull();
-    expect(screen.getByTestId('donut-chart')).toBeTruthy();
+    expect(screen.getByTestId('donut-chart-segment-housing')).toBeTruthy();
+    expect(screen.getByTestId('donut-chart')).toHaveProp('accessible', true);
   });
 
   it('ignores non-positive and non-finite values', () => {

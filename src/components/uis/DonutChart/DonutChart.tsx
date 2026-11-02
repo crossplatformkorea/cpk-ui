@@ -11,6 +11,7 @@ export type DonutChartDatum = {
 
 export type DonutChartProps = {
   data: readonly DonutChartDatum[];
+  /** Read as the whole chart, including any centred `children`. */
   accessibilityLabel: string;
   children?: ReactNode;
   emptyColor?: string;
@@ -70,13 +71,14 @@ function normalizedArcs(
   startAngle: number,
   gapDegrees: number,
 ): readonly Arc[] {
-  const visible = data.filter(
-    ({value}) => Number.isFinite(value) && value > 0,
-  );
+  const visible = data.filter(({value}) => Number.isFinite(value) && value > 0);
   const total = visible.reduce((sum, datum) => sum + datum.value, 0);
   if (total <= 0) return [];
 
-  const gap = visible.length > 1 ? Math.max(0, gapDegrees) : 0;
+  const gap =
+    visible.length > 1 && Number.isFinite(gapDegrees)
+      ? Math.max(0, gapDegrees)
+      : 0;
   const sweep = Math.max(1, FULL_CIRCLE - gap * visible.length);
   let cursor = startAngle;
   return visible.map((datum) => {
@@ -104,12 +106,13 @@ export function DonutChart({
   testID = 'donut-chart',
   trackColor = emptyColor,
 }: DonutChartProps): ReactElement {
-  const safeSize = Math.max(1, size);
+  const safeSize = Number.isFinite(size) ? Math.max(1, size) : DEFAULT_SIZE;
+  const safeRatio = Number.isFinite(innerRadiusRatio) ? innerRadiusRatio : 0.72;
   const center = safeSize / 2;
   const outerRadius = center;
   const innerRadius = Math.min(
     outerRadius - 1,
-    Math.max(1, outerRadius * innerRadiusRatio),
+    Math.max(1, outerRadius * safeRatio),
   );
   const arcs = useMemo(
     () => normalizedArcs(data, startAngle, gapDegrees),
@@ -120,6 +123,7 @@ export function DonutChart({
     <View
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="image"
+      accessible
       style={[styles.container, {height: safeSize, width: safeSize}, style]}
       testID={testID}
     >
@@ -141,6 +145,7 @@ export function DonutChart({
             r={(outerRadius + innerRadius) / 2}
             stroke={arcs[0]?.color}
             strokeWidth={outerRadius - innerRadius}
+            testID={`${testID}-segment-${arcs[0]?.key}`}
           />
         ) : arcs.length > 1 ? (
           arcs.map((arc) => (
