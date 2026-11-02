@@ -145,3 +145,54 @@ export const StateMatrix: Story = {
     </StoryCanvas>
   ),
 };
+
+export const WrappingPlaceholder: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A wrapping placeholder must keep every line inside the native line box. Narrow the canvas or increase system font size; the second line must not clip.',
+      },
+    },
+  },
+  render: () => (
+    <StoryCanvas>
+      <StorySection label="Underline and boxed wrapping placeholders">
+        <StoryStack style={{maxWidth: 220}}>
+          <InteractiveEditText
+            decoration="underline"
+            label="Email"
+            placeholder="hello@gmail.com"
+            size="medium"
+          />
+          <InteractiveEditText
+            decoration="boxed"
+            label="Email"
+            placeholder="We sent a code to hello@gmail.com."
+            size="medium"
+          />
+        </StoryStack>
+      </StorySection>
+    </StoryCanvas>
+  ),
+};
+
+export const AccessibleEmail: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Focus the email field with VoiceOver, TalkBack, or a keyboard. The editable field must remain discoverable; tapping its surrounding border still focuses it.',
+      },
+    },
+  },
+  render: (args) => <InteractiveEditText {...args} />,
+  args: {
+    testID: 'email-input',
+    label: 'Email',
+    accessibilityLabel: 'Email address',
+    decoration: 'boxed',
+    placeholder: 'you@example.com',
+    textInputProps: {keyboardType: 'email-address', autoCorrect: false},
+  },
+};

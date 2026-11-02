@@ -21,6 +21,12 @@ type Styles = {
 
 export type AccordionSizeType = 'small' | 'medium' | 'large' | number;
 
+export type AccordionHeaderContext<T> = {
+  title: T;
+  expanded: boolean;
+  toggle: () => void;
+};
+
 export type AccordionBaseProps<T = string, K = string> = {
   data: AccordionItemDataType<T, K>[];
   style?: StyleProp<ViewStyle>;
@@ -33,11 +39,16 @@ export type AccordionBaseProps<T = string, K = string> = {
   expandAllOnStart?: boolean;
   /** Array of indexes that should be expanded on start. Overrides expandAllOnStart */
   defaultExpandedIndexes?: number[];
+  /** Controlled disclosure, including an empty array to close every item. */
+  expandedIndexes?: readonly number[];
+  onExpandedChange?: (index: number, expanded: boolean) => void;
   animDuration?: number;
   activeOpacity?: number;
   toggleElementPosition?: 'left' | 'right';
   toggleElement?: ReactElement | null;
   renderTitle?: (title: T) => ReactElement;
+  /** Own the entire header, including independent menu/drag controls. */
+  renderHeader?: (context: AccordionHeaderContext<T>) => ReactElement;
   renderItem?: (body: K) => ReactElement;
   onPressItem?: (title: T | string, body: K | string) => void;
 };
@@ -52,6 +63,8 @@ function Accordion<T, K>({
   collapseOnStart,
   expandAllOnStart,
   defaultExpandedIndexes,
+  expandedIndexes,
+  onExpandedChange,
   ...rest
 }: AccordionProps<T, K>): ReactElement {
   // Memoize accordion items rendering
@@ -86,6 +99,10 @@ function Accordion<T, K>({
             toggleElementPosition={toggleElementPosition}
             size={size}
             collapseOnStart={shouldCollapse}
+            expanded={expandedIndexes?.includes(titleKey)}
+            onExpandedChange={(expanded) =>
+              onExpandedChange?.(titleKey, expanded)
+            }
             {...rest}
           />
         );
@@ -97,6 +114,8 @@ function Accordion<T, K>({
       collapseOnStart,
       expandAllOnStart,
       defaultExpandedIndexes,
+      expandedIndexes,
+      onExpandedChange,
       rest,
     ],
   );

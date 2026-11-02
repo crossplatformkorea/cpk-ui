@@ -15,14 +15,15 @@ jest.mock('@expo/vector-icons/createIconSetFromIcoMoon', () => ({
 
 import '@testing-library/jest-native/extend-expect';
 
-import React, {type ReactElement} from 'react';
-import {Text} from 'react-native';
+import React, {createRef, type ReactElement} from 'react';
+import {Text, type TextInput} from 'react-native';
 import type {RenderAPI} from '@testing-library/react-native';
 import {act, fireEvent, render} from '@testing-library/react-native';
 
+import {StyleSheet} from 'react-native';
 import {createComponent} from '../../../../test/testUtils';
 import type {EditTextProps} from './EditText';
-import {EditText} from './EditText';
+import {EditText, editTextInputMetrics} from './EditText';
 import {light} from '../../../utils/colors';
 
 let testingLib: RenderAPI;
@@ -222,6 +223,33 @@ describe('[EditText]', () => {
   });
 
   describe('input', () => {
+    it('exposes the input instead of grouping it into its touch wrapper', () => {
+      const inputRef = createRef<TextInput>();
+      const view = render(
+        createComponent(
+          <EditText
+            ref={inputRef}
+            testID="email-input"
+            accessibilityLabel="Email address"
+            textInputProps={{keyboardType: 'email-address'}}
+          />,
+        ),
+      );
+
+      expect(view.getByTestId('container-touch')).toHaveProp('accessible', false);
+      expect(view.getByLabelText('Email address')).toBe(
+        view.getByTestId('email-input'),
+      );
+      expect(view.getByTestId('email-input')).toHaveProp(
+        'keyboardType',
+        'email-address',
+      );
+      if (!inputRef.current) throw new Error('Input ref was not attached');
+      const focus = jest.spyOn(inputRef.current, 'focus');
+      fireEvent.press(view.getByTestId('container-touch'));
+      expect(focus).toHaveBeenCalledTimes(1);
+    });
+
     it('should trigger text changes', () => {
       const CHANGE_TEXT = 'content';
       const mockedFn = jest.fn();
@@ -360,23 +388,15 @@ describe('[EditText]', () => {
       expect(input).toHaveStyle({color: 'yellow'});
     });
 
-    it('should trigger `onFocus` when touching container', async () => {
-      const focusFn = jest.fn();
-
+    it('focuses the input when touching its container', () => {
+      const inputRef = createRef<TextInput>();
       testingLib = render(
-        Component({
-          onFocus: focusFn,
-          colors: {focused: 'yellow'},
-        }),
+        createComponent(<EditText ref={inputRef} />),
       );
-
-      const touch = testingLib.getByTestId('container-touch');
-
-      expect(touch).toBeTruthy();
-
-      fireEvent(touch, 'press');
-      // Below should work but no luck in testing-library
-      // expect(focusFn).toBeCalled();
+      if (!inputRef.current) throw new Error('Input ref was not attached');
+      const focus = jest.spyOn(inputRef.current, 'focus');
+      fireEvent.press(testingLib.getByTestId('container-touch'));
+      expect(focus).toHaveBeenCalledTimes(1);
     });
 
     describe('onBlur (focused === false)', () => {
@@ -463,6 +483,55 @@ describe('[EditText]', () => {
 
       const label = testingLib.getByText('Custom Size Input');
       expect(label).toBeTruthy();
+    });
+  });
+
+  describe('line box', () => {
+    it('reserves explicit top/bottom padding and a lineHeight for the medium size', () => {
+      testingLib = render(
+        Component({
+          testID: 'INPUT_TEST',
+          placeholder: 'hello@gmail.com',
+        }),
+      );
+
+      const style = StyleSheet.flatten(
+        testingLib.getByTestId('INPUT_TEST').props.style,
+      );
+      const metrics = editTextInputMetrics({fontSize: 16, padding: 10});
+
+      expect(style.fontSize).toBe(metrics.fontSize);
+      expect(style.lineHeight).toBe(metrics.lineHeight);
+      expect(style.paddingTop).toBe(metrics.paddingTop);
+      expect(style.paddingBottom).toBe(metrics.paddingBottom);
+      expect(style.includeFontPadding).toBe(false);
+      expect(style.overflow).toBe('visible');
+      expect(style.paddingTop + style.lineHeight + style.paddingBottom).toBe(
+        metrics.paddingTop + metrics.lineHeight + metrics.paddingBottom,
+      );
+    });
+
+    it('keeps a complete line box for small and large sizes', () => {
+      for (const [size, fontSize, padding] of [
+        ['small', 14, 8],
+        ['large', 18, 12],
+      ] as const) {
+        const view = render(
+          Component({
+            testID: `INPUT_${size}`,
+            size,
+            placeholder: 'hello@gmail.com',
+          }),
+        );
+        const style = StyleSheet.flatten(
+          view.getByTestId(`INPUT_${size}`).props.style,
+        );
+        const metrics = editTextInputMetrics({fontSize, padding});
+        expect(style.lineHeight).toBe(metrics.lineHeight);
+        expect(style.paddingTop).toBe(metrics.paddingTop);
+        expect(style.paddingBottom).toBe(metrics.paddingBottom);
+        expect(style.includeFontPadding).toBe(false);
+      }
     });
   });
 });

@@ -1,4 +1,5 @@
 import {action} from '@storybook/addon-actions';
+import {useEffect, useState} from 'react';
 import type {Meta, StoryObj} from '@storybook/react';
 
 import {withThemeProvider} from '../../../../.storybook/decorators';
@@ -47,7 +48,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'The primary command component. Choose solid for the main action, outlined for a secondary action, and text for low-emphasis commands. Loading preserves the button footprint; disabled removes interaction.',
+          'The primary command component. Choose solid for the main action, outlined for a secondary action, and text for low-emphasis commands. Text buttons hug their label with 8px/16px padding and keep the pressed underlay. Loading preserves the button footprint; disabled removes interaction.',
       },
     },
   },
@@ -110,6 +111,26 @@ export const Secondary: Story = {
   },
 };
 
+export const IntrinsicLabel: Story = {
+  args: {
+    text: 'Add entry',
+    type: 'outlined',
+    size: 'small',
+    borderRadius: 16,
+    style: {alignSelf: 'center'},
+    styles: {text: {fontWeight: 'bold'}},
+    testID: 'intrinsic-label-button',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Hold, release, and press again. Every word must remain visible with the same bounds on Android, iOS, and web; changing underlay opacity must not flatten the label parent.',
+      },
+    },
+  },
+};
+
 export const Danger: Story = {
   args: {
     text: 'Delete release',
@@ -118,6 +139,40 @@ export const Danger: Story = {
     size: 'small',
     onPress: action('onPress'),
   },
+};
+
+function LoadingCycleExample() {
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (!loading) return;
+    const timer = setTimeout(() => setLoading(false), 700);
+    return () => clearTimeout(timer);
+  }, [loading]);
+  return (
+    <StoryCanvas>
+      <StorySection label="Press repeatedly; save returns to idle without reparenting">
+        <StoryStack>
+          {buttonTypes.map((type) => (
+            <Button
+              key={type}
+              borderRadius={0}
+              disabled={loading}
+              loading={loading}
+              onPress={() => setLoading(true)}
+              styles={{disabled: {opacity: 0.82}}}
+              testID={`loading-cycle-${type}`}
+              text="Save"
+              type={type}
+            />
+          ))}
+        </StoryStack>
+      </StorySection>
+    </StoryCanvas>
+  );
+}
+
+export const LoadingCycle: Story = {
+  render: () => <LoadingCycleExample />,
 };
 
 export const CustomTheme: Story = {
@@ -197,4 +252,20 @@ export const VisualMatrix: Story = {
       </StorySection>
     </StoryCanvas>
   ),
+};
+
+export const RoundedPressFeedback: Story = {
+  args: {
+    text: 'Create ledger',
+    borderRadius: 28,
+    onPress: action('create-ledger'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'On Android, hold and drag across the pill edges: one foreground Material ripple stays inside the rounded surface. Loading retains the same native content parents.',
+      },
+    },
+  },
 };

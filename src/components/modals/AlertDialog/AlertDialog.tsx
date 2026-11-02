@@ -6,10 +6,12 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  isValidElement,
   type ReactElement,
 } from 'react';
 import type {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {
+  KeyboardAvoidingView,
   Modal,
   Platform,
   StyleSheet,
@@ -71,10 +73,6 @@ const ActionRow = styled.View<{$marginTop: number}>`
 
 export type AlertDialogSizeType = 'small' | 'medium' | 'large' | number;
 
-export type AlertDialogProps = {
-  style?: StyleProp<ViewStyle>;
-};
-
 export type AlertDialogStyles = {
   container?: StyleProp<ViewStyle>;
   titleContainer?: StyleProp<ViewStyle>;
@@ -93,48 +91,92 @@ export type AlertDialogOptions = {
   actions?: ReactElement[];
   showCloseButton?: boolean;
   size?: AlertDialogSizeType;
+  /** Custom slots take precedence over title/body/actions. Keep title for a11y. */
+  renderHeader?: (context: AlertDialogRenderContext) => ReactElement | null;
+  renderBody?: (context: AlertDialogRenderContext) => ReactElement | null;
+  renderActions?: (context: AlertDialogRenderContext) => ReactElement[] | null;
 };
+
+export type AlertDialogRenderContext = {
+  close: () => void;
+};
+
+export type AlertDialogProps = {
+  style?: StyleProp<ViewStyle>;
+  visible?: boolean;
+  onClose?: () => void;
+} & AlertDialogOptions;
 
 export type AlertDialogContext = {
   open(alertDialogOptions?: AlertDialogOptions): void;
   close(): void;
 };
 
-function AlertDialog(
-  {style}: AlertDialogProps,
+function AlertDialogImpl(
+  {
+    actions: actionsProp,
+    backdropOpacity: backdropOpacityProp,
+    body: bodyProp,
+    closeOnTouchOutside: closeOnTouchOutsideProp,
+    onClose,
+    renderHeader: renderHeaderProp,
+    renderBody: renderBodyProp,
+    renderActions: renderActionsProp,
+    showCloseButton: showCloseButtonProp,
+    size: sizeProp,
+    style,
+    styles: stylesProp,
+    title: titleProp,
+    visible: visibleProp,
+  }: AlertDialogProps,
   ref: React.Ref<AlertDialogContext>,
 ): ReactElement {
-  const [options, setOptions] = useState<AlertDialogOptions | null>(null);
-  const [visible, setVisible] = useState(false);
-  const {theme, themeType} = useTheme();
+  const [openedOptions, setOpenedOptions] = useState<AlertDialogOptions | null>(
+    null,
+  );
+  const [uncontrolledVisible, setUncontrolledVisible] = useState(false);
+  const {theme} = useTheme();
+  const isControlled = visibleProp !== undefined;
+  const visible = isControlled ? visibleProp : uncontrolledVisible;
+  const options = isControlled
+    ? {
+        actions: actionsProp,
+        backdropOpacity: backdropOpacityProp,
+        body: bodyProp,
+        renderHeader: renderHeaderProp,
+        renderBody: renderBodyProp,
+        renderActions: renderActionsProp,
+        closeOnTouchOutside: closeOnTouchOutsideProp,
+        showCloseButton: showCloseButtonProp,
+        size: sizeProp,
+        styles: stylesProp,
+        title: titleProp,
+      }
+    : openedOptions;
 
-  // Memoize the cleanup effect
   useEffect(() => {
-    if (!visible) {
-      const timeoutId = setTimeout(() => {
-        setOptions(null);
-        // Run after modal has finished transition
-      }, 300);
+    if (isControlled || visible) return;
+    const timeoutId = setTimeout(() => {
+      setOpenedOptions(null);
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [isControlled, visible]);
 
-      return () => clearTimeout(timeoutId);
-    }
-
-    // Return an empty cleanup function when visible is true
-    return () => {};
-  }, [visible]);
-
-  // Memoize the close handler
   const handleClose = useCallback(() => {
-    setVisible(false);
-  }, []);
+    onClose?.();
+    if (!isControlled) setUncontrolledVisible(false);
+  }, [isControlled, onClose]);
 
-  // Memoize the open handler
-  const handleOpen = useCallback((alertDialogOptions?: AlertDialogOptions) => {
-    setVisible(true);
-    if (alertDialogOptions) {
-      setOptions(alertDialogOptions);
-    }
-  }, []);
+  const handleOpen = useCallback(
+    (alertDialogOptions?: AlertDialogOptions) => {
+      if (isControlled) return;
+      setUncontrolledVisible(true);
+      if (alertDialogOptions) {
+        setOpenedOptions(alertDialogOptions);
+      }
+    },
+    [isControlled],
+  );
 
   useImperativeHandle(
     ref,
@@ -149,6 +191,9 @@ function AlertDialog(
     backdropOpacity = 0.2,
     title,
     body,
+    renderHeader,
+    renderBody,
+    renderActions,
     styles,
     actions,
     closeOnTouchOutside = true,
@@ -200,13 +245,11 @@ function AlertDialog(
     }
   }, [size]);
 
-  // Memoize backdrop color calculation
+  // A scrim subdues the background in either theme. A white dark-mode overlay
+  // washes out the page and reverses the dialog's foreground hierarchy.
   const backdropColor = useMemo(
-    () =>
-      themeType === 'light'
-        ? `rgba(0,0,0,${backdropOpacity})`
-        : `rgba(255,255,255,${backdropOpacity})`,
-    [themeType, backdropOpacity],
+    () => `rgba(0,0,0,${backdropOpacity})`,
+    [backdropOpacity],
   );
 
   // Memoize shadow styles
@@ -229,18 +272,18 @@ function AlertDialog(
 
   // Memoize backdrop press handler
   const handleBackdropPress = useCallback(() => {
-    if (closeOnTouchOutside) {
-      setVisible(false);
-    }
-  }, [closeOnTouchOutside]);
+    if (closeOnTouchOutside) handleClose();
+  }, [closeOnTouchOutside, handleClose]);
 
-  // Memoize close button press handler
-  const handleCloseButtonPress = useCallback(() => setVisible(false), []);
+  const handleCloseButtonPress = handleClose;
+  const renderContext = useMemo(() => ({close: handleClose}), [handleClose]);
 
   // Memoize title content
   const titleContent = useMemo(
     () =>
-      typeof title === 'string' ? (
+      renderHeader ? (
+        renderHeader(renderContext)
+      ) : typeof title === 'string' ? (
         <Typography.Heading3
           style={[{fontSize: sizeConfig.titleFontSize}, styles?.title]}
         >
@@ -249,13 +292,21 @@ function AlertDialog(
       ) : (
         title
       ),
-    [title, sizeConfig.titleFontSize, styles?.title],
+    [
+      renderHeader,
+      renderContext,
+      title,
+      sizeConfig.titleFontSize,
+      styles?.title,
+    ],
   );
 
   // Memoize body content
   const bodyContent = useMemo(
     () =>
-      typeof body === 'string' ? (
+      renderBody ? (
+        renderBody(renderContext)
+      ) : typeof body === 'string' ? (
         <Typography.Body3
           style={[{fontSize: sizeConfig.bodyFontSize}, styles?.body]}
         >
@@ -264,29 +315,38 @@ function AlertDialog(
       ) : (
         body
       ),
-    [body, sizeConfig.bodyFontSize, styles?.body],
+    [renderBody, renderContext, body, sizeConfig.bodyFontSize, styles?.body],
   );
 
   // Memoize actions content
+  const renderedActions = useMemo(
+    () => (renderActions ? renderActions(renderContext) : actions),
+    [renderActions, renderContext, actions],
+  );
   const actionsContent = useMemo(
     () =>
-      actions ? (
+      renderedActions ? (
         <ActionRow
           $marginTop={sizeConfig.actionMarginTop}
           style={styles?.actionContainer}
         >
-          {actions.map((action, index) =>
-            cloneElement(action, {
-              key: `action-${index}`,
-              style: {
-                flex: 1,
-                marginLeft: index !== 0 ? 12 : 0,
-              },
-            } as any),
+          {renderedActions.map((action, index) =>
+            isValidElement<{style?: StyleProp<ViewStyle>}>(action)
+              ? cloneElement(action, {
+                  key: `action-${index}`,
+                  style: [
+                    {
+                      flex: 1,
+                      marginLeft: index !== 0 ? 12 : 0,
+                    },
+                    action.props.style,
+                  ],
+                })
+              : action,
           )}
         </ActionRow>
       ) : null,
-    [actions, sizeConfig.actionMarginTop, styles?.actionContainer],
+    [renderedActions, sizeConfig.actionMarginTop, styles?.actionContainer],
   );
 
   // Memoize close button content
@@ -315,17 +375,21 @@ function AlertDialog(
     ],
   );
 
+  const titleSlotStyle = useMemo(() => ({flex: 1, minWidth: 0}), []);
+
   const AlertDialogContent = useMemo(
     () => (
       <Container
+        testID="alert-dialog-overlay"
         style={css`
           background-color: ${backdropColor};
         `}
       >
-        <TouchableWithoutFeedback
-          onPress={closeOnTouchOutside ? handleCloseButtonPress : undefined}
-        >
-          <View style={StyleSheet.absoluteFill} />
+        <TouchableWithoutFeedback onPress={handleBackdropPress}>
+          <View
+            style={StyleSheet.absoluteFill}
+            testID="alert-dialog-backdrop"
+          />
         </TouchableWithoutFeedback>
 
         <AlertDialogContainer
@@ -337,7 +401,7 @@ function AlertDialog(
           style={containerStyles}
         >
           <TitleRow style={styles?.titleContainer}>
-            {titleContent}
+            <View style={titleSlotStyle}>{titleContent}</View>
             {closeButtonContent}
           </TitleRow>
           <BodyRow
@@ -353,8 +417,7 @@ function AlertDialog(
     ),
     [
       backdropColor,
-      closeOnTouchOutside,
-      handleCloseButtonPress,
+      handleBackdropPress,
       title,
       size,
       containerStyles,
@@ -366,31 +429,37 @@ function AlertDialog(
       closeButtonContent,
       bodyContent,
       actionsContent,
+      titleSlotStyle,
     ],
   );
 
   return (
     // https://github.com/facebook/react-native/issues/48526#issuecomment-2579478884
     <View style={style}>
-      <Modal animationType="fade" transparent={true} visible={visible}>
-        {closeOnTouchOutside ? (
-          <TouchableWithoutFeedback
-            onPress={handleBackdropPress}
-            style={css`
-              flex: 1;
-            `}
-          >
-            {AlertDialogContent}
-          </TouchableWithoutFeedback>
-        ) : (
-          AlertDialogContent
-        )}
+      <Modal
+        animationType="fade"
+        onRequestClose={handleClose}
+        transparent={true}
+        visible={visible}
+      >
+        {/* Android draws the modal window edge-to-edge, so adjustResize no
+            longer lifts it: without padding there, the keyboard covered a
+            dialog's field, notices and actions on short phones. */}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'web' ? undefined : 'padding'}
+          style={keyboardAvoidingStyle}
+        >
+          {AlertDialogContent}
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
 }
 
-// Export memoized component for better performance
-export default React.memo(
-  forwardRef<AlertDialogContext, AlertDialogProps>(AlertDialog),
+const keyboardAvoidingStyle = {flex: 1};
+
+export const AlertDialog = React.memo(
+  forwardRef<AlertDialogContext, AlertDialogProps>(AlertDialogImpl),
 );
+
+export default AlertDialog;

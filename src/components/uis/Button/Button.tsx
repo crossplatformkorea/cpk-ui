@@ -1,12 +1,13 @@
 import React, {useCallback, useMemo, type ReactElement} from 'react';
 import type {
   Insets,
+  GestureResponderEvent,
   StyleProp,
   TextStyle,
   TouchableHighlightProps,
   ViewStyle,
 } from 'react-native';
-import {StyleSheet, TouchableHighlight, View} from 'react-native';
+import {Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
 import {styled, css} from 'kstyled';
 
 import {useTheme} from '../../../providers/ThemeProvider';
@@ -14,6 +15,7 @@ import {cloneElemWithDefaultColors} from '../../../utils/guards';
 import type {CpkTheme} from '../../../utils/theme';
 import {LoadingIndicator} from '../LoadingIndicator/LoadingIndicator';
 import {Typography} from '../Typography/Typography';
+import {CustomPressable} from '../CustomPressable/CustomPressable';
 import * as Haptics from 'expo-haptics';
 import {useHoverState} from '../../../hooks/useHoverState';
 
@@ -104,7 +106,7 @@ const calculateStyles = ({
   const isDisabled = disabled || loading;
   const padding =
     type === 'text'
-      ? '8px'
+      ? '8px 16px'
       : typeof size === 'number'
         ? `${size * 0.6}px ${size * 1.2}px`
         : size === 'large'
@@ -186,16 +188,18 @@ const calculateStyles = ({
         ]
       : undefined,
     disabled: isDisabled
-      ? [
-          css`
-            background-color: ${theme.button.disabled.bg};
-            border-top-color: ${theme.bg.disabled};
-            border-bottom-color: ${theme.bg.disabled};
-            border-left-color: ${theme.bg.disabled};
-            border-right-color: ${theme.bg.disabled};
-          `,
-          styles?.disabled,
-        ]
+      ? type === 'text'
+        ? styles?.disabled
+        : [
+            css`
+              background-color: ${theme.button.disabled.bg};
+              border-top-color: ${theme.bg.disabled};
+              border-bottom-color: ${theme.bg.disabled};
+              border-left-color: ${theme.bg.disabled};
+              border-right-color: ${theme.bg.disabled};
+            `,
+            styles?.disabled,
+          ]
       : undefined,
   };
 };
@@ -313,7 +317,8 @@ export function Button({
           color: textStyle?.color,
         })}
         {!text || typeof text === 'string' ? (
-          <Typography.Body2 style={compositeStyles.text}>
+          // Keep command labels on one line during Android intrinsic remeasurement.
+          <Typography.Body2 numberOfLines={1} style={compositeStyles.text}>
             {text}
           </Typography.Body2>
         ) : (
@@ -346,6 +351,7 @@ export function Button({
       loadingView: ReactElement;
     }): ReactElement => (
       <ButtonContainer
+        collapsable={false}
         $disabled={innerDisabled}
         $size={size}
         style={[
@@ -361,8 +367,11 @@ export function Button({
         testID={loading ? 'loading-view' : 'button-container'}
         $type={type}
       >
-        <View style={compositeStyles.content}>{children}</View>
-        <View style={compositeStyles.loading}>
+        {/* Press/disabled opacity must not reparent the label or spinner in Fabric. */}
+        <View collapsable={false} style={compositeStyles.content}>
+          {children}
+        </View>
+        <View collapsable={false} style={compositeStyles.loading}>
           {loading ? loadingView : null}
         </View>
       </ButtonContainer>
@@ -376,6 +385,7 @@ export function Button({
       compositeStyles.content,
       compositeStyles.loading,
       hovered,
+      borderRadius,
       type,
       loading,
     ],
@@ -383,7 +393,7 @@ export function Button({
 
   // Memoize press handler
   const handlePress = useCallback(
-    (e: any) => {
+    (e: GestureResponderEvent) => {
       onPress?.(e);
       if (hapticFeedback) {
         Haptics.impactAsync(hapticFeedback);
@@ -395,13 +405,44 @@ export function Button({
   // Memoize button styles
   const buttonStyles = useMemo(
     () => [
+      type === 'text' ? {alignSelf: 'flex-start' as const} : null,
       style,
       css`
         border-radius: ${borderRadius}px;
+        overflow: hidden;
       `,
     ],
-    [style, borderRadius],
+    [style, borderRadius, type],
   );
+
+  if (Platform.OS === 'android') {
+    return (
+      <CustomPressable
+        {...touchableHighlightProps}
+        accessibilityLabel={
+          accessibilityLabel ?? (typeof text === 'string' ? text : undefined)
+        }
+        accessibilityRole="button"
+        accessibilityState={{
+          ...touchableHighlightProps?.accessibilityState,
+          busy: loading,
+          disabled: innerDisabled || loading,
+        }}
+        disabled={innerDisabled || loading}
+        hitSlop={hitSlop}
+        onPress={handlePress}
+        style={buttonStyles}
+        testID={testID}
+        android_ripple={{
+          color: touchableHighlightProps?.underlayColor ?? theme.role.underlay,
+          foreground: true,
+          borderless: false,
+        }}
+      >
+        {renderContainer({children: ChildView, loadingView: LoadingView})}
+      </CustomPressable>
+    );
+  }
 
   return (
     <TouchableHighlight
@@ -418,7 +459,7 @@ export function Button({
       onPress={handlePress}
       style={buttonStyles}
       testID={testID}
-      underlayColor={type === 'text' ? 'transparent' : theme.role.underlay}
+      underlayColor={theme.role.underlay}
       {...touchableHighlightProps}
       accessibilityState={{
         ...touchableHighlightProps?.accessibilityState,

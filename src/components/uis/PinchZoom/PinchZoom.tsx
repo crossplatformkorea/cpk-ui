@@ -197,7 +197,21 @@ function PinchZoomContainer(
   const pan = useMemo(
     () =>
       Gesture.Pan()
+        .withTestId(`${testID}-pan`)
         .maxPointers(1)
+        .manualActivation(true)
+        .onTouchesMove((event, manager) => {
+          // Ignoring movement after activation still steals a native pager's
+          // touch stream. Yield before activation while the image is at rest.
+          if (
+            event.numberOfTouches !== 1 ||
+            scale.get() <= lowerScale + 0.001
+          ) {
+            manager.fail();
+            return;
+          }
+          manager.activate();
+        })
         .onStart(() => {
           startTranslateX.set(translateX.get());
           startTranslateY.set(translateY.get());
@@ -245,6 +259,7 @@ function PinchZoomContainer(
       scale,
       startTranslateX,
       startTranslateY,
+      testID,
       translateX,
       translateY,
       width,

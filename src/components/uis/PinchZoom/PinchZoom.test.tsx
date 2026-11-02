@@ -2,6 +2,12 @@ import '@testing-library/jest-native/extend-expect';
 
 import React, {act, createRef, type ReactElement} from 'react';
 import {Text, View} from 'react-native';
+import {
+  PointerType,
+  State,
+  type GestureTouchEvent,
+} from 'react-native-gesture-handler';
+import {getByGestureTestId} from 'react-native-gesture-handler/jest-utils';
 import type {RenderAPI} from '@testing-library/react-native';
 import {fireEvent, render} from '@testing-library/react-native';
 
@@ -122,5 +128,80 @@ describe('[PinchZoom]', () => {
 
     act(() => ref.current?.setValues({scale: 9}));
     expect(onScaleChanged).toHaveBeenLastCalledWith(3);
+  });
+
+  it('yields rest-scale swipes, pans while zoomed, then yields after reset', () => {
+    const ref = createRef<PinchZoomRef>();
+    render(
+      createComponent(
+        <PinchZoom ref={ref}>
+          <View />
+        </PinchZoom>,
+      ),
+    );
+    const pan = getByGestureTestId('pinch-zoom-container-pan');
+    const manager = {
+      begin: jest.fn(),
+      activate: jest.fn(),
+      fail: jest.fn(),
+      end: jest.fn(),
+    };
+    const event: GestureTouchEvent = {
+      handlerTag: pan.handlerTag,
+      numberOfTouches: 1,
+      state: State.BEGAN,
+      eventType: 2,
+      pointerType: PointerType.TOUCH,
+      allTouches: [{id: 1, x: 100, y: 100, absoluteX: 100, absoluteY: 100}],
+      changedTouches: [{id: 1, x: 100, y: 100, absoluteX: 100, absoluteY: 100}],
+    };
+    expect(pan.config.manualActivation).toBe(true);
+    pan.handlers.onTouchesMove?.(event, manager);
+    expect(manager.fail).toHaveBeenCalledTimes(1);
+    expect(manager.activate).not.toHaveBeenCalled();
+    act(() => ref.current?.setValues({scale: 2}));
+    pan.handlers.onTouchesMove?.(event, manager);
+    expect(manager.activate).toHaveBeenCalledTimes(1);
+    act(() => ref.current?.setValues({scale: 1}));
+    pan.handlers.onTouchesMove?.(event, manager);
+    expect(manager.fail).toHaveBeenCalledTimes(2);
+    expect(manager.activate).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves two-finger movement to the independent pinch recognizer', () => {
+    const ref = createRef<PinchZoomRef>();
+    render(
+      createComponent(
+        <PinchZoom ref={ref}>
+          <View />
+        </PinchZoom>,
+      ),
+    );
+    act(() => ref.current?.setValues({scale: 2}));
+    const pan = getByGestureTestId('pinch-zoom-container-pan');
+    const manager = {
+      begin: jest.fn(),
+      activate: jest.fn(),
+      fail: jest.fn(),
+      end: jest.fn(),
+    };
+    const touches = [
+      {id: 1, x: 90, y: 100, absoluteX: 90, absoluteY: 100},
+      {id: 2, x: 110, y: 100, absoluteX: 110, absoluteY: 100},
+    ];
+    pan.handlers.onTouchesMove?.(
+      {
+        handlerTag: pan.handlerTag,
+        numberOfTouches: 2,
+        state: State.BEGAN,
+        eventType: 2,
+        pointerType: PointerType.TOUCH,
+        allTouches: touches,
+        changedTouches: touches,
+      },
+      manager,
+    );
+    expect(manager.fail).toHaveBeenCalledTimes(1);
+    expect(manager.activate).not.toHaveBeenCalled();
   });
 });

@@ -49,6 +49,24 @@ type CustomRenderType =
   | (({color, status}: {color: string; status: EditTextStatus}) => ReactElement)
   | null;
 
+/** One native line box for the given EditText size. Use longhands; axis padding does not replace edges. */
+export function editTextInputMetrics(sizeConfig: {
+  fontSize: number;
+  padding: number;
+}): {
+  fontSize: number;
+  lineHeight: number;
+  paddingTop: number;
+  paddingBottom: number;
+} {
+  return {
+    fontSize: sizeConfig.fontSize,
+    lineHeight: Math.round(sizeConfig.fontSize * 1.25),
+    paddingTop: sizeConfig.padding,
+    paddingBottom: Math.round(sizeConfig.padding * 1.2),
+  };
+}
+
 export type EditTextProps = {
   testID?: TextInputProps['testID'];
   inputRef?: MutableRefObject<TextInput | undefined> | RefObject<TextInput>;
@@ -329,6 +347,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       (children: ReactNode): ReactElement => {
         return (
           <TouchableWithoutFeedback
+            accessible={false}
             onPress={() => inputRef.current?.focus()}
             testID="container-touch"
           >
@@ -376,6 +395,11 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       ],
     );
 
+    const inputMetrics = useMemo(
+      () => editTextInputMetrics(sizeConfig),
+      [sizeConfig],
+    );
+
     // Memoize render input function
     const renderInput = useCallback((): ReactElement | null => {
       return (
@@ -396,6 +420,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
               flex-direction: row;
               align-items: center;
               justify-content: space-between;
+              overflow: visible;
             `,
             styles?.inputContainer,
           ]}
@@ -439,29 +464,24 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
               secureTextEntry={secureTextEntry}
               selectionColor={theme.role.underlay}
               style={[
-                // Stretch input in order to make remaining space clickable
-                css`
-                  font-family: Pretendard;
-                  flex: 1;
-                  font-size: ${sizeConfig.fontSize}px;
-                  text-align-vertical: ${multiline ? 'top' : 'center'};
-                `,
+                {
+                  color: defaultColor,
+                  flex: 1,
+                  fontFamily: 'Pretendard',
+                  fontSize: inputMetrics.fontSize,
+                  includeFontPadding: false,
+                  lineHeight: inputMetrics.lineHeight,
+                  overflow: 'visible',
+                  paddingBottom: inputMetrics.paddingBottom,
+                  paddingLeft: direction === 'row' ? sizeConfig.padding : 0,
+                  paddingRight: 0,
+                  paddingTop: inputMetrics.paddingTop,
+                  textAlignVertical: multiline ? 'top' : 'center',
+                },
                 isWeb() &&
                   css`
                     outline-width: 0;
                   `,
-                direction === 'column'
-                  ? css`
-                      padding-top: ${sizeConfig.padding}px;
-                    `
-                  : css`
-                      padding-left: ${sizeConfig.padding}px;
-                    `,
-                css`
-                  color: ${defaultColor};
-                  padding: ${sizeConfig.padding}px 0
-                    ${sizeConfig.padding * 1.2}px 0;
-                `,
                 styles?.input,
               ]}
               testID={testID}
@@ -482,6 +502,7 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
         </View>
       );
     }, [
+      accessibilityLabel,
       autoCapitalize,
       autoComplete,
       decoration,
@@ -489,7 +510,9 @@ export const EditText = forwardRef<TextInput, EditTextProps>(
       direction,
       editable,
       endElement,
+      inputMetrics,
       inputRef,
+      label,
       maxLength,
       multiline,
       numberOfLines,
