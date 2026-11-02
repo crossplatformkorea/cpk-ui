@@ -10,7 +10,7 @@ maintained by Cross Platform Korea and uses
 [kstyled](https://crossplatformkorea.github.io/kstyled) for typed,
 compile-time-aware styling.
 
-`cpk-ui@0.8.0-beta.1` pairs with `kstyled@0.4.1`. Keep the runtime and Babel plugin on
+`cpk-ui@0.8.0` pairs with `kstyled@0.4.1`. Keep the runtime and Babel plugin on
 the same kstyled version.
 
 ## Install
@@ -18,9 +18,10 @@ the same kstyled version.
 ### Expo
 
 ```bash
-npx expo install cpk-ui@0.8.0-beta.1 kstyled@0.4.1 @expo/vector-icons \
+npx expo install cpk-ui@0.8.0 kstyled@0.4.1 @expo/vector-icons \
   react-native-gesture-handler react-native-svg expo-screen-orientation \
-  react-native-reanimated @expo/match-media expo-haptics
+  react-native-reanimated react-native-worklets @shopify/flash-list \
+  @expo/match-media expo-haptics
 bun add --dev babel-plugin-kstyled@0.4.1
 ```
 
@@ -30,9 +31,10 @@ Install Expo modules first, then add the same runtime dependencies:
 
 ```bash
 npx install-expo-modules@latest
-bun add cpk-ui@0.8.0-beta.1 kstyled@0.4.1 @expo/vector-icons \
+bun add cpk-ui@0.8.0 kstyled@0.4.1 @expo/vector-icons \
   react-native-gesture-handler react-native-svg expo-screen-orientation \
-  react-native-reanimated @expo/match-media expo-haptics
+  react-native-reanimated react-native-worklets @shopify/flash-list \
+  @expo/match-media expo-haptics
 bun add --dev babel-plugin-kstyled@0.4.1
 ```
 
@@ -77,13 +79,14 @@ dark theme tokens. Applications that provide product-specific tokens can pass
 
 ## Component Surface
 
-| Area             | Components                                                                       |
-| ---------------- | -------------------------------------------------------------------------------- |
-| Actions          | Button, CustomPressable, Fab, IconButton                                         |
-| Inputs           | Calendar, Checkbox, EditText, RadioGroup, Rating, SegmentedControl, SwitchToggle |
-| Feedback         | AlertDialog, ErrorBoundary, LoadingIndicator, Snackbar                           |
-| Display          | Accordion, Card, Hr, Icon, ParallaxHeader, ReorderableList, Typography           |
-| Media and system | PinchZoom, StatusBarBrightness                                                   |
+| Area             | Components                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------- |
+| Actions          | Button, CustomPressable, Fab, IconButton                                                     |
+| Inputs           | Calendar, Checkbox, EditText, RadioGroup, Rating, SegmentedControl, SwitchToggle, TimePicker |
+| Feedback         | AlertDialog, ErrorBoundary, LoadingIndicator, SelectionFeedback, Snackbar                    |
+| Display          | Accordion, Card, Hr, Icon, PageIndicator, ParallaxHeader, ReorderableList, Typography        |
+| Charts           | DonutChart, LineChart                                                                        |
+| Media and system | PinchZoom, StatusBarBrightness                                                               |
 
 Each public component has automated tests and Storybook coverage for its main
 states. Use the [live Storybook](https://ui.crossplatformkorea.com) to inspect
@@ -91,7 +94,7 @@ controls, responsive behavior, accessibility results, and source examples.
 
 ## Release Matrix
 
-### ReorderableList (0.8.0-beta.4)
+### ReorderableList (0.8.0)
 
 `ReorderableList<T>` composes FlashList and react-native-drax. Provide stable
 domain keys, `getItemLabel`, controlled `data`/`onReorder`, and place the
@@ -126,7 +129,7 @@ permutation into actual data and clear shifts in the layout phase. Tests cover
 partial measurement, variable heights, horizontal lists and accepted order;
 native reorder → expand/edit → save → reopen must still be replayed.
 
-The 0.8.0 beta is verified with Expo 54, React Native 0.81, React 19,
+cpk-ui 0.8.0 is developed and verified with Expo 54, React Native 0.81, React 19,
 kstyled 0.4, and React Native Web 0.21. This is the release validation matrix,
 not a claim that every consumer must use those exact React or React Native
 versions.
@@ -147,6 +150,7 @@ main-branch GitHub Actions publish workflow with provenance.
 ## Documentation
 
 - [Storybook](https://ui.crossplatformkorea.com)
+- [0.8.0 release notes](./docs/releases/0.8.0.md)
 - [0.8.0-beta.1 release notes](./docs/releases/0.8.0-beta.1.md)
 - [0.8.0-beta.0 release notes](./docs/releases/0.8.0-beta.0.md)
 - [0.7 engineering notes](./docs/blog/2026-07-11-cpk-ui-0.7.0.md)
