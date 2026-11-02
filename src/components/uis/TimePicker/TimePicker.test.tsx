@@ -28,6 +28,25 @@ function Controlled({
   );
 }
 
+/**
+ * The day period words the runtime's ICU writes. They differ by build: Node
+ * 20's ICU 78.2 writes Korean as AM/PM, Node 22+ and Hermes as 오전/오후.
+ */
+function runtimeDayPeriods(locale: string): string[] {
+  const format = new Intl.DateTimeFormat(locale, {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  return [9, 21].map(
+    (hour) =>
+      format
+        .formatToParts(new Date(2000, 0, 1, hour, 5))
+        .find((part) => part.type === 'dayPeriod')?.value ?? '',
+  );
+}
+
 function segmentOrder(): string[] {
   const json = JSON.stringify(screen.toJSON());
   const ids = ['time-picker-am', 'time-picker-hour', 'time-picker-minute'];
@@ -49,7 +68,7 @@ describe('[TimePicker] locale format', () => {
     expect(resolveTimeFormat('ko')).toMatchObject({
       hourCycle: 'h12',
       order: ['dayPeriod', 'hour', 'minute'],
-      dayPeriods: ['오전', '오후'],
+      dayPeriods: runtimeDayPeriods('ko'),
     });
     expect(resolveTimeFormat('id')).toMatchObject({
       hourCycle: 'h23',
@@ -82,7 +101,7 @@ describe('[TimePicker] locale format', () => {
     });
     expect(resolveTimeFormat('ja', 'h12')).toMatchObject({
       hourCycle: 'h12',
-      dayPeriods: ['午前', '午後'],
+      dayPeriods: runtimeDayPeriods('ja'),
     });
   });
 
@@ -148,11 +167,16 @@ describe('[TimePicker] render', () => {
     ]);
     expect(screen.getByTestId('time-picker-hour').props.value).toBe('9');
     expect(screen.getByTestId('time-picker-minute').props.value).toBe('05');
-    expect(screen.getByLabelText('오후').props.accessibilityState).toEqual({
+    const [morning, evening] = runtimeDayPeriods('ko');
+    const am = screen.getByTestId('time-picker-am');
+    const pm = screen.getByTestId('time-picker-pm');
+    expect(pm.props.accessibilityLabel).toBe(evening);
+    expect(pm.props.accessibilityState).toEqual({
       checked: true,
       disabled: false,
     });
-    expect(screen.getByLabelText('오전').props.accessibilityState).toEqual({
+    expect(am.props.accessibilityLabel).toBe(morning);
+    expect(am.props.accessibilityState).toEqual({
       checked: false,
       disabled: false,
     });
@@ -184,8 +208,14 @@ describe('[TimePicker] render', () => {
 
     view.rerender(createComponent(<TimePicker locale="ko" value={EVENING} />));
 
-    expect(screen.queryByLabelText('PM')).toBeNull();
-    expect(screen.getByLabelText('오후')).toBeTruthy();
+    expect(segmentOrder()).toEqual([
+      'time-picker-am',
+      'time-picker-hour',
+      'time-picker-minute',
+    ]);
+    expect(screen.getByTestId('time-picker-pm').props.accessibilityLabel).toBe(
+      runtimeDayPeriods('ko')[1],
+    );
   });
 
   // jest-expo reports fontScale 2.0, so the cap decides the width here.
