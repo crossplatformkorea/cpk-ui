@@ -40,6 +40,7 @@
     "react-native": ">=0.76",
     "react-native-gesture-handler": ">=2.28.0",
     "react-native-reanimated": "^4.1.1",
+    "react-native-svg": ">=15",
     "react-native-worklets": ">=0.5.1 <1",
     "@expo/vector-icons": "*",
     "expo-haptics": "*"
