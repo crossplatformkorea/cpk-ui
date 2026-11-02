@@ -156,11 +156,17 @@ const weekdayLabel = (date: Date, locale: string): string => {
 // truncates two-digit days in a cell. Native digits (ar-EG) are kept.
 const dayNumber = (date: Date, locale: string): string => {
   const format = getFormat(locale, 'dayNumber');
-  if (!format) return String(date.getDate());
+  if (!format || typeof format.formatToParts !== 'function') {
+    return String(date.getDate());
+  }
 
-  const day = format.formatToParts(date).find((part) => part.type === 'day');
+  try {
+    const day = format.formatToParts(date).find((part) => part.type === 'day');
 
-  return day ? day.value : format.format(date);
+    return day ? day.value : String(date.getDate());
+  } catch {
+    return String(date.getDate());
+  }
 };
 
 const dayAccessibilityLabel = (date: Date, locale: string): string => {

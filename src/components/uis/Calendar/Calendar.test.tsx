@@ -937,6 +937,31 @@ describe('[Calendar] large font degradation', () => {
 });
 
 describe('[Calendar] locale and week start correctness', () => {
+  it('should fall back to the bare day number without formatToParts', () => {
+    const original = Intl.DateTimeFormat.prototype.formatToParts;
+    try {
+      // Partial ICU builds ship DateTimeFormat without formatToParts.
+      Object.defineProperty(Intl.DateTimeFormat.prototype, 'formatToParts', {
+        configurable: true,
+        value: undefined,
+      });
+      const screen = render(
+        createComponent(
+          <Calendar locale="ja" month="2026-07" paging="none" today={TODAY} />,
+        ),
+      );
+
+      expect(
+        within(screen.getByTestId('calendar-day-2026-07-15')).getByText('15'),
+      ).toBeTruthy();
+    } finally {
+      Object.defineProperty(Intl.DateTimeFormat.prototype, 'formatToParts', {
+        configurable: true,
+        value: original,
+      });
+    }
+  });
+
   // Intl writes `15일` / `15日`, which truncated to `1…` in a day cell.
   it.each([
     ['ko', '15'],

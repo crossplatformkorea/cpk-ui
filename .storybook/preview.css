@@ -4,6 +4,7 @@
   --cpk-label: #4d4d4d;
   --cpk-mist: #ededed;
   --cpk-signal: #3d8bff;
+  --cpk-link: #1a66d9;
   --cpk-font:
     'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
     system-ui, sans-serif;
@@ -78,7 +79,7 @@ body {
 }
 
 .sbdocs-a {
-  color: var(--cpk-signal);
+  color: var(--cpk-link);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
@@ -141,6 +142,9 @@ body {
 .cpk-install {
   background: var(--cpk-ink);
   border-radius: 12px;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: auto;
   color: #ffffff;
   display: inline-block;
   font-size: 14px;
@@ -198,7 +202,7 @@ body {
 
 .cpk-index a:hover,
 .cpk-index a:focus-visible {
-  color: var(--cpk-signal);
+  color: var(--cpk-link);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
