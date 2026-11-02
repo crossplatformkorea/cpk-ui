@@ -7,7 +7,7 @@ import type {
   TouchableHighlightProps,
   ViewStyle,
 } from 'react-native';
-import {Platform, TouchableHighlight, View} from 'react-native';
+import {Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
 import {styled, css} from 'kstyled';
 
 import {useTheme} from '../../../providers/ThemeProvider';
@@ -298,21 +298,13 @@ export function Button({
     [loadingElement, loadingColor, type, theme.text.contrast, theme.text.basic],
   );
 
-  // Memoize style resolvers
-  const resolveStyle = useCallback(<T,>(style: StyleProp<T>): T | undefined => {
-    if (Array.isArray(style)) {
-      return style.find((s): s is T => !!s);
-    }
-    return (style as T) || undefined;
-  }, []);
-
   const viewStyle = useMemo(
-    () => resolveStyle<ViewStyle>(compositeStyles.container),
-    [resolveStyle, compositeStyles.container],
+    () => StyleSheet.flatten<ViewStyle>(compositeStyles.container),
+    [compositeStyles.container],
   );
   const textStyle = useMemo(
-    () => resolveStyle<TextStyle>(compositeStyles.text),
-    [resolveStyle, compositeStyles.text],
+    () => StyleSheet.flatten<TextStyle>(compositeStyles.text),
+    [compositeStyles.text],
   );
 
   // Memoize child view
