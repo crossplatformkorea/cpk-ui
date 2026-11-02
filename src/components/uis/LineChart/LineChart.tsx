@@ -68,6 +68,15 @@ function safeNumber(value: number): number {
   return Number.isFinite(value) ? value : 0;
 }
 
+const FULL_WIDTH =
+  /[\u1100-\u11ff\u2e80-\ua4cf\uac00-\ud7af\uf900-\ufaff\uff00-\uffef]/;
+
+function estimateTextWidth(text: string): number {
+  let width = 0;
+  for (const glyph of text) width += FULL_WIDTH.test(glyph) ? 11 : 7;
+  return width;
+}
+
 // Each target reaches halfway to its neighbours, so a tap selects the
 // nearest point rather than an equal-width column.
 function targetSlot(
@@ -142,6 +151,23 @@ export function LineChart({
     }));
   }, [data, frame.height, frame.width]);
   const selectedPoint = points.find((point) => point.key === selectedKey);
+  const tooltipText = selectedPoint ? formatValue(selectedPoint.value) : '';
+  // SVG text cannot be measured before paint. At 11pt semibold a Latin glyph
+  // or digit needs about 7pt and a full-width CJK glyph about 11pt; the
+  // tooltip never grows past the frame.
+  const tooltipWidth = Math.min(
+    Math.max(88, estimateTextWidth(tooltipText) + 24),
+    Math.max(88, frame.width - 8),
+  );
+  const tooltipX = selectedPoint
+    ? Math.max(
+        4,
+        Math.min(
+          selectedPoint.x - tooltipWidth / 2,
+          frame.width - tooltipWidth - 4,
+        ),
+      )
+    : 0;
   // Points are interactive only with `onSelect`; a read-only chart is one
   // image, and interactive point buttons must not nest inside an image.
   const interactive = onSelect !== undefined;
@@ -231,11 +257,9 @@ export function LineChart({
                 fill={colors.tooltipBackground}
                 height={26}
                 rx={6}
-                width={88}
-                x={Math.min(
-                  Math.max(selectedPoint.x - 44, 4),
-                  frame.width - 92,
-                )}
+                testID={`${testID}-tooltip`}
+                width={tooltipWidth}
+                x={tooltipX}
                 y={Math.max(2, selectedPoint.y - 36)}
               />
               <SvgText
@@ -243,10 +267,10 @@ export function LineChart({
                 fontSize={11}
                 fontWeight="600"
                 textAnchor="middle"
-                x={Math.min(Math.max(selectedPoint.x, 48), frame.width - 48)}
+                x={tooltipX + tooltipWidth / 2}
                 y={Math.max(19, selectedPoint.y - 19)}
               >
-                {formatValue(selectedPoint.value)}
+                {tooltipText}
               </SvgText>
             </G>
           ) : null}

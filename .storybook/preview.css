@@ -1,8 +1,14 @@
 :root {
   color-scheme: light;
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
-    sans-serif;
+  --cpk-ink: #1b1b1b;
+  --cpk-label: #4d4d4d;
+  --cpk-mist: #ededed;
+  --cpk-signal: #3d8bff;
+  --cpk-link: #1a66d9;
+  --cpk-font:
+    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, sans-serif;
+  font-family: var(--cpk-font);
 }
 
 html,
@@ -18,45 +24,72 @@ body,
 
 body {
   margin: 0;
+  word-break: keep-all;
 }
 
 .sbdocs-wrapper {
   background: #ffffff;
-  padding: 48px 56px 72px;
+  padding: 56px 56px 96px;
 }
 
 .sbdocs-content {
-  max-width: 1080px;
+  max-width: 1040px;
+}
+
+.sbdocs,
+.sbdocs-content p,
+.sbdocs-content li,
+.sbdocs-content dd {
+  font-family: var(--cpk-font);
 }
 
 .sbdocs-title {
-  color: #16191f;
-  font-size: 36px;
-  font-weight: 720;
-  letter-spacing: 0;
-  line-height: 1.16;
+  color: var(--cpk-ink);
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
 }
 
-.sbdocs-subtitle,
-.sbdocs-p {
-  color: #5d6573;
-  font-size: 15px;
-  letter-spacing: 0;
+.sbdocs .sbdocs-subtitle,
+.sbdocs .sbdocs-p,
+.sbdocs .sbdocs-li {
+  color: var(--cpk-label);
+  font-size: 16px;
+  letter-spacing: -0.005em;
   line-height: 1.7;
+  max-width: 68ch;
 }
 
-.sbdocs-h2 {
-  border-bottom: 1px solid #e3e7ed;
-  color: #20242c;
-  font-size: 22px;
-  letter-spacing: 0;
-  padding-bottom: 10px;
+.sbdocs .sbdocs-h2 {
+  border-bottom: 0;
+  color: var(--cpk-ink);
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  margin-top: 64px;
+  padding-bottom: 0;
+}
+
+.sbdocs-h3 {
+  color: var(--cpk-ink);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sbdocs-a {
+  color: var(--cpk-link);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 
 .docs-story {
-  border-color: #dfe4eb !important;
-  border-radius: 6px !important;
+  border: 1px solid var(--cpk-mist) !important;
+  border-radius: 16px !important;
   box-shadow: none !important;
+  overflow: hidden;
 }
 
 .docblock-argstable {
@@ -65,34 +98,140 @@ body {
 }
 
 .docblock-code-toggle {
-  border-radius: 4px !important;
+  border-radius: 8px !important;
 }
 
+.sbdocs-pre pre,
+.sbdocs-pre .docblock-source {
+  border-radius: 12px !important;
+}
+
+/* Introduction */
+
+.cpk-hero {
+  margin: 8px 0 40px;
+}
+
+.cpk-wordmark,
+.cpk-hero h1 {
+  color: var(--cpk-ink);
+  font-family: var(--cpk-font);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+  margin: 0 0 24px;
+}
+
+.cpk-wordmark {
+  font-size: clamp(72px, 13vw, 152px);
+}
+
+.cpk-hero--compact h1 {
+  font-size: clamp(40px, 6vw, 64px);
+}
+
+.cpk-lead {
+  color: var(--cpk-label);
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 34em;
+}
+
+.cpk-install {
+  background: var(--cpk-ink);
+  border-radius: 12px;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: auto;
+  color: #ffffff;
+  display: inline-block;
+  font-size: 14px;
+  margin: 28px 0 0;
+  padding: 14px 18px;
+}
+
+.cpk-specimen .docs-story {
+  border: 0 !important;
+  border-radius: 24px !important;
+}
+
+.cpk-specimen .docs-story > div:first-child {
+  padding: 0 !important;
+}
+
+.cpk-caption {
+  color: var(--cpk-label);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 12px 0 56px;
+}
+
+.cpk-index {
+  display: grid;
+  gap: 0 32px;
+  grid-template-columns: max-content 1fr;
+  margin: 20px 0 0;
+}
+
+.cpk-index dt,
+.cpk-index dd {
+  border-top: 1px solid var(--cpk-mist);
+  margin: 0;
+  padding: 14px 0;
+}
+
+.cpk-index dt {
+  color: var(--cpk-label);
+  font-size: 15px;
+}
+
+.cpk-index dd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+}
+
+.cpk-index a {
+  color: var(--cpk-ink);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cpk-index a:hover,
+.cpk-index a:focus-visible {
+  color: var(--cpk-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Kept for the 0.7.0 release and engineering pages. */
+
 .cpk-docs-hero {
-  border-bottom: 1px solid #dfe4eb;
   margin: 0 0 36px;
-  padding: 12px 0 40px;
+  padding: 8px 0 32px;
 }
 
 .cpk-docs-kicker {
-  color: #1d4ed8;
-  font-size: 12px;
-  font-weight: 700;
+  color: var(--cpk-label);
+  font-size: 14px;
+  font-weight: 600;
   margin: 0 0 12px;
-  text-transform: uppercase;
 }
 
 .cpk-docs-hero h1 {
-  color: #14171c;
+  color: var(--cpk-ink);
   font-size: 48px;
-  font-weight: 760;
-  letter-spacing: 0;
+  font-weight: 800;
+  letter-spacing: -0.03em;
   line-height: 1.05;
   margin: 0 0 16px;
 }
 
 .cpk-docs-lead {
-  color: #555e6d;
+  color: var(--cpk-label);
   font-size: 18px;
   line-height: 1.65;
   margin: 0;
@@ -107,13 +246,12 @@ body {
 }
 
 .cpk-platforms span {
-  background: #f1f4f8;
-  border: 1px solid #d9dfe8;
-  border-radius: 4px;
-  color: #374151;
-  font-size: 12px;
-  font-weight: 650;
-  padding: 6px 9px;
+  background: var(--cpk-mist);
+  border-radius: 999px;
+  color: var(--cpk-ink);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
 }
 
 .cpk-docs-grid {
@@ -124,22 +262,21 @@ body {
 }
 
 .cpk-docs-grid > div {
-  border: 1px solid #dfe4eb;
-  border-radius: 6px;
+  border: 1px solid var(--cpk-mist);
+  border-radius: 12px;
   box-sizing: border-box;
   min-height: 112px;
   padding: 18px;
 }
 
 .cpk-docs-grid h3 {
-  color: #20242c;
+  color: var(--cpk-ink);
   font-size: 15px;
-  letter-spacing: 0;
   margin: 0 0 7px;
 }
 
 .cpk-docs-grid p {
-  color: #697180;
+  color: var(--cpk-label);
   font-size: 13px;
   line-height: 1.55;
   margin: 0;
@@ -147,11 +284,24 @@ body {
 
 @media (max-width: 760px) {
   .sbdocs-wrapper {
-    padding: 28px 20px 48px;
+    padding: 28px 16px 56px;
   }
 
   .sbdocs-title {
     font-size: 30px;
+  }
+
+  .cpk-lead {
+    font-size: 17px;
+  }
+
+  .cpk-index {
+    grid-template-columns: 1fr;
+  }
+
+  .cpk-index dd {
+    border-top: 0;
+    padding-top: 0;
   }
 
   .cpk-docs-hero h1 {
@@ -160,5 +310,11 @@ body {
 
   .cpk-docs-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
   }
 }

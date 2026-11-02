@@ -18,7 +18,7 @@ const data = [
 ];
 
 const meta = {
-  title: 'Display/DonutChart',
+  title: 'Charts/DonutChart',
   component: DonutChart,
   decorators: [withThemeProvider],
   parameters: {
@@ -36,11 +36,15 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const CategoryShare: Story = {
-  args: {accessibilityLabel: 'Spending by category', data},
+  args: {
+    accessibilityLabel:
+      'Spending this month, $2,840: housing 54%, food 26%, travel 12%, other 8%',
+    data,
+  },
   render: (args) => (
     <StoryCanvas>
       <StoryHeader
-        description="Segments remain legible when one category dominates the total."
+        description="Segments stay legible when one category dominates. The centre total sits inside the chart image, so the label reads it too."
         title="Spending composition"
       />
       <StorySection label="Current month">

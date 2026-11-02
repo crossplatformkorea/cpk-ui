@@ -44,8 +44,8 @@ const preview: Preview = {
       default: 'light',
       values: [
         {name: 'light', value: '#ffffff'},
-        {name: 'muted', value: '#f3f5f8'},
-        {name: 'dark', value: '#17191d'},
+        {name: 'paper', value: '#EDEDED'},
+        {name: 'dark', value: '#1B1B1B'},
       ],
     },
 
@@ -64,11 +64,12 @@ const preview: Preview = {
       storySort: {
         order: [
           'Overview',
-          ['Introduction', 'Release 0.7.0', 'Engineering Notes'],
+          ['Introduction', 'Release 0.8.0', 'Release 0.7.0', 'Engineering Notes'],
           'Foundations',
           ['Colors', 'Typography'],
           'Actions',
           'Inputs',
+          'Charts',
           'Feedback',
           'Display',
           'Media',

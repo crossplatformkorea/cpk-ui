@@ -77,6 +77,68 @@ describe('[LineChart]', () => {
     expect(slot(2)).toMatchObject({left: 230, width: 90});
   });
 
+  it('widens the tooltip to fit a long formatted value', () => {
+    const screen = render(
+      createComponent(
+        <LineChart
+          data={data}
+          formatValue={(value) => `₩${value * 100000}`}
+          selectedKey="mar"
+        />,
+      ),
+    );
+    const tooltip = screen.getByTestId('line-chart-tooltip');
+
+    // `₩1500000` is 8 glyphs; the frame is 320pt wide.
+    expect(tooltip.props.width).toBe(88);
+    screen.rerender(
+      createComponent(
+        <LineChart
+          data={data}
+          formatValue={(value) =>
+            `₩${(value * 1000000).toLocaleString('en-US')}`
+          }
+          selectedKey="mar"
+        />,
+      ),
+    );
+    const wide = screen.getByTestId('line-chart-tooltip');
+    // `₩15,000,000` is 11 glyphs.
+    expect(wide.props.width).toBe(11 * 7 + 24);
+    expect(wide.props.x + wide.props.width).toBeLessThanOrEqual(316);
+  });
+
+  it('keeps a long or Hangul tooltip inside a narrow frame', () => {
+    const screen = render(
+      createComponent(
+        <LineChart
+          data={data}
+          formatValue={() => '지출 합계 일백이십팔만사천원'}
+          selectedKey="jan"
+        />,
+      ),
+    );
+    const tooltip = screen.getByTestId('line-chart-tooltip');
+
+    // 13 Hangul glyphs and two spaces; the box stays inside the frame even
+    // above the first point.
+    expect(tooltip.props.width).toBe(13 * 11 + 2 * 7 + 24);
+    expect(tooltip.props.x).toBeGreaterThanOrEqual(4);
+
+    screen.rerender(
+      createComponent(
+        <LineChart
+          data={data}
+          formatValue={() => 'x'.repeat(60)}
+          selectedKey="mar"
+        />,
+      ),
+    );
+    const capped = screen.getByTestId('line-chart-tooltip');
+    expect(capped.props.width).toBe(312);
+    expect(capped.props.x).toBe(4);
+  });
+
   it('draws an all-zero series on the baseline', () => {
     const zero = [
       {key: 'jan', label: 'Jan', value: 0},

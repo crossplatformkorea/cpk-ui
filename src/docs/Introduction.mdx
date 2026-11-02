@@ -1,66 +1,123 @@
-import {Meta} from '@storybook/blocks';
+import {Meta, Story} from '@storybook/blocks';
+
+import * as Specimen from './Specimen.stories';
 
 <Meta title="Overview/Introduction" />
 
-<div className="cpk-docs-hero">
-  <p className="cpk-docs-kicker">
-    {'Cross Platform Korea · 0.7.0 release workbench'}
-  </p>
-  <h1>cpk-ui</h1>
-  <p className="cpk-docs-lead">
+<header className="cpk-hero sb-unstyled">
+  <h1 className="cpk-wordmark">cpk-ui</h1>
+  <p className="cpk-lead">
     {
-      'React Native components with one API across iOS, Android, and web. This workbench documents behavior, visual states, accessibility, and platform constraints against the local package build.'
+      'React Native components for iOS, Android and the web, with one API and Korean text set properly. Everything on this page is the real package, running in your browser.'
     }
   </p>
-  <div className="cpk-platforms">
-    <span>React Native</span>
-    <span>Expo</span>
-    <span>Web</span>
-    <span>TypeScript</span>
-  </div>
+  <pre className="cpk-install">
+    <code>{'bun add cpk-ui@0.8.0 kstyled@0.4.1'}</code>
+  </pre>
+</header>
+
+<div className="cpk-specimen">
+  <Story of={Specimen.Ledger} />
 </div>
 
-## Working principles
+<p className="cpk-caption sb-unstyled">
+  {
+    'Pick a day, then a month on the chart. Calendar, DonutChart, LineChart and Button above are imported from cpk-ui with no wrapper.'
+  }
+</p>
 
-<div className="cpk-docs-grid">
-  <div>
-    <h3>Native behavior</h3>
-    <p>
-      {'Press, focus, motion, and accessibility remain platform appropriate.'}
-    </p>
-  </div>
-  <div>
-    <h3>Predictable styling</h3>
-    <p>
-      {'Theme tokens and kstyled keep component output explicit and typed.'}
-    </p>
-  </div>
-  <div>
-    <h3>Regression visibility</h3>
-    <p>
-      {
-        'Every public component has stories, tests, and responsive web coverage.'
-      }
-    </p>
-  </div>
-</div>
+## Components
 
-## Install
+<dl className="cpk-index sb-unstyled">
+  <dt>Foundations</dt>
+  <dd>
+    <a href="./?path=/docs/foundations-colors--docs" target="_top">Colors</a>
+    <a href="./?path=/docs/foundations-typography--docs" target="_top">Typography</a>
+  </dd>
+  <dt>Actions</dt>
+  <dd>
+    <a href="./?path=/docs/actions-button--docs" target="_top">Button</a>
+    <a href="./?path=/docs/actions-iconbutton--docs" target="_top">IconButton</a>
+    <a href="./?path=/docs/actions-fab--docs" target="_top">Fab</a>
+    <a href="./?path=/docs/actions-custompressable--docs" target="_top">CustomPressable</a>
+  </dd>
+  <dt>Inputs</dt>
+  <dd>
+    <a href="./?path=/docs/inputs-calendar--docs" target="_top">Calendar</a>
+    <a href="./?path=/docs/inputs-timepicker--docs" target="_top">TimePicker</a>
+    <a href="./?path=/docs/inputs-edittext--docs" target="_top">EditText</a>
+    <a href="./?path=/docs/inputs-segmentedcontrol--docs" target="_top">SegmentedControl</a>
+    <a href="./?path=/docs/inputs-checkbox--docs" target="_top">Checkbox</a>
+    <a href="./?path=/docs/inputs-radiogroup--docs" target="_top">RadioGroup</a>
+    <a href="./?path=/docs/inputs-radiobutton--docs" target="_top">RadioButton</a>
+    <a href="./?path=/docs/inputs-switchtoggle--docs" target="_top">SwitchToggle</a>
+    <a href="./?path=/docs/inputs-rating--docs" target="_top">Rating</a>
+  </dd>
+  <dt>Charts</dt>
+  <dd>
+    <a href="./?path=/docs/charts-donutchart--docs" target="_top">DonutChart</a>
+    <a href="./?path=/docs/charts-linechart--docs" target="_top">LineChart</a>
+  </dd>
+  <dt>Feedback</dt>
+  <dd>
+    <a href="./?path=/docs/feedback-alertdialog--docs" target="_top">AlertDialog</a>
+    <a href="./?path=/docs/feedback-snackbar--docs" target="_top">Snackbar</a>
+    <a href="./?path=/docs/feedback-selectionfeedback--docs" target="_top">SelectionFeedback</a>
+    <a href="./?path=/docs/feedback-pageindicator--docs" target="_top">PageIndicator</a>
+    <a href="./?path=/docs/feedback-loadingindicator--docs" target="_top">LoadingIndicator</a>
+    <a href="./?path=/docs/feedback-errorboundary--docs" target="_top">ErrorBoundary</a>
+  </dd>
+  <dt>Display</dt>
+  <dd>
+    <a href="./?path=/docs/display-accordion--docs" target="_top">Accordion</a>
+    <a href="./?path=/docs/display-card--docs" target="_top">Card</a>
+    <a href="./?path=/docs/display-reorderablelist--docs" target="_top">ReorderableList</a>
+    <a href="./?path=/docs/display-parallaxheader--docs" target="_top">ParallaxHeader</a>
+    <a href="./?path=/docs/display-icon--docs" target="_top">Icon</a>
+    <a href="./?path=/docs/display-hr--docs" target="_top">Hr</a>
+  </dd>
+  <dt>Media and system</dt>
+  <dd>
+    <a href="./?path=/docs/media-pinchzoom--docs" target="_top">PinchZoom</a>
+    <a href="./?path=/docs/system-statusbarbrightness--docs" target="_top">StatusBarBrightness</a>
+  </dd>
+</dl>
+
+## Set up
+
+Install the package with its peers. kstyled's runtime and Babel plugin must be
+on the same version.
 
 ```bash
-bun add cpk-ui@0.7.0 kstyled@0.4.1
+npx expo install cpk-ui@0.8.0 kstyled@0.4.1 @expo/vector-icons \
+  react-native-gesture-handler react-native-svg expo-screen-orientation \
+  react-native-reanimated react-native-worklets @shopify/flash-list \
+  @expo/match-media expo-haptics
 bun add --dev babel-plugin-kstyled@0.4.1
 ```
 
-## Provider setup
+Put kstyled first in your Babel plugins and Reanimated last.
+
+```js
+module.exports = {
+  presets: ['babel-preset-expo'],
+  plugins: [
+    ['babel-plugin-kstyled', {strict: true}],
+    'react-native-reanimated/plugin',
+  ],
+};
+```
+
+Wrap the app once. `CpkProvider` loads Pretendard and supplies the light and
+dark tokens.
 
 ```tsx
 import {CpkProvider} from 'cpk-ui';
 
 export function App() {
-  return <CpkProvider>{/* application */}</CpkProvider>;
+  return <CpkProvider>{/* your screens */}</CpkProvider>;
 }
 ```
 
-Use the theme toolbar to inspect light and dark behavior. Use the viewport
-toolbar for compact mobile, mobile, tablet, and desktop layouts.
+Use the theme switch in the toolbar to check every story in light and dark,
+and the viewport menu for phone, tablet and desktop widths.

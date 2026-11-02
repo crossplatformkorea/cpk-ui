@@ -285,7 +285,7 @@ export const Localized: Story = {
         title="Locales"
       />
       <StorySection
-        description="Korean renders the month title as 2026\ub144 8\uc6d4 and the weekday row as \uc77c \uc6d4 \ud654 \uc218 \ubaa9 \uae08 \ud1a0, with the week still starting on Sunday."
+        description="Korean renders the month title as 2026년 8월 and the weekday row as 일 월 화 수 목 금 토, with the week still starting on Sunday. Day cells show the number alone."
         label="ko"
       >
         <Calendar
@@ -484,6 +484,24 @@ export const BoundarySelectionMotion: Story = {
       <StoryHeader
         title="Selection at month boundaries"
         description="Choose 2 or 31, then repeat. Only the visible page confirms a changed selection; preloaded neighbours remain quiet."
+      />
+      <Calendar {...args} />
+    </StoryCanvas>
+  ),
+};
+
+export const TwoMonthBoundaryMotion: Story = {
+  args: {
+    selectionAnimation: true,
+    monthsToShow: 2,
+    paging: 'none',
+    defaultMonth: '2026-10',
+  },
+  render: (args) => (
+    <StoryCanvas>
+      <StoryHeader
+        title="Boundary dates across two months"
+        description="October 1 also appears dimmed in the September grid. Press either copy: only the October copy pops, because its month is on screen."
       />
       <Calendar {...args} />
     </StoryCanvas>

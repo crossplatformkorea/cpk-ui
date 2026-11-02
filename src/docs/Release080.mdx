@@ -1,0 +1,47 @@
+import {Meta} from '@storybook/blocks';
+
+<Meta title="Overview/Release 0.8.0" />
+
+<header className="cpk-hero cpk-hero--compact sb-unstyled">
+  <h1>cpk-ui 0.8.0</h1>
+  <p className="cpk-lead">
+    {
+      'The first stable 0.8 release, published on November 2, 2026. It promotes eight betas and adds charts and selection motion.'
+    }
+  </p>
+</header>
+
+## New components
+
+- [DonutChart](./?path=/docs/charts-donutchart--docs) and
+  [LineChart](./?path=/docs/charts-linechart--docs) draw with
+  `react-native-svg`. A read-only LineChart is one labelled image; with
+  `onSelect` it becomes a group of point buttons.
+- [SelectionFeedback](./?path=/docs/feedback-selectionfeedback--docs) pops a
+  deliberate selection. Calendar opts in with `selectionAnimation`; RadioButton
+  uses it by default. The system Reduce Motion setting always wins.
+- [TimePicker](./?path=/docs/inputs-timepicker--docs) writes hours and minutes
+  the way a given locale does, independent of the device language.
+- [Calendar](./?path=/docs/inputs-calendar--docs),
+  [ParallaxHeader](./?path=/docs/display-parallaxheader--docs),
+  [PageIndicator](./?path=/docs/feedback-pageindicator--docs) and
+  [ReorderableList](./?path=/docs/display-reorderablelist--docs) arrived during
+  the betas.
+
+## Behavior changes
+
+- Typography keeps Korean words whole on iOS (`lineBreakStrategyIOS:
+  'hangul-word'`).
+- AlertDialog avoids the Android keyboard and can be controlled with `visible`
+  and `onClose`.
+- Text buttons pad `8px 16px` and hug their label.
+
+## Upgrading from 0.7
+
+1. Install the new peers: `react-native-svg`, `react-native-worklets` and
+   `@shopify/flash-list`, with React 19 and Reanimated 4.
+2. Pass `selectionAnimation={false}` to RadioButton if it should stay still.
+3. Keep `borderRadius` on Button as a prop, never in `style`.
+
+The full list is in the
+[changelog](https://github.com/crossplatformkorea/cpk-ui/blob/main/CHANGELOG.md).
