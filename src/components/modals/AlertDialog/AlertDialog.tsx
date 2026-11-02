@@ -442,8 +442,11 @@ function AlertDialogImpl(
         transparent={true}
         visible={visible}
       >
+        {/* Android draws the modal window edge-to-edge, so adjustResize no
+            longer lifts it: without padding there, the keyboard covered a
+            dialog's field, notices and actions on short phones. */}
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === 'web' ? undefined : 'padding'}
           style={keyboardAvoidingStyle}
         >
           {AlertDialogContent}
