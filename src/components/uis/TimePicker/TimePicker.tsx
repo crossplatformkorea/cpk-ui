@@ -124,7 +124,7 @@ const FALLBACK_LABELS: Required<TimePickerLabels> = {
 
 function defaultLabels(locale: string): Required<TimePickerLabels> {
   const DisplayNames = (
-    Intl as unknown as {DisplayNames?: DisplayNamesConstructor}
+    Intl as typeof Intl & {DisplayNames?: DisplayNamesConstructor}
   ).DisplayNames;
 
   if (typeof DisplayNames !== 'function') {
@@ -269,7 +269,9 @@ function TimePickerContainer({
 
   const handleChangeText = useCallback(
     (field: TimePickerField, text: string): void => {
-      const entry = readTimeField(text, field, format.hourCycle);
+      const entry = disabled
+        ? null
+        : readTimeField(text, field, format.hourCycle);
 
       if (!entry) {
         return;
@@ -292,7 +294,7 @@ function TimePickerContainer({
         minuteRef.current?.focus();
       }
     },
-    [commit, format.hourCycle, hours, isAfternoon, minutes],
+    [commit, disabled, format.hourCycle, hours, isAfternoon, minutes],
   );
 
   const handleFocus = useCallback(

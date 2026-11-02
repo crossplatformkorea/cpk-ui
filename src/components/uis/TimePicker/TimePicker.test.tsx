@@ -63,6 +63,18 @@ describe('[TimePicker] locale format', () => {
     });
   });
 
+  // Apps usually pass a bare language tag, not a region.
+  it('resolves bare language tags', () => {
+    expect(resolveTimeFormat('en')).toMatchObject({
+      hourCycle: 'h12',
+      dayPeriods: ['AM', 'PM'],
+    });
+    expect(resolveTimeFormat('zh')).toMatchObject({
+      hourCycle: 'h23',
+      separator: ':',
+    });
+  });
+
   it('lets an explicit hour cycle override the locale', () => {
     expect(resolveTimeFormat('en-US', 'h23')).toMatchObject({
       hourCycle: 'h23',
@@ -284,6 +296,21 @@ describe('[TimePicker] changes', () => {
     expect(screen.getByTestId('time-picker-hour').props.value).toBe('08');
   });
 
+  it('restores the time when an incomplete hour loses focus', () => {
+    const onChange = jest.fn();
+
+    render(createComponent(<Controlled locale="ko" onChange={onChange} />));
+
+    const hour = screen.getByTestId('time-picker-hour');
+    fireEvent(hour, 'focus');
+    fireEvent.changeText(hour, '0');
+    expect(screen.getByTestId('time-picker-hour').props.value).toBe('0');
+    fireEvent(screen.getByTestId('time-picker-hour'), 'blur');
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(screen.getByTestId('time-picker-hour').props.value).toBe('9');
+  });
+
   it('moves to the minutes once the hour is complete', () => {
     render(createComponent(<Controlled locale="id" />));
 
@@ -327,6 +354,7 @@ describe('[TimePicker] changes', () => {
 
     expect(screen.getByTestId('time-picker-hour').props.editable).toBe(false);
     fireEvent.press(screen.getByTestId('time-picker-am'));
+    fireEvent.changeText(screen.getByTestId('time-picker-minute'), '7');
     expect(onChange).not.toHaveBeenCalled();
   });
 });
